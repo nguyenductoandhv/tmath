@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
     function getDocHeight() {
         var D = document;
         return Math.max(
@@ -7,7 +7,7 @@
             Math.max(D.body.clientHeight, D.documentElement.clientHeight)
         );
     }
-
+  
     function getDocWidth() {
         var D = document;
         return Math.max(
@@ -16,7 +16,7 @@
             Math.max(D.body.clientWidth, D.documentElement.clientWidth)
         );
     }
-
+  
     function next(elem) {
         // Credit to John Resig for this function
         // taken from Pro JavaScript techniques
@@ -25,7 +25,7 @@
         } while (elem && elem.nodeType != 1);
         return elem;
     }
-
+  
     function prev(elem) {
         // Credit to John Resig for this function
         // taken from Pro JavaScript techniques
@@ -34,7 +34,7 @@
         } while (elem && elem.nodeType != 1);
         return elem;
     }
-
+  
     function redraw(element) {
         element = $(element);
         var n = document.createTextNode(' ');
@@ -44,11 +44,11 @@
         }).defer();
         return element;
     }
-
+  
     function minimizeMaximize(widget, main_block, editor) {
         if (window.fullscreen == true) {
             main_block.className = 'django-ace-editor';
-
+  
             widget.style.width = window.ace_widget.width + 'px';
             widget.style.height = window.ace_widget.height + 'px';
             window.fullscreen = false;
@@ -58,18 +58,18 @@
                 'width': widget.offsetWidth,
                 'height': widget.offsetHeight
             };
-
+  
             main_block.className = 'django-ace-editor-fullscreen';
-
+  
             widget.style.height = getDocHeight() + 'px';
             widget.style.width = getDocWidth() + 'px';
-
+  
             window.scrollTo(0, 0);
             window.fullscreen = true;
         }
         editor.resize();
     }
-
+  
     function apply_widget(widget) {
         var div = widget.firstChild,
             textarea = next(widget),
@@ -79,19 +79,19 @@
             wordwrap = widget.getAttribute('data-wordwrap'),
             toolbar = prev(widget),
             main_block = toolbar.parentNode;
-
+  
         // Toolbar maximize/minimize button
         var min_max = toolbar.getElementsByClassName('django-ace-max_min');
         min_max[0].onclick = function () {
             minimizeMaximize(widget, main_block, editor);
             return false;
         };
-
+  
         editor.getSession().setValue(textarea.value);
-
+  
         // the editor is initially absolute positioned
         textarea.style.display = "none";
-
+  
         // options
         if (mode) {
             editor.getSession().setMode('ace/mode/' + mode);
@@ -102,11 +102,11 @@
         if (wordwrap == "true") {
             editor.getSession().setUseWrapMode(true);
         }
-
+  
         editor.getSession().on('change', function () {
             textarea.value = editor.getSession().getValue();
         });
-
+  
         editor.commands.addCommands([
             {
                 name: 'Full screen',
@@ -158,25 +158,26 @@
                 }
             }
         ]);
-
+  
         window[widget.id] = editor;
         $(widget).trigger('ace_load', [editor]);
     }
-
+  
     function init() {
         var widgets = document.getElementsByClassName('django-ace-widget');
-
+  
         for (var i = 0; i < widgets.length; i++) {
             var widget = widgets[i];
             widget.className = "django-ace-widget"; // remove `loading` class
-
+  
             apply_widget(widget);
         }
     }
-
+  
     if (window.addEventListener) { // W3C
         window.addEventListener('load', init);
     } else if (window.attachEvent) { // Microsoft
         window.attachEvent('onload', init);
     }
-})();
+  })(jQuery);
+  
