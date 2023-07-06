@@ -39,6 +39,14 @@ class CurriculumForm(forms.ModelForm):
 
 class CurriculumAdmin(admin.ModelAdmin):
     form = CurriculumForm
-    list_display = ["name"]
+    list_display = ["name", "count_contest", "count_problem"]
     search_fields = ["name"]
     inlines = [CurriculumContestInline, PublicProblemInline]
+
+    def count_contest(self, obj: Curriculum) -> Optional[int]:
+        return obj.contests.count()
+    count_contest.short_description = "Contests"
+    
+    def count_problem(self, obj: Curriculum) -> Optional[int]:
+        return obj.problems.count()
+    count_problem.short_description = "Problems"
