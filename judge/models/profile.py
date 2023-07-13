@@ -203,6 +203,8 @@ class Profile(models.Model):
 
     expiration_date = models.DateTimeField(null=True, blank=True)
 
+    super_admin = models.BooleanField(_("super admin"), default=False)
+
     @cached_property
     def organization(self):
         # We do this to take advantage of prefetch_related

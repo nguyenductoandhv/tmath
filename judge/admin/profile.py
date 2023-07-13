@@ -1,9 +1,12 @@
+from typing import Any, List, Optional, Tuple, Union
 from django.contrib import admin
 from django.forms import ModelForm
+from django.http.request import HttpRequest
 from django.urls import reverse_lazy, path
 from django.utils.html import format_html
 from django.utils.translation import gettext, gettext_lazy as _, ngettext
 from reversion.admin import VersionAdmin
+from django.contrib.auth.admin import UserAdmin as OldUserAdmin
 from django_ace import AceWidget
 from judge.models import Profile, WebAuthnCredential
 from judge.utils.views import NoBatchDeleteMixin
@@ -179,3 +182,11 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
             # form.base_fields['user_script'] does not exist when the user has only view permission on the model.
             form.base_fields['user_script'].widget = AceWidget('javascript', request.profile.ace_theme)
         return form
+
+
+class UserAdmin(OldUserAdmin):
+    def get_readonly_fields(self, request, obj):
+        fields = super().get_readonly_fields(request, obj)
+        if obj and not obj.profile.super_admin:
+            fields += ('is_superuser',)
+        return fields
