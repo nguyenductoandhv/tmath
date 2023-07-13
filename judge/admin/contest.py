@@ -367,6 +367,12 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
     def show_word(self, obj):
         return format_html('<a href="{0}" style="white-space:nowrap; background-color: blue; padding: 0.5rem; font-weight:600; border-radius: 6px;">{1}</a>',
                         reverse('admin:export_word', kwargs={'id': obj.id,}), _('Export word'))
+    
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if 'autocomplete' in request.path and request.GET.get('model_name') == 'curriculumcontest' and request.GET.get('field_name') == 'contest':
+            queryset = queryset.filter(is_visible=False).order_by('-pk')
+        return queryset, use_distinct
 
 
 class ProblemInlineForm(ModelForm):

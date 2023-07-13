@@ -313,11 +313,12 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
             return form.cleaned_data['change_message']
         return super(ProblemAdmin, self).construct_change_message(request, form, *args, **kwargs)
 
-    
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         if 'autocomplete' in request.path and request.GET.get('model_name') == 'contestproblem' and request.GET.get('field_name') == 'problem':
             queryset = queryset.annotate(case_count=Count('cases')).filter(case_count__gt=0).order_by('-pk')
+        if 'autocomplete' in request.path and request.GET.get('model_name') == 'publicproblem' and request.GET.get('field_name') == 'problem':
+            queryset = queryset.annotate(case_count=Count('cases')).filter(case_count__gt=0, is_public=False).order_by('-pk')
         return queryset, use_distinct
 
 

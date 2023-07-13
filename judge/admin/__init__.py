@@ -16,8 +16,9 @@ from judge.admin.ticket import TicketAdmin
 from judge.models import BlogPost, Comment, CommentLock, Contest, ContestParticipation, \
     ContestTag, Judge, Language, License, MiscConfig, NavigationBar, Organization, \
     OrganizationRequest, Problem, ProblemGroup, ProblemType, Profile, Submission, Ticket, \
-    CourseModel, ProblemClass, ContestLevel, Log, SchoolYear, ContestSubmission
+    CourseModel, ProblemClass, ContestLevel, Log, SchoolYear, ContestSubmission, Curriculum
 from judge.models.problem_data import PublicSolution
+from judge.admin.curriculum import CurriculumAdmin
 
 admin.site.register(BlogPost, BlogPostAdmin)
 admin.site.register(Comment, CommentAdmin)
@@ -48,5 +49,6 @@ admin.site.register(Submission, SubmissionAdmin)
 admin.site.register(Ticket, TicketAdmin)
 admin.site.register(CourseModel, CourseAdmin)
 admin.site.register(PublicSolution, PublicSolutionAdmin)
+admin.site.register(Curriculum, CurriculumAdmin)
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
