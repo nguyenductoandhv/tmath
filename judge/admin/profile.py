@@ -187,6 +187,6 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
 class UserAdmin(OldUserAdmin):
     def get_readonly_fields(self, request, obj):
         fields = super().get_readonly_fields(request, obj)
-        if obj and not obj.profile.super_admin:
+        if not request.profile.super_admin and 'is_superuser' not in fields:
             fields += ('is_superuser',)
         return fields
