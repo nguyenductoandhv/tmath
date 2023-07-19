@@ -6,58 +6,63 @@
     <script src="{{ static('semantic/components/accordion.min.js') }}"></script>
     <script src="{{ static('semantic/components/dropdown.min.js') }}"></script>
     <script src="{{ static('semantic/components/transition.min.js') }}"></script>
-    {% if not submission.is_graded %}
-        <script type="text/javascript">
-            $(function () {
-                var blocked = false, request = false;
-                var list = $('#test-cases');
-                var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-                var ws_path = ws_scheme + '://' + window.location.host + '/ws/submission/{{ submission.id_secret }}/';
-                var ws = new WebSocket(ws_path);
-                
-                function update() {
-                    if (blocked) {
-                        request = true;
-                        return;
+    {#
+        {% if not submission.is_graded %}
+            <script type="text/javascript">
+                $(function () {
+                    var blocked = false, request = false;
+                    var list = $('#test-cases');
+                    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+                    var ws_path = ws_scheme + '://' + window.location.host + '/ws/submission/{{ submission.id_secret }}/';
+                    var ws = new WebSocket(ws_path);
+                    
+                    function update() {
+                        if (blocked) {
+                            request = true;
+                            return;
+                        }
+                        request = false;
+                        blocked = true;
+                        $.ajax({
+                            url: '{{ url('submission_testcases_query') }}',
+                            data: {id: '{{ submission.id }}'}
+                        }).done(function (data) {
+                            list.empty().html(data);
+                            setTimeout(function () {
+                                blocked = false;
+                                if (request)
+                                    update();
+                            }, 500);
+                        }).fail(function (data) {
+                            console.log('Failed to update testcases!');
+                        });
+    
+                        if ($(window).scrollTop() + $(window).height() > $(document).height() - 100)
+                            $("html, body").animate({scrollTop: $(document).height()}, 0);
                     }
-                    request = false;
-                    blocked = true;
-                    $.ajax({
-                        url: '{{ url('submission_testcases_query') }}',
-                        data: {id: '{{ submission.id }}'}
-                    }).done(function (data) {
-                        list.empty().html(data);
-                        setTimeout(function () {
-                            blocked = false;
-                            if (request)
+    
+                    ws.onmessage = function (event) {
+                        var data = JSON.parse(event.data);
+                        switch (data['type']) {
+                            case 'internal-error':
+                            case 'grading-end':
+                            case 'compile-error':
+                                $('#abort-button').remove();
+                                $('#grading-label').remove();
+                                ws.close();
+                            case 'test-case':
+                            case 'grading-begin':
+                            case 'processing':
                                 update();
-                        }, 500);
-                    }).fail(function (data) {
-                        console.log('Failed to update testcases!');
-                    });
-
-                    if ($(window).scrollTop() + $(window).height() > $(document).height() - 100)
-                        $("html, body").animate({scrollTop: $(document).height()}, 0);
-                }
-
-                ws.onmessage = function (event) {
-                    var data = JSON.parse(event.data);
-                    switch (data['type']) {
-                        case 'internal-error':
-                        case 'grading-end':
-                        case 'compile-error':
-                            $('#abort-button').remove();
-                            $('#grading-label').remove();
-                            ws.close();
-                        case 'test-case':
-                        case 'grading-begin':
-                        case 'processing':
-                            update();
-                    }
-                };
-            });
-        </script>
-    {% endif %}
+                        }
+                    };
+                    ws.onclose = function (event) {
+                        console.log('Websocket closed!');
+                    };
+                });
+            </script>
+        {% endif %}
+    #}
     {% if not submission.is_graded %}
         <script type="text/javascript">
             $(function () {
