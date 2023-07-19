@@ -484,7 +484,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             try:
                 self.selected_types = list(map(int, request.GET.getlist('type')))
                 if not ProblemType.objects.filter(pk__in=self.selected_types, priority=True).exists():
-                    self.selected_types = None
+                    raise Http404()
             except ValueError:
                 pass
         # self.point_start = safe_float_or_none(request.GET.get('point_start'))
