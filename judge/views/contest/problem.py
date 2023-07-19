@@ -274,7 +274,6 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             return HttpResponseForbidden('<h1>Do you want me to ban you?</h1>')
         
     def get(self, request, *args, **kwargs):
-        self.object: Contest = self.get_object()
         if not self.problem.can_submitted_by(request.user):
             return generic_message(request,
                         _('Can\'t submit to problem'), 
@@ -283,6 +282,12 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
         return super().get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
+        self.object: Contest = self.get_object()
+        profile = request.profile
+        if not profile.current_contest or (profile.current_contest and profile.current_contest.contest != self.object):
+            return generic_message(request, _('Not in contest'),
+                                   _('You are not in a contest.'), status=403)
+        
         if request.in_contest and request.participation.contest.start_time > timezone.now():
             return generic_message(request, _('Contest not ongoing'),
                                    _('You cannot submit now.'), status=403)
