@@ -46,7 +46,9 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
 
     def get_object(self, queryset=None):
         contest = super().get_object(queryset)
-        self.problem: ContestProblem = contest.contest_problems.get(order=self.kwargs['problem'])
+        self.problem: ContestProblem = ContestProblem.objects.filter(contest=contest, order=self.kwargs['problem'])
+        if not self.problem:
+            raise Http404()
         return contest
 
     def get_title(self):
