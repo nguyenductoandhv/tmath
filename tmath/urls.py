@@ -1,35 +1,42 @@
 from django.conf import settings
 from django.conf.urls import include
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.http import Http404, HttpResponsePermanentRedirect
 from django.templatetags.static import static
-from django.urls import path, reverse, register_converter
+from django.urls import path, register_converter, reverse
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import RedirectView
 from django.views.decorators.cache import cache_page
+from django.views.generic import RedirectView
 from martor.views import markdown_search_user
-from django.conf.urls.static import static
 
-from judge.feed import AtomBlogFeed, AtomCommentFeed, AtomProblemFeed, BlogFeed, CommentFeed, ProblemFeed
-from judge.sitemap import BlogPostSitemap, ContestSitemap, HomePageSitemap, OrganizationSitemap, ProblemSitemap, \
-    SolutionSitemap, UrlSitemap, UserSitemap
-from judge.views import TitledTemplateView, api, blog, comment, contests, language, license, mailgun, organization, \
-    preview, problem, problem_manage, ranked_submission, register, stats, status, submission, tasks, ticket, \
-    two_factor, user, widgets, about
-from judge.views.problem_data import ProblemDataView, ProblemSubmissionDiff, \
-    problem_data_file, problem_init_view
-from judge.views.register import ActivationView, RegistrationView
-from judge.views.select2 import AssigneeSelect2View, CommentSelect2View, ContestSelect2View, \
-    ContestUserSearchSelect2View, OrganizationSelect2View, ProblemSelect2View, TicketUserSelect2View, \
-    UserSearchSelect2View, UserSelect2View#, UserSearchSematicView
-from judge.views.widgets import martor_image_uploader
 from chat.views import NewMessageAjax
-
-from judge.views.contest.problem import ContestProblemListView, ContestProblemDetailView, ContestProblemSubmit
-# from judge.views.contest.submission import *
+from judge.feed import (AtomBlogFeed, AtomCommentFeed, AtomProblemFeed,
+                        BlogFeed, CommentFeed, ProblemFeed)
+from judge.sitemap import (BlogPostSitemap, ContestSitemap, HomePageSitemap,
+                           OrganizationSitemap, ProblemSitemap,
+                           SolutionSitemap, UrlSitemap, UserSitemap)
+from judge.views import (TitledTemplateView, about, api, blog, comment,
+                         contests, language, license, mailgun, organization,
+                         preview, problem, problem_manage, ranked_submission,
+                         register, stats, status, submission, tasks, ticket,
+                         two_factor, user, widgets)
+from judge.views.contest.problem import (ContestProblemDetailView,
+                                         ContestProblemListView,
+                                         ContestProblemSubmit)
+from judge.views.contest.submission import (ContestProblemSubmissions,
+                                            UserContestProblemSubmissions)
+from judge.views.problem_data import (ProblemDataView, ProblemSubmissionDiff,
+                                      problem_data_file, problem_init_view)
+from judge.views.register import ActivationView, RegistrationView
+from judge.views.select2 import (  # , UserSearchSematicView
+    AssigneeSelect2View, CommentSelect2View, ContestSelect2View,
+    ContestUserSearchSelect2View, OrganizationSelect2View, ProblemSelect2View,
+    TicketUserSelect2View, UserSearchSelect2View, UserSelect2View)
+from judge.views.widgets import martor_image_uploader
 
 admin.autodiscover()
 
@@ -249,6 +256,8 @@ urlpatterns = [
             path('', ContestProblemDetailView.as_view(), name='contest_problem_detail'),
             path('/submit', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
             path('/resubmit/<slug:submission>', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
+            path('/submissions/', paged_list_view(ContestProblemSubmissions, 'contest_problem_submissions')),
+            path('/submissions/<str:user>/', paged_list_view(UserContestProblemSubmissions, 'user_contest_problem_submissions')),
         ])),
 
         path('/rank/<slug:problem>/',

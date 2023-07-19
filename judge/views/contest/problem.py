@@ -62,6 +62,9 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        authed = user.is_authenticated
+        context['has_submissions'] = authed and ContestSubmission.objects.filter(participation__user=user.profile,
+                                                                          problem=self.problem).exists()
         context['problem'] = self.problem
         context['description'] = self.problem.problem.description
         context['completed_problem_ids'] = self.get_completed_problems()
