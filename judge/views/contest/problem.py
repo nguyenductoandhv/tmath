@@ -21,10 +21,15 @@ from judge.models import (Contest, ContestProblem, ContestSubmission, Judge,
                           Submission, SubmissionSource)
 from judge.utils.views import SingleObjectFormView, TitleMixin, generic_message
 from judge.views.contests import ContestMixin
-from judge.views.problem import (SolvedProblemMixin,
-                                 get_contest_submission_count)
+from judge.views.problem import SolvedProblemMixin
 
 user_logger = logging.getLogger('judge.user')
+
+def get_contest_submission_count(problem: ContestProblem, profile, virtual):
+    print(profile)
+    return profile.current_contest.submissions.exclude(submission__status__in=['IE']) \
+                  .filter(problem=problem, participation__virtual=virtual).count()
+
 
 class ContestProblemListView(LoginRequiredMixin, ContestMixin, TitleMixin, SolvedProblemMixin, DetailView):
     template_name = 'contest/problem/list.html'
@@ -64,11 +69,12 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
         can_edit = self.problem.problem.is_editable_by(self.request.user)
         context['can_edit_problem'] = can_edit
         context['available_judges'] = Judge.objects.filter(online=True, problems=self.problem.problem)
-        context['submission_limit'] = self.problem.max_submissions
-        if self.problem.max_submissions:
-            context['submissions_left'] = max(self.problem.max_submissions -
-                                                get_contest_submission_count(self.problem.problem, user.profile,
-                                                                            user.profile.current_contest.virtual), 0)
+        if user.profile.current_contest:
+            context['submission_limit'] = self.problem.max_submissions
+            if self.problem.max_submissions:
+                context['submissions_left'] = max(self.problem.max_submissions -
+                                                    get_contest_submission_count(self.problem, user.profile,
+                                                                                user.profile.current_contest.virtual), 0)
         context['show_languages'] = self.problem.problem.allowed_languages.count() != Language.objects.count()
         return context
     
@@ -88,6 +94,8 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
     
     @cached_property
     def remaining_submission_count(self):
+        if self.request.profile.current_contest is None:
+            return None
         max_subs = self.contest_problem and self.contest_problem.max_submissions
         if max_subs is None:
             return None
@@ -97,7 +105,7 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
         return max(
             0,
             max_subs - get_contest_submission_count(
-                self.object, self.request.profile, self.request.profile.current_contest.virtual,
+                self.contest_problem, self.request.profile, self.request.profile.current_contest.virtual,
             ),
         )
 
