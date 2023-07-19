@@ -52,12 +52,12 @@ SUBMISSION_RESULT_BACKGROUND = {
     'TLE': 'time-limit-exceeded-result',
     'MLE': 'memory-limit-exceeded-result',
     'OLE': 'output-limit-exceeded-result',
-    'IR': 'invalid-return-result',
+    'IR': 'default-result',
     'RTE': 'runtime-error-result',
     'CE': 'compile-error-result',
     'IE': 'internal-error-result',
-    'SC': 'bg-gray-300',
-    'AB': 'bg-gray-300',
+    'SC': 'default-result',
+    'AB': 'default-result',
 }
 
 class Submission(models.Model):
