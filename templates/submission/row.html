@@ -1,4 +1,5 @@
 {% set can_view, can_edit = submission_layout(submission, profile_id, request.user, completed_problem_ids, editable_problem_ids, tester_problem_ids) %}
+{% set problem_name, problem_link = submission.get_problem() %}
 <td class=" w-28 {{ submission.result_background }}">
     <div class="flex flex-col items-center justify-center h-full text-lg ">
         {%- if submission.is_graded -%}
@@ -24,7 +25,7 @@
         <div class="flex flex-col flex-1">
             {% if show_problem %}
             <div class="text-lg font-bold">
-                <a href="{{ url('problem_detail', submission.problem.code) }}">{{ problem_name }}</a>
+                <a href="{{ problem_link }}">{{ problem_name }}</a>
             </div>
             <div class="text-base">
                 {{ link_user(submission.user) }}

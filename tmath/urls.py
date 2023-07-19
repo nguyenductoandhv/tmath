@@ -28,6 +28,9 @@ from judge.views.select2 import AssigneeSelect2View, CommentSelect2View, Contest
 from judge.views.widgets import martor_image_uploader
 from chat.views import NewMessageAjax
 
+from judge.views.contest.problem import ContestProblemListView, ContestProblemDetailView, ContestProblemSubmit
+# from judge.views.contest.submission import *
+
 admin.autodiscover()
 
 register_patterns = [
@@ -239,6 +242,14 @@ urlpatterns = [
         path('/leave', contests.ContestLeave.as_view(), name='contest_leave'),
         path('/stats', contests.ContestStats.as_view(), name='contest_stats'),
         path('/raw', contests.ContestRawView.as_view(), name="contest_raw"),
+
+        # Problem
+        path('/tasks', ContestProblemListView.as_view(), name='contest_problem_list'),
+        path('/task/<int:problem>', include([
+            path('', ContestProblemDetailView.as_view(), name='contest_problem_detail'),
+            path('/submit', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
+            path('/resubmit/<slug:submission>', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
+        ])),
 
         path('/rank/<slug:problem>/',
             paged_list_view(ranked_submission.ContestRankedSubmission, 'contest_ranked_submissions')),

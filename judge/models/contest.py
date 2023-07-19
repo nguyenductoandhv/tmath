@@ -706,6 +706,13 @@ class ContestProblem(models.Model):
         self.save()
     update_first_accept.alters_data = True
     
+    @property
+    def temporary_name(self):
+        return f'Problem {self.contest.get_label_for_problem(self.order)}'
+    
+    def get_absolute_url(self):
+        return reverse("contest_problem_detail", kwargs={"contest": self.contest.key, "problem": self.order})
+    
 
     class Meta:
         unique_together = ('problem', 'contest')

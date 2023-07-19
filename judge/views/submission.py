@@ -52,19 +52,18 @@ class SubmissionDetailBase(LoginRequiredMixin, TitleMixin, SubmissionMixin, Deta
             raise PermissionDenied()
         return submission
 
-    def get_title(self):
-        submission = self.object
-        return _('Submission of %(problem)s by %(user)s') % {
-            'problem': submission.problem.translated_name(self.request.LANGUAGE_CODE),
-            'user': submission.user.user.username,
-        }
+    def get_title(self) -> str:
+        submission: Submission = self.object
+        name, __ = submission.get_problem()
+        return _(f'Submission of {name} by {submission.user.user.username}')
 
     def get_content_title(self):
-        submission = self.object
+        submission: Submission = self.object
+        problem_name, problem_link = submission.get_problem()
         return mark_safe(escape(_('Submission of %(problem)s by %(user)s')) % {
             'problem': format_html('<a href="{0}" class="text-blue-500">{1}</a>',
-                                   reverse('problem_detail', args=[submission.problem.code]),
-                                   submission.problem.translated_name(self.request.LANGUAGE_CODE)),
+                                   problem_link,
+                                   problem_name),
             'user': format_html('<a href="{0}" class="text-blue-500">{1}</a>',
                                 reverse('user_page', args=[submission.user.user.username]),
                                 submission.user.user.username),

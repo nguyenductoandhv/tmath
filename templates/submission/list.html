@@ -343,9 +343,7 @@
                 {% set profile_id = request.profile.id if request.user.is_authenticated else 0 %}
                 {% for submission in submissions %}
                     <tr class="bg-white rounded-xl transition-all shadow-md [&>td:nth-child(1)]:rounded-l-xl [&>td:nth-last-child(1)]:rounded-r-xl" id="{{ submission.id }}">
-                        {% with problem_name=show_problem and (submission.problem.i18n_name or submission.problem.name) %}
-                            {% include "submission/row.html" %}
-                        {% endwith %}
+                        {% include "submission/row.html" %}
                     </tr>
                 {% endfor %}
             </table>

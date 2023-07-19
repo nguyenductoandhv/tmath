@@ -33,4 +33,4 @@ def kbdetailformat(bytes):
 
 @registry.filter
 def kbsimpleformat(kb):
-    return _format_size(kb * 1024, lambda x, y: '%.0f%s' % (y, x or 'B'))
+    return _format_size(kb * 1024, lambda x, y: '%.0f %s' % (y, x or 'B'))

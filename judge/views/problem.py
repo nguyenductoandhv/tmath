@@ -367,16 +367,15 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             )).order_by('order')
         
         return [{
-            'id': p['problem_id'],
-            'code': p['problem__code'],
-            'name': p['problem__name'],
-            'i18n_name': p['i18n_name'],
-            'group': {'full_name': p['problem__group__full_name']},
-            'points': p['points'],
-            'partial': p['partial'],
-            'user_count': p['user_count'],
-        } for p in queryset.values('problem_id', 'problem__code', 'problem__name', 'i18n_name',
-                                   'problem__group__full_name', 'points', 'partial', 'user_count')]
+            'link': p.get_absolute_url(),
+            'id': p.problem_id,
+            'code': p.problem.code,
+            'name': p.temporary_name,
+            'i18n_name': p.i18n_name,
+            'points': p.points,
+            'partial': p.partial,
+            'user_count': p.user_count,
+        } for p in queryset]
 
     def get_normal_queryset(self):
         filter = Q(is_public=True) | Q(public_description=True)
@@ -542,6 +541,7 @@ class ProblemSubmit(LoginRequiredMixin, ProblemMixin, TitleMixin, SingleObjectFo
 
     @cached_property
     def contest_problem(self):
+        # return None
         if self.request.profile.current_contest is None:
             return None
         return get_contest_problem(self.object, self.request.profile)

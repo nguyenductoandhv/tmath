@@ -104,7 +104,7 @@ def version_matrix(request):
         for language, versions in six.iteritems(data):
             versions.is_latest = versions.versions == latest[language]
 
-    languages = sorted(languages, key=lambda lang: version.parse(lang.name))
+    # languages = sorted(languages, key=lambda lang: version.parse(lang.name))
     return render(request, 'status/versions.html', {
         'title': _('Version matrix'),
         'judges': sorted(matrix.keys()),
