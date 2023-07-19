@@ -214,7 +214,11 @@
                             {% endif %}
                         {% endif %}
                         <td class="p-2 font-bold">
+                            {% if problem.link %}
                             <a href="{{ problem.link }}">{{ problem.name }}</a>
+                            {% else %}
+                            <a href="{{ url('problem_detail', problem.code) }}">{{ problem.name }}</a>
+                            {% endif %}
                         </td>
                         {% if not request.in_contest %}
                         <td class="hidden lg:table-cell">
