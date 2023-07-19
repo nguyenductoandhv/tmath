@@ -121,13 +121,7 @@
 
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         var ws_path = ws_scheme + '://' + window.location.host + '/ws/submissions/';
-        var ws = new WebSocket(ws_path);
 
-        ws.onopen = function () {
-            setTimeout(function() {
-                ws.close();
-            }, 5 * 60 * 1000);
-        };
         
         function load_dynamic_update() {
             var _collect = function (e) {
@@ -207,27 +201,51 @@
                     update_stats();
             });
 
-            var $body = $(document.body);
-            ws.onmessage = function (event) {
-                var data = JSON.parse(event.data);
-                var message = data.message
-                if (dynamic_user_id && message.user != dynamic_user_id ||
-                    dynamic_problem_id && message.problem != dynamic_problem_id ||
-                    dynamic_contest_id && message.contest != dynamic_contest_id)
-                    return;
-                if (data.type == 'update-submission') {
-                    if (message.state == 'test-case' && $body.hasClass('window-hidden'))
+            function createWebSocket() {
+                var socket = new WebSocket(ws_path);
+              
+                socket.onopen = function() {
+                  console.log("WebSocket connected");
+                };
+              
+                socket.onclose = function(event) {
+                  console.log("WebSocket disconnected with code: " + event.code);
+                  // Thử kết nối lại sau 5 giây
+                  setTimeout(function() {
+                    createWebSocket();
+                  }, 5000);
+                };
+              
+                socket.onerror = function(error) {
+                  console.error("WebSocket error: " + error);
+                };
+    
+                var $body = $(document.body);
+              
+                socket.onmessage = function (event) {
+                    var data = JSON.parse(event.data);
+                    var message = data.message
+                    if (dynamic_user_id && message.user != dynamic_user_id ||
+                        dynamic_problem_id && message.problem != dynamic_problem_id ||
+                        dynamic_contest_id && message.contest != dynamic_contest_id)
                         return;
-                    update_submission(message);
-                } else if (data.type == 'done-submission') {
-                    update_submission(message, true);
-
-                    if (!statistics.length) return;
-                    if ($('body').hasClass('window-hidden'))
-                        return stats_outdated = true;
-                    update_stats();
-                }
-            };
+                    if (data.type == 'update-submission') {
+                        if (message.state == 'test-case' && $body.hasClass('window-hidden'))
+                            return;
+                        update_submission(message);
+                    } else if (data.type == 'done-submission') {
+                        update_submission(message, true);
+    
+                        if (!statistics.length) return;
+                        if ($('body').hasClass('window-hidden'))
+                            return stats_outdated = true;
+                        update_stats();
+                    }
+                };
+            }
+              
+            // Gọi hàm để tạo kết nối WebSocket ban đầu
+            createWebSocket();
         }
         {% endif %}
     </script>
