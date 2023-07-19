@@ -33,7 +33,7 @@
             // });
         });
         var filter_joinable_button = document.getElementById('can_join');
-        filter_joinable_button.click(function() {
+        filter_joinable_button.addEventListener('click', function() {
             if (filter_joinable_button.checked) {
                 $('.not_joinable').hide();
             } else {
