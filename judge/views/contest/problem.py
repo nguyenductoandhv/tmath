@@ -54,12 +54,20 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
         context['problem'] = self.problem
         context['description'] = self.problem.problem.description
         context['completed_problem_ids'] = self.get_completed_problems()
         context['attempted_problems'] = self.get_attempted_problems()
         can_edit = self.problem.problem.is_editable_by(self.request.user)
         context['can_edit_problem'] = can_edit
+        context['available_judges'] = Judge.objects.filter(online=True, problems=self.problem.problem)
+        context['submission_limit'] = self.problem.max_submissions
+        if self.problem.max_submissions:
+            context['submissions_left'] = max(self.problem.max_submissions -
+                                                get_contest_submission_count(self.problem.problem, user.profile,
+                                                                            user.profile.current_contest.virtual), 0)
+        context['show_languages'] = self.problem.problem.allowed_languages.count() != Language.objects.count()
         return context
     
 
