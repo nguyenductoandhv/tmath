@@ -32,7 +32,14 @@
             //     });
             // });
         });
-
+        var filter_joinable_button = document.getElementById('can_join');
+        filter_joinable_button.click(function() {
+            if (filter_joinable_button.checked) {
+                $('.not_joinable').hide();
+            } else {
+                $('.not_joinable').show();
+            }
+        });
     </script>
 {% endblock %}
 
@@ -122,8 +129,9 @@
 {% endmacro %}
 
 {% macro contest_join(contest, request) %}
-<div class="flex flex-col items-center justify-center p-4 text-center border-l">
-    {% if (not request.in_contest) and contest.is_joinable_by(request.user) %}
+{% set joinable = (not request.in_contest) and contest.is_joinable_by(request.user) %}
+<div class="flex flex-col items-center justify-center p-4 text-center border-l {% if not joinable %} not_joinable {%endif%}">
+    {% if joinable %}
         {% if request.profile in contest.authors.all() or request.profile in contest.curators.all() or request.profile in contest.testers.all() %}
             <form class="w-full" action="{{ url('contest_join', contest.key) }}" method="post">
                 {% csrf_token %}
@@ -154,7 +162,9 @@
   <div class="hidden p-4 font-bold text-center text-white border-l md:block">{{ _('Users') }}</div>
   {% endif %}
   {% if not canjoin %}
-  <div class="border-l"></div>
+  <div class="flex items-center justify-center border-l">
+    <input type="checkbox" name="" id="can_join" class="p-3 text-indigo-600 border-gray-300 rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50">
+  </div>
   {% endif %}
 </div>
 
@@ -165,9 +175,9 @@
     {% else %}
       {% set contest=item %}
     {% endif %}
-
+    {% set joinable = (not request.in_contest) and contest.is_joinable_by(request.user) %}
     <div class="grid gap-y-2 rounded-2xl shadow-md [&>div:nth-child(1)]:rounded-l-2xl [&>div:nth-last-child(1)]:rounded-r-2xl grid-cols-5 {% if not canjoin %} lg:grid-cols-10 xl:grid-cols-12 {% else %} lg:grid-cols-9 xl:grid-cols-11 {% endif %}">
-        <div class="flex flex-col space-y-2 justify-between {% if hide_user %} col-span-5 lg:col-span-10 xl:col-span-12 {% else %} col-span-4 md:col-span-3 lg:col-span-8 xl:col-span-10 {% endif %} p-4">
+        <div class="{% if not joinable %} not_joinable {%endif%} flex flex-col space-y-2 justify-between {% if hide_user %} col-span-5 lg:col-span-10 xl:col-span-12 {% else %} col-span-4 md:col-span-3 lg:col-span-8 xl:col-span-10 {% endif %} p-4">
             <div class="flex flex-col gap-2 lg:flex-row">
                 {{ contest_head(contest, request) }}
             </div>
@@ -185,7 +195,7 @@
             {% endif %}
         </div>
         {% if not hide_user %}
-        <div class="flex-col items-center justify-center hidden text-center border-l md:flex">
+        <div class="{% if not joinable %} not_joinable {%endif%} flex-col items-center justify-center hidden text-center border-l md:flex">
             {{ user_count(contest, request.user) }}
         </div>
         {% endif %}
