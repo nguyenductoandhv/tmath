@@ -31,14 +31,6 @@
             //         link.removeClass(tooltip_classes).removeAttr('aria-label');
             //     });
             // });
-            var filter_joinable_button = document.getElementById('can_join');
-            filter_joinable_button.addEventListener('click', function() {
-                if (filter_joinable_button.checked) {
-                    $('.not_joinable').hide();
-                } else {
-                    $('.not_joinable').show();
-                }
-            });
         });
     </script>
 {% endblock %}
@@ -299,3 +291,17 @@
         {% endif %}
     </div>
 {% endblock %}
+
+{% block bodyend %}
+    {{ super() }}
+    <script>
+        var filter_joinable_button = document.getElementById('can_join');
+        filter_joinable_button.addEventListener('click', function() {
+            if (filter_joinable_button.checked) {
+                $('.not_joinable').hide();
+            } else {
+                $('.not_joinable').show();
+            }
+        });
+    </script>
+{% endblock bodyend %}
