@@ -49,7 +49,7 @@
         {% if request.user.is_authenticated and has_submissions %}
             <a class="col-span-2 bg-green-500 hover:bg-green-600 whitespace-nowrap" href="{{ url('user_contest_problem_submissions', contest.key, problem.order, request.user.username) }}">{{ _('My submissions') }}</a>
         {% endif %}
-        <a class="bg-green-500 hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="#">{{ _('Submissions') }}</a>
+        <a class="bg-green-500 hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="{{ url('contest_problem_submissions', contest.key, problem.order) }}">{{ _('Submissions') }}</a>
         <a class="bg-green-500 hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="#">{{ _('Leaderboard') }}</a>
     </div>
     <div class="grid grid-cols-2 gap-2 font-bold auto-rows-fr w-full my-2 divide-y [&>*]:rounded-xl [&>*]:py-3 [&>*]:hover:text-white [&>*]:text-white [&>*]:px-4">
