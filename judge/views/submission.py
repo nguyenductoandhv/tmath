@@ -497,7 +497,7 @@ def single_submission(request):
         'editable_problem_ids': user_editable_ids(request.profile) if authenticated else [],
         'tester_problem_ids': user_tester_ids(request.profile) if authenticated else [],
         'show_problem': show_problem,
-        'problem_name': show_problem and submission.problem.translated_name(request.LANGUAGE_CODE),
+        'problem_name': show_problem and submission.problem_name,
         'profile_id': request.profile.id if authenticated else 0,
     })
 
