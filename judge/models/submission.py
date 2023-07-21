@@ -232,7 +232,7 @@ class Submission(models.Model):
     @cached_property
     def problem_link(self):
         if self.contest_object is not None:
-            problem_link = reverse('contest_problem_detail', args=(self.contest_object.id, self.contest.problem.order,))
+            problem_link = reverse('contest_problem_detail', args=(self.contest_object.key, self.contest.problem.order,))
         else:
             problem_link = reverse('problem_detail', args=(self.problem.code,))
         return problem_link
