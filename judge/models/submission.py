@@ -221,14 +221,21 @@ class Submission(models.Model):
     def get_absolute_url(self):
         return reverse('submission_status', args=(self.id,))
     
-    def get_problem(self):
+    @cached_property
+    def problem_name(self):
         if self.contest_object is not None:
             problem_name = f'{self.contest_object.name} - {self.contest.problem.temporary_name}'
-            problem_link = self.contest.problem.get_absolute_url()
         else:
             problem_name = self.problem.name
-            problem_link = self.problem.get_absolute_url()
-        return problem_name, problem_link
+        return problem_name
+
+    @cached_property
+    def problem_link(self):
+        if self.contest_object is not None:
+            problem_link = reverse('contest_problem_detail', args=(self.contest_object.id, self.contest.problem.order,))
+        else:
+            problem_link = reverse('problem_detail', args=(self.problem.code,))
+        return problem_link
 
     @cached_property
     def contest_or_none(self):
