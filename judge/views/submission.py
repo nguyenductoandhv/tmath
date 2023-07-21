@@ -54,12 +54,13 @@ class SubmissionDetailBase(LoginRequiredMixin, TitleMixin, SubmissionMixin, Deta
 
     def get_title(self) -> str:
         submission: Submission = self.object
-        name, __ = submission.get_problem()
+        name = submission.problem_name
         return _(f'Submission of {name} by {submission.user.user.username}')
 
     def get_content_title(self):
         submission: Submission = self.object
-        problem_name, problem_link = submission.get_problem()
+        problem_name = submission.problem_name
+        problem_link = submission.problem_link
         return mark_safe(escape(_('Submission of %(problem)s by %(user)s')) % {
             'problem': format_html('<a href="{0}" class="text-blue-500">{1}</a>',
                                    problem_link,

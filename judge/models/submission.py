@@ -222,6 +222,7 @@ class Submission(models.Model):
         return reverse('submission_status', args=(self.id,))
     
     @cached_property
+    @property
     def problem_name(self):
         if self.contest_object is not None:
             problem_name = f'{self.contest_object.name} - {self.contest.problem.temporary_name}'
@@ -230,6 +231,7 @@ class Submission(models.Model):
         return problem_name
 
     @cached_property
+    @property
     def problem_link(self):
         if self.contest_object is not None:
             problem_link = reverse('contest_problem_detail', args=(self.contest_object.id, self.contest.problem.order,))
