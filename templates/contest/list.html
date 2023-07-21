@@ -130,7 +130,7 @@
 
 {% macro contest_join(contest, request) %}
 {% set joinable = (not request.in_contest) and contest.is_joinable_by(request.user) %}
-<div class="flex flex-col items-center justify-center p-4 text-center border-l {% if not joinable %} not_joinable {%endif%}">
+<div class="flex flex-col items-center justify-center p-4 text-center border-l">
     {% if joinable %}
         {% if request.profile in contest.authors.all() or request.profile in contest.curators.all() or request.profile in contest.testers.all() %}
             <form class="w-full" action="{{ url('contest_join', contest.key) }}" method="post">
@@ -176,8 +176,8 @@
       {% set contest=item %}
     {% endif %}
     {% set joinable = (not request.in_contest) and contest.is_joinable_by(request.user) %}
-    <div class="grid gap-y-2 rounded-2xl shadow-md [&>div:nth-child(1)]:rounded-l-2xl [&>div:nth-last-child(1)]:rounded-r-2xl grid-cols-5 {% if not canjoin %} lg:grid-cols-10 xl:grid-cols-12 {% else %} lg:grid-cols-9 xl:grid-cols-11 {% endif %}">
-        <div class="{% if not joinable %} not_joinable {%endif%} flex flex-col space-y-2 justify-between {% if hide_user %} col-span-5 lg:col-span-10 xl:col-span-12 {% else %} col-span-4 md:col-span-3 lg:col-span-8 xl:col-span-10 {% endif %} p-4">
+    <div class="grid gap-y-2 rounded-2xl {% if not joinable %} not_joinable {%endif%} shadow-md [&>div:nth-child(1)]:rounded-l-2xl [&>div:nth-last-child(1)]:rounded-r-2xl grid-cols-5 {% if not canjoin %} lg:grid-cols-10 xl:grid-cols-12 {% else %} lg:grid-cols-9 xl:grid-cols-11 {% endif %}">
+        <div class="flex flex-col space-y-2 justify-between {% if hide_user %} col-span-5 lg:col-span-10 xl:col-span-12 {% else %} col-span-4 md:col-span-3 lg:col-span-8 xl:col-span-10 {% endif %} p-4">
             <div class="flex flex-col gap-2 lg:flex-row">
                 {{ contest_head(contest, request) }}
             </div>
@@ -195,7 +195,7 @@
             {% endif %}
         </div>
         {% if not hide_user %}
-        <div class="{% if not joinable %} not_joinable {%endif%} flex-col items-center justify-center hidden text-center border-l md:flex">
+        <div class="flex-col items-center justify-center hidden text-center border-l md:flex">
             {{ user_count(contest, request.user) }}
         </div>
         {% endif %}
@@ -258,7 +258,7 @@
                 <div class="top-pagination-bar">{% include "list-pages.html" %}</div>
             {% endif %}
             <div class="grid gap-y-2 [&>*]:bg-white rounded-xl [&>div:nth-child(1)]:rounded-l-xl [&>div:nth-last-child(1)]:rounded-r-xl grid-cols-5 {% if not request.in_contest %} lg:grid-cols-10 xl:grid-cols-12 {% else %} lg:grid-cols-9 xl:grid-cols-11 {% endif %}">
-              <div class="!bg-black text-center text-white font-bold p-4 col-span-10">
+              <div class="!bg-black text-center text-white font-bold p-4 md:col-span-3 lg:col-span-8 xl:col-span-10">
                 <a href="{{ sort_links.name }}">{{ _('Contest') }}{{ sort_order.name }}</a>
               </div>
               <div class="!bg-black hidden md:block text-white text-center font-bold p-4 border-l">
