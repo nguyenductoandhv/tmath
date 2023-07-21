@@ -72,7 +72,7 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
         can_edit = self.problem.problem.is_editable_by(self.request.user)
         context['can_edit_problem'] = can_edit
         context['available_judges'] = Judge.objects.filter(online=True, problems=self.problem.problem)
-        if user.profile.current_contest:
+        if user.profile.current_contest and user.profile.current_contest.contest == self.object:
             context['submission_limit'] = self.problem.max_submissions
             if self.problem.max_submissions:
                 context['submissions_left'] = max(self.problem.max_submissions -

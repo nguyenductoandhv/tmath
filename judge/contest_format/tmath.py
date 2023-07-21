@@ -109,8 +109,8 @@ class TmathContestFormat(DefaultContestFormat):
                 '<td class="{state} icpc_format"><a href="{url}">{points}{penalty}<div class="solving-time">{time}</div></a></td>',
                 state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
                        self.best_solution_state(format_data['points'], contest_problem.points * (self.config['weight'] ** format_data['penalty']), contest_problem.first_accept == participation)),
-                url=reverse('contest_user_submissions',
-                            args=[self.contest.key, participation.user.user.username, contest_problem.problem.code]),
+                url=reverse('user_contest_problem_submissions',
+                            args=[self.contest.key, contest_problem.order, participation.user.user.username]),
                 points=floatformat(format_data['points']),
                 penalty=penalty,
                 time=nice_repr(timedelta(seconds=format_data['time']), 'noday'),
