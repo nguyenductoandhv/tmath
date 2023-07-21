@@ -142,14 +142,14 @@
                 </span>
                 <div class="font-semibold">{{ _('Input') }}</div>
             </div>
-            <div class="font-bold text-red-500"><i>{{ problem.io_method.input }}</i></div>
+            <div class="font-bold text-red-500"><i>{{ problem.problem.io_method.input }}</i></div>
             <div class="relative pl-6">
                 <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
                     <i class="fa fa-print"></i>
                 </span>
                 <div class="font-semibold">{{ _('Output') }}</div>
             </div>
-            <div class="font-bold text-red-500"><i>{{ problem.io_method.output }}</i></div>
+            <div class="font-bold text-red-500"><i>{{ problem.problem.io_method.output }}</i></div>
             {% endif %}
         </div>
         {% endif %}
@@ -212,7 +212,7 @@
 
 {% block description %}
 <div class="p-4 prose text-black bg-white max-w-none prose-td:font-roboto rounded-xl">
-    {% cache 86400 'problem_html' problem.id MATH_ENGINE LANGUAGE_CODE %}
+    {% cache 86400 'problem_html' problem.problem.id MATH_ENGINE LANGUAGE_CODE %}
         {{ description|markdown(problem.problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
     {% endcache %}
 </div>
