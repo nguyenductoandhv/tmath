@@ -30,6 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 CSRF_TRUSTED_ORIGINS = []
+CSRF_USE_SESSIONS = True
 
 SITE_ID = 1
 SITE_NAME = 'DMOJ'
@@ -192,11 +193,11 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'judge.middleware.ShortCircuitMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.cache.FetchFromCacheMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'judge.middleware.APIMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
