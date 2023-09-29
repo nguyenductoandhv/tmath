@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <link rel="preload" href="{{ static('full_style.css') }}" as="style">
+    <link rel="preload" href="{{ static('full_style.css') }}?v=13317" as="style">
     <link rel="preload" href="{{ static('libs/jquery-3.6.0.min.js') }}" as="script">
     <title>{% block title %}{{ title }} - {{ SITE_LONG_NAME }}{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -13,22 +13,22 @@
     {% endif %}
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicons-->
-    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
-    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ static('icons/apple-touch-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ static('icons/apple-touch-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ static('icons/apple-touch-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ static('icons/apple-touch-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ static('icons/apple-touch-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ static('icons/apple-touch-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ static('icons/apple-touch-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ static('icons/apple-touch-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ static('icons/apple-touch-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-32x32.png') }}" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ static('icons/android-chrome-192x192.png') }}" sizes="192x192">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-96x96.png') }}" sizes="96x96">
+    <link rel="icon" type="image/png" href="{{ static('icons/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="manifest" href="{{ static('icons/manifest.json') }}?v=2">
     <meta name="msapplication-TileColor" content="#FFBB33">
-    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="msapplication-TileImage" content="{{ static('icons/mstile-144x144.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Inter:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
@@ -85,6 +85,54 @@
             color: black;
             border-radius: 4px;
         }
+        svg.ip {
+            overflow: visible;
+            width: 100px;
+            height: 150px;
+          }
+          svg.ip g {
+            animation: slide 2s linear infinite;
+          }
+          svg.ip g:nth-child(2) {
+            animation-delay: 0.5s;
+          }
+          svg.ip g:nth-child(2) path {
+            animation-delay: 0.5s;
+            stroke-dasharray: 0px 158px;
+            stroke-dashoffset: 1px;
+          }
+          svg.ip path {
+            stroke: url(#gradient);
+            stroke-width: 20px;
+            stroke-linecap: round;
+            fill: none;
+            stroke-dasharray: 0 157px;
+            stroke-dashoffset: 0;
+            animation: escalade 2s cubic-bezier(0.8, 0, 0.2, 1) infinite;
+          }
+          
+          @keyframes slide {
+            0% {
+              transform: translateY(-50px);
+            }
+            100% {
+              transform: translateY(50px);
+            }
+          }
+          @keyframes escalade {
+            0% {
+              stroke-dasharray: 0 157px;
+              stroke-dashoffset: 0;
+            }
+            50% {
+              stroke-dasharray: 157px 157px;
+              stroke-dashoffset: 0;
+            }
+            100% {
+              stroke-dasharray: 157px 157px;
+              stroke-dashoffset: -156px;
+            }
+          }
     </style>
     {% if request.user.is_impersonate %}
         <style>
@@ -94,7 +142,7 @@
         </style>
     {% endif %}
     {% block media %}{% endblock %}
-    <link rel="stylesheet" href="{{ static('full_style.css') }}">
+    <link rel="stylesheet" href="{{ static('full_style.css') }}?v=13317">
     {% if not INLINE_JQUERY %}
         <script src="{{ JQUERY_JS }}"></script>
     {% endif %}
@@ -301,63 +349,93 @@
         <clipPath id="rating-clip"><circle cx="8" cy="8" r="7"/></clipPath>
     </defs>
 </svg>
-
-<div class="mx-auto max-w-8xl">
-    {% include 'navbar.html' %}
-    
-    <div id="page_container" class="flex flex-col !min-h-screen pt-6 ui fluid">
-        <noscript>
-            <div id="noscript">{{ _('This site works best with JavaScript enabled.') }}</div>
-        </noscript>
-        <br>
-        <main class="flex flex-col flex-1 w-11/12 mx-auto mt-12 mb-auto">
-            <div class="flex items-center">
-                {% block title_row %}
-                    <div class="flex-1 text-3xl font-bold text-black">
-                        {% block content_title %}
-                            {% if content_title %}{{ content_title }}{% else %}{{ title }}{% endif %}
-                        {% endblock %}
-                    </div>
-                {% endblock %}
-                {% block header %}{% endblock %}
-            </div>
-            {% block title_ruler %}
-                <hr>
-            {% endblock %}
-            <div id="content-body" class="flex-1">{% block body %}{% endblock %}</div>
-        </main>
-    
-        {% if i18n_config.announcement %}
-            <div id="announcement">{{ i18n_config.announcement|safe }}</div>
-        {% endif %}
-    
-        {% block bodyend %}{% endblock %}
-    </div>
+<div class="preloader absolute top-0 left-0 min-h-screen w-full flex flex-col items-center justify-center">
+    <svg class="ip" viewBox="0 0 256 128" width="256px" height="128px" xmlns="http://www.w3.org/2000/svg">
+		<g>
+            <path d="M 50,100 A 1,1 0 0 1 50,0"/>
+          </g>
+          <g>
+            <path d="M 50,75 A 1,1 0 0 0 50,-25"/>
+          </g>
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#FF56A1;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#FF9350;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+	</svg>
 </div>
-<div class="w-full py-10 bg-slate-700 ">
-    <div class="max-w-4xl mx-auto ">
-        <div class="flex items-center justify-center space-x-4">
-            <div class="flex items-baseline">
-                <p style="height: 100%">
-                <a style="color: #808080;" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>
-                {% if i18n_config.footer %}
-                    {{ i18n_config.footer|safe }} |
-                {% endif %}
-                </p>
+<div class="main-content w-full opacity-0 transition-opacity duration-300 ease-in-out">
+    <div class="mx-auto max-w-8xl">
+        {% include 'navbar.html' %}
+        
+        <div id="page_container" class="flex flex-col !min-h-screen pt-6 ui fluid">
+            <noscript>
+                <div id="noscript">{{ _('This site works best with JavaScript enabled.') }}</div>
+            </noscript>
+            <br>
+            <main class="flex flex-col flex-1 w-11/12 mx-auto mt-12 mb-auto">
+                <div class="flex items-center">
+                    {% block title_row %}
+                        <div class="flex-1 text-3xl font-bold text-black">
+                            {% block content_title %}
+                                {% if content_title %}{{ content_title }}{% else %}{{ title }}{% endif %}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
+                    {% block header %}{% endblock %}
+                </div>
+                {% block title_ruler %}
+                    <hr>
+                {% endblock %}
+                <div id="content-body" class="flex-1">{% block body %}{% endblock %}</div>
+            </main>
+        
+            {% if i18n_config.announcement %}
+                <div id="announcement">{{ i18n_config.announcement|safe }}</div>
+            {% endif %}
+        
+            {% block bodyend %}{% endblock %}
+        </div>
+    </div>
+    <div class=" w-full py-10 bg-slate-700 ">
+        <div class="max-w-4xl mx-auto ">
+            <div class="flex items-center justify-center space-x-4">
+                <div class="flex items-baseline">
+                    <p style="height: 100%">
+                    <a style="color: #808080;" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>
+                    {% if i18n_config.footer %}
+                        {{ i18n_config.footer|safe }} |
+                    {% endif %}
+                    </p>
+                </div>
+                <form action="{{ url('set_language') }}" method="post" id="set_language">
+                    {% csrf_token %}
+                    <select name="language" id="language" onchange="this.form.submit()" class="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        {% for language in language_info_list(LANGUAGES) %}
+                        <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <input name="next" type="hidden" value="{{ request.get_full_path() }}">
+                </form>
             </div>
-            <form action="{{ url('set_language') }}" method="post" id="set_language">
-                {% csrf_token %}
-                <select name="language" id="language" onchange="this.form.submit()" class="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    {% for language in language_info_list(LANGUAGES) %}
-                    <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
-                        {{ language.name_local }} ({{ language.code }})
-                    </option>
-                    {% endfor %}
-                </select>
-                <input name="next" type="hidden" value="{{ request.get_full_path() }}">
-            </form>
         </div>
     </div>
 </div>
+<script>
+    window.onload = function () {
+        var preloader = document.querySelector(".preloader");
+        var mainContent = document.querySelector(".main-content");
+        
+        setTimeout(function () {
+            // Ẩn preloader khi tải xong
+            preloader.style.display = "none";
+            // Hiển thị nội dung chính của trang
+            mainContent.classList.toggle('opacity-0');
+        }, 500);
+    };
+</script>
 </body>
 </html>

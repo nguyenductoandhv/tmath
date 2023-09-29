@@ -37,25 +37,25 @@
 {% endblock %}
 {% block body %}
     {% if has_results %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th class="header">{{ _('Problem') }}</th>
+        <table class="table w-full">
+            <thead class="bg-black text-white">
+            <tr class="divide-x">
+                <th class="p-2">{{ _('Problem') }}</th>
                 {% for lang in languages %}
-                    <th class="header">{{ lang }}</th>
+                    <th class="p-2">{{ lang }}</th>
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
                 {% for problem, results in moss_results %}
-                    <tr id="problem-{{ problem.code }}">
+                    <tr id="problem-{{ problem.code }}" class="[&>*]:p-2 {{ loop.cycle('bg-gray-300', 'bg-gray-200') }} divide-x">
                         <td>
-                            <a href="{{ url('problem_detail', problem.code) }}">{{ problem.name }}</a>
+                            <a href="{{ url('problem_detail', problem.code) }}" class="text-blue-500 hover:text-blue-600 font-semibold">{{ problem.name }}</a>
                         </td>
                         {% for result in results %}
-                            <td>
+                            <td class="text-center">
                                 {% if result.submission_count %}
-                                    <a href="{{ result.url }}">{{ result.submission_count }} {{_('submissions')}}</a>
+                                    <a href="{{ result.url }}" class="text-blue-500 hover:text-blue-600 font-semibold">{{ result.submission_count }} {{_('submissions')}}</a>
                                 {% else %}
                                     {{ _('No submissions') }}
                                 {% endif %}

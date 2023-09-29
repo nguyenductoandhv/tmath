@@ -1,5 +1,21 @@
 {% extends "user/users-table.html" %}
 
+{% block after_rank_head %}
+    {% if request.user.is_superuser %}
+    <th class="header">{{ _('ID') }}</th>
+    {% endif %}
+    {{ super() }}
+{% endblock %}
+
+{% block after_rank %}
+    {% if request.user.is_superuser %}
+    <td class="text-red-500 font-semibold">
+        {{ user.id }}
+    </td>
+    {% endif %}
+    {{ super() }}
+{% endblock %}
+
 {% block before_point_head %}
     {% if is_admin %}
         <th class="header"></th>
