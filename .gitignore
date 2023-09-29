@@ -22,3 +22,7 @@ martor/*
 submission_file
 node_modules
 resources/mathjax
+*.pdf
+*.log
+*.log.*
+*.txt
