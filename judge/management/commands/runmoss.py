@@ -39,7 +39,7 @@ class Command(BaseCommand):
                     print('<no submissions>')
                     continue
 
-                moss_call = MOSS(moss_api_key, language=moss_lang, matching_file_limit=100,
+                moss_call = MOSS(moss_api_key, language=moss_lang, matching_file_limit=250,
                                  comment='%s - %s' % (contest, problem.code))
 
                 users = set()
