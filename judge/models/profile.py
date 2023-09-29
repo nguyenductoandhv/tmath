@@ -32,7 +32,7 @@ from judge.ratings import rating_class
 from judge.utils.two_factor import webauthn_decode
 from typeracer.models import TypoResult
 
-__all__ = ['Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential']
+__all__ = ['Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential', 'LoggedInUser']
 
 class LoggedInUser(models.Model):
 

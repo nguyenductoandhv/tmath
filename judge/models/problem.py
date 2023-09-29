@@ -222,6 +222,10 @@ class Problem(models.Model):
         self._i18n_name = None
         self.__original_code = self.code
 
+    def clean(self):
+        if self.is_public and len(self.code) != 10:
+            raise ValidationError(_(f'Problem public code must be 10 characters long.'))
+
     @cached_property
     def types_list(self):
         return list(map(user_gettext, map(attrgetter('full_name'), self.types.all())))
