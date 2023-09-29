@@ -78,6 +78,16 @@ class TmathDashboard(Dashboard):
         ))
 
         self.children.append(modules.AppList(
+            title=_('Curriculums'),
+            column=1,
+            collapsible=True,
+            css_classes=['grp-closed', ],
+            models=(
+                'judge.models.curriculum.*',
+            )
+        ))
+
+        self.children.append(modules.AppList(
             title=_('Submissions'),
             column=1,
             collapsible=True,
