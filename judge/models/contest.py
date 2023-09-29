@@ -692,6 +692,12 @@ class ContestProblem(models.Model):
                                           default=None, null=True, blank=True,
                                           validators=[MinValueOrNoneValidator(1, _('Why include a problem you '
                                                                                    'can\'t submit to?'))])
+    
+    @classmethod
+    def get_order(cls, order: str | int):
+        if isinstance(order, str):
+            return ord(order) - ord('A')
+        return order
 
     def update_first_accept(self):
         if self.first_accept is not None:
@@ -706,7 +712,7 @@ class ContestProblem(models.Model):
         self.save()
     update_first_accept.alters_data = True
     
-    @property
+    @cached_property
     def temporary_name(self):
         return f'Problem {self.contest.get_label_for_problem(self.order)}'
     

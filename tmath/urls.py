@@ -29,6 +29,7 @@ from judge.views.contest.problem import (ContestProblemDetailView,
                                          ContestProblemSubmit)
 from judge.views.contest.submission import (ContestProblemSubmissions,
                                             UserContestProblemSubmissions)
+from judge.views.contest.utils import ContestDataView
 from judge.views.problem_data import (ProblemDataView, ProblemSubmissionDiff,
                                       problem_data_file, problem_init_view)
 from judge.views.register import ActivationView, RegistrationView
@@ -249,7 +250,7 @@ urlpatterns = [
         path('/leave', contests.ContestLeave.as_view(), name='contest_leave'),
         path('/stats', contests.ContestStats.as_view(), name='contest_stats'),
         path('/raw', contests.ContestRawView.as_view(), name="contest_raw"),
-
+        path('/upload', ContestDataView.as_view(), name='contest_upload'),
         # Problem
         path('/tasks', ContestProblemListView.as_view(), name='contest_problem_list'),
         path('/task/<int:problem>', include([
