@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 CSRF_TRUSTED_ORIGINS = []
-CSRF_USE_SESSIONS = True
+# CSRF_USE_SESSIONS = True
 
 SITE_ID = 1
 SITE_NAME = 'DMOJ'
@@ -88,7 +88,7 @@ DMOJ_USER_DATA_CACHE = ''
 DMOJ_USER_DATA_DOWNLOAD_RATELIMIT = datetime.timedelta(days=1)
 DMOJ_COMMENT_VOTE_HIDE_THRESHOLD = -5
 DMOJ_PDF_PROBLEM_CACHE = ''
-DMOJ_PDF_PROBLEM_TEMP_DIR = tempfile.gettempdir()
+PDF_PROBLEM_TEMP_DIR = tempfile.gettempdir()
 DMOJ_STATS_SUBMISSION_RESULT_COLORS = {
     'TLE': '#a3bcbd',
     'AC': '#00a92a',
@@ -189,19 +189,20 @@ INSTALLED_APPS = (
     'django_jinja',
     'martor',
     # "corsheaders",
-    # 'channels',
+    'channels',
 )
 
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'judge.middleware.ShortCircuitMiddleware',
-    # 'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'judge.middleware.APIMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'judge.middleware.LogRequestsMiddleware',
     'judge.middleware.DMOJLoginMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -217,6 +218,8 @@ MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
     'judge.middleware.OneSessionPerUser',
 )
+
+CACHE_MIDDLEWARE_SECONDS = 5
 
 IMPERSONATE_REQUIRE_SUPERUSER = True
 IMPERSONATE_DISABLE_LOGGING = True
