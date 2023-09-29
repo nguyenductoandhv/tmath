@@ -20,6 +20,9 @@ module.exports = {
               backgroundColor: theme('colors.gray.300'),
               color: theme('colors.black'),
             },
+            'pre code': {
+              fontSize: '1.5rem',
+            },
             code: {
               backgroundColor: theme('colors.gray.200'),
               '&::before': {
