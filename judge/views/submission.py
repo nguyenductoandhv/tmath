@@ -17,12 +17,14 @@ from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
+from django.views.decorators.cache import never_cache
 
 # from judge import event_poster as event
 from judge.highlight_code import highlight_code
-from judge.models import Contest, Language, Problem, ProblemTranslation, Profile, Submission, Log
+from judge.models import Contest, Language, Problem, ProblemTranslation, Profile, Submission, Log, ContestSubmission
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.problem_data import get_problem_testcases_data
 from judge.utils.problems import get_result_data, user_completed_ids, user_editable_ids, user_tester_ids
@@ -36,7 +38,9 @@ def submission_related(queryset):
               'problem__code', 'problem__is_public', 'language__short_name', 'language__key', 'date', 'time', 'memory',
               'points', 'result', 'status', 'case_points', 'case_total', 'current_testcase', 'contest_object',
               'locked_after', 'problem__submission_source_visibility_mode') \
-        .prefetch_related('contest_object__authors', 'contest_object__curators')
+        .prefetch_related('contest_object__authors', 'contest_object__curators',
+                          Prefetch('contest', queryset=ContestSubmission.objects.select_related('problem')),
+                        )
 
 
 class SubmissionMixin(object):
@@ -208,6 +212,7 @@ def filter_submissions_by_visible_problems(queryset, user):
     queryset = queryset.filter(problem_id__in=problems)
 
 
+# @never_cache
 class SubmissionsListBase(DiggPaginatorMixin, TitleMixin, ListView):
     model = Submission
     paginate_by = 50
@@ -502,6 +507,7 @@ def single_submission(request):
     })
 
 
+@method_decorator(never_cache, name='dispatch')
 class AllSubmissions(InfinitePaginationMixin, SubmissionsListBase):
     stats_update_interval = 3600
 

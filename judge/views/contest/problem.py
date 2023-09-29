@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Prefetch
 from django.http import Http404, HttpResponse, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -20,7 +20,7 @@ from judge.models import (Contest, ContestProblem, ContestSubmission, Judge,
                           Language, Problem, Profile, RuntimeVersion,
                           Submission, SubmissionSource)
 from judge.utils.views import SingleObjectFormView, TitleMixin, generic_message
-from judge.views.contests import ContestMixin
+from judge.views.contests import ContestMixin, PrivateContestError
 from judge.views.problem import SolvedProblemMixin
 
 user_logger = logging.getLogger('judge.user')
@@ -88,9 +88,8 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
 
     def get_object(self, queryset=None):
         contest = super().get_object(queryset)
-        try:
-            self.contest_problem: ContestProblem = contest.contest_problems.get(order=self.kwargs['problem'])
-        except ContestProblem.DoesNotExist:
+        self.contest_problem: ContestProblem = ContestProblem.objects.filter(contest=contest, order=self.kwargs['problem']).first()
+        if not self.contest_problem:
             raise Http404()
         self.problem = self.contest_problem.problem
         return contest
@@ -210,31 +209,6 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             else:
                 self.new_submission.save()
 
-            # submission_file = form.files.get('submission_file', None)
-            # submission_json = submission_file
-            # if submission_file is not None:
-            #     if self.new_submission.language.key == 'SCRATCH':
-            #         try:
-            #             archive = zipfile.ZipFile(submission_file.file)
-            #             submission_json.file = archive.open('project.json')
-            #             submission_json.name = str(self.new_submission.id) + '.json'
-            #             submission_file.name = str(self.new_submission.id) + '.sb3'
-            #         except (zipfile.BadZipFile, KeyError):
-            #             pass
-
-            #     source_url = submission_uploader(
-            #         submission_file=submission_json,
-            #         problem_code=self.new_submission.problem.code,
-            #         user_id=self.new_submission.user.user.id,
-            #     )
-            #     origin_url = submission_uploader(
-            #         submission_file=submission_file,
-            #         problem_code=self.new_submission.problem.code,
-            #         user_id=self.new_submission.user.user.id,
-            #     )
-            #     # has_file = True
-            # else:
-            #     # has_file = False
             source_url = ''
             origin_url = ''
 
@@ -246,7 +220,7 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             source.save()
 
         # Save a query.
-        self.new_submission.source = source
+        # self.new_submission.source = source
         self.new_submission.judge(force_judge=True, judge_id=form.cleaned_data['judge'])
 
         return super().form_valid(form)
@@ -282,7 +256,16 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
         return super().get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
-        self.object: Contest = self.get_object()
+        try:
+            self.object: Contest = self.get_object()
+        except Http404:
+            return generic_message(request, _('Contest not found'),
+                                   _('The contest you are looking for does not exist.'), status=404)
+        except PrivateContestError as e:
+            return render(request, 'contest/private.html', {
+                'error': e, 'title': _('Access to contest "%s" denied') % e.name,
+            }, status=403)
+        
         profile = request.profile
         if not profile.current_contest or (profile.current_contest and profile.current_contest.contest != self.object):
             return generic_message(request, _('Not in contest'),

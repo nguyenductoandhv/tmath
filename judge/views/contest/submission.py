@@ -51,7 +51,7 @@ def filter_submissions_by_visible_problems(queryset, user):
     queryset = queryset.filter(problem_id__in=problems)
 
 
-class SubmissionsListBase(DiggPaginatorMixin, TitleMixin, ListView):
+class SubmissionsListBase(LoginRequiredMixin, DiggPaginatorMixin, TitleMixin, ListView):
     model = Submission
     paginate_by = 50
     show_problem = True
@@ -285,10 +285,10 @@ class UserContestProblemSubmissions(ConditionalUserTabMixin, UserMixin, ContestP
     def get_content_title(self):
         if self.request.user.is_authenticated and self.request.profile == self.profile:
             return format_html('''My submissions for <a class="content_title" href="{1}">{0}</a>''',
-                               self.problem_name, self.problem.get_absolute_url())
+                               self.problem_name, self.contest_problem.get_absolute_url())
         return format_html('''<a class="content_title" href="{1}">{0}</a>'s submissions for <a class="content_title" href="{3}">{2}</a>''',
                            self.username, reverse('user_page', args=[self.username]),
-                           self.problem_name, self.problem.get_absolute_url())
+                           self.problem_name, self.contest_problem.get_absolute_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

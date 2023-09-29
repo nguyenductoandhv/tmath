@@ -192,7 +192,7 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
     ]
     list_display = ['code', 'name', 'show_authors', 'classes', 'is_public', 'show_public', ]
     ordering = ['-pk']
-    search_fields = ('code', 'name', 'authors__user__username', 'curators__user__username')
+    search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name',)
     inlines = [
         LanguageLimitInline, 
         ProblemClarificationInline, 
