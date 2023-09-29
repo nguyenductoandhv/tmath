@@ -1,34 +1,129 @@
 import json
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
+import logging
+from channels.generic.websocket import AsyncJsonWebsocketConsumer, JsonWebsocketConsumer
+from asgiref.sync import async_to_sync
+from autobahn.exception import Disconnected
 
-class SubmissionConsumer(AsyncJsonWebsocketConsumer):
-    async def connect(self):
-        self.room_name = 'submissions'
-        self.room_group_name = 'submissions'
+class SubmissionConsumer(JsonWebsocketConsumer):
+    groups = ['submissions']
 
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+    def connect(self):
+        self.accept()
 
-        await self.accept()
-
-    async def disconnect(self, close_code):
+    def disconnect(self, close_code):
         # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        pass
 
-    async def receive(self, text_data):
+    def receive(self, text_data):
         message = json.loads(text_data)
 
         # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name, message
+        async_to_sync(
+            self.channel_layer.group_send(
+                self.group_name, message
+            )
         )
     
+    def done_submission(self, event):
+        self.send_json({
+            "type": "done-submission",
+            "message": event['message'],
+        })
+    
+    def update_submission(self, event):
+        self.send_json({
+            "type": "update-submission",
+            "message": event['message'],
+        })
+
+
+class DetailSubmission(JsonWebsocketConsumer):
+    def connect(self):
+        key = self.scope['url_route']['kwargs']['key']
+        self.room_group_name = 'sub_%s' % key
+
+        # Join room group
+        async_to_sync(
+            self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+        )
+
+        self.accept()
+
+    def disconnect(self, close_code):
+        # Leave room group
+        async_to_sync(
+            self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
+        )
+
+    def receive(self, text_data):
+        message = json.loads(text_data)
+
+        # Send message to room group
+        async_to_sync(
+            self.channel_layer.group_send(
+                self.room_group_name, message
+            )
+        )
+
+    def compile_message(self, event):
+        self.send_json({
+            "type": "compile-message",
+        })
+    
+    def compile_error(self, event):
+        self.send_json({
+            "type": "compile-error",
+            "message": event['message'],
+        })
+
+    def internal_error(self, event):
+        self.send_json({
+            "type": "internal-error",
+        })
+    
+    def aborted_submission(self, event):
+        self.send_json({
+            "type": "aborted-submission",
+        })
+    
+    def test_case(self, event):
+        self.send_json({
+            "type": "test-case",
+            "message": event['message']
+        })
+    
+    def grading_begin(self, event):
+        self.send_json({
+            "type": "grading-begin",
+        })
+
+    def grading_end(self, event):
+        self.send_json({
+            "type": "grading-end",
+            "message": event['message'],
+        })
+
+    def processing(self, event):
+        self.send_json({
+            "type": "processing"
+        })
+
+
+class AsyncSubmissionConsumer(AsyncJsonWebsocketConsumer):
+    groups = ['async_submissions']
+
+    async def send(self, *args, **kwargs):
+        try:
+            await super().send(*args, **kwargs)
+        except Disconnected:
+            pass
+
     async def done_submission(self, event):
         await self.send_json({
             "type": "done-submission",
@@ -42,10 +137,10 @@ class SubmissionConsumer(AsyncJsonWebsocketConsumer):
         })
 
 
-class DetailSubmission(AsyncJsonWebsocketConsumer):
+class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
     async def connect(self):
         key = self.scope['url_route']['kwargs']['key']
-        self.room_group_name = 'sub_%s' % key
+        self.room_group_name = 'async_sub_%s' % key
 
         # Join room group
         await self.channel_layer.group_add(
@@ -80,19 +175,16 @@ class DetailSubmission(AsyncJsonWebsocketConsumer):
             "type": "compile-error",
             "message": event['message'],
         })
-        await self.close()
 
     async def internal_error(self, event):
         await self.send_json({
             "type": "internal-error",
         })
-        await self.close()
     
     async def aborted_submission(self, event):
         await self.send_json({
             "type": "aborted-submission",
         })
-        await self.close()
     
     async def test_case(self, event):
         await self.send_json({
@@ -110,7 +202,6 @@ class DetailSubmission(AsyncJsonWebsocketConsumer):
             "type": "grading-end",
             "message": event['message'],
         })
-        await self.close()
 
     async def processing(self, event):
         await self.send_json({
