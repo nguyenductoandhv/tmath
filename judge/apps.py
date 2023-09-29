@@ -14,18 +14,22 @@ class JudgeAppConfig(AppConfig):
         # noinspection PyUnresolvedReferences
         from . import signals, jinja2  # noqa: F401, imported for side effects
 
-        from judge.models import Language, Profile, Organization, Problem
+        from judge.models import Language, Profile, Organization, Problem, LoggedInUser
         from chat.models import ChatRoom, ChatParticipation
         from django.contrib.auth.models import User
 
-        try:
-            lang = Language.get_default_language()
-            for user in User.objects.filter(profile=None):
-                # These poor profileless users
-                profile = Profile(user=user, language=lang)
-                profile.save()
-        except DatabaseError:
-            pass
+        # try:
+        #     lang = Language.get_default_language()
+        #     for user in User.objects.filter(profile=None):
+        #         # These poor profileless users
+        #         profile = Profile(user=user, language=lang)
+        #         profile.save()
+        #     for user in User.objects.filter(logged_in_user=None):
+        #         # These poor profileless users
+        #         logged_in_user = LoggedInUser(user=user)
+        #         logged_in_user.save()
+        # except DatabaseError:
+        #     pass
 
         # problems = Problem.objects.all()
         # for problem in problems:
