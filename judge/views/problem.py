@@ -241,7 +241,7 @@ class LatexError(Exception):
     pass
 
 
-class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
+class ProblemPdfView(LoginRequiredMixin, ProblemMixin, SingleObjectMixin, View):
     logger = logging.getLogger('judge.problem.pdf')
     languages = set(map(itemgetter(0), settings.LANGUAGES))
 
@@ -259,7 +259,7 @@ class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
         except ProblemTranslation.DoesNotExist:
             trans = None
 
-        cache = os.path.join(settings.DMOJ_PDF_PROBLEM_CACHE, '%s.%s.pdf' % (problem.code, language))
+        cache = os.path.join(settings.PDF_PROBLEM_CACHE, '%s.%s.pdf' % (problem.code, language))
 
         if not os.path.exists(cache):
             self.logger.info('Rendering: %s.%s.pdf', problem.code, language)
@@ -274,11 +274,14 @@ class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
                 }).replace('"//', '"https://').replace("'//", "'https://")
                 maker.title = problem_name
 
-                assets = ['style.css', 'pygment-github.css']
+                assets = ['full_style.css', 'pygment-github.css']
+                icons = ['logo.svg']
                 if maker.math_engine == 'jax':
                     assets.append('mathjax_config.js')
                 for file in assets:
-                    maker.load(file, os.path.join(settings.DMOJ_RESOURCES, file))
+                    maker.load(file, os.path.join(settings.RESOURCES, file))
+                for file in icons:
+                    maker.load(file, settings.RESOURCES / 'icons' / file)
                 maker.make()
                 if not maker.success:
                     self.logger.error('Failed to render PDF for %s', problem.code)
@@ -287,8 +290,8 @@ class ProblemPdfView(ProblemMixin, SingleObjectMixin, View):
 
         response = HttpResponse()
 
-        if hasattr(settings, 'DMOJ_PDF_PROBLEM_INTERNAL'):
-            url_path = '%s/%s.%s.pdf' % (settings.DMOJ_PDF_PROBLEM_INTERNAL, problem.code, language)
+        if hasattr(settings, 'PDF_PROBLEM_INTERNAL'):
+            url_path = '%s/%s.%s.pdf' % (settings.PDF_PROBLEM_INTERNAL, problem.code, language)
         else:
             url_path = None
 
@@ -309,7 +312,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
     manual_sort = frozenset(('name', 'group', 'solved', 'type'))
     all_sorts = sql_sort | manual_sort
     default_desc = frozenset(('points', 'ac_rate', 'user_count'))
-    default_sort = '-user_count'
+    default_sort = 'code'
 
     def get_paginator(self, queryset, per_page, orphans=0,
                       allow_empty_first_page=True, **kwargs):

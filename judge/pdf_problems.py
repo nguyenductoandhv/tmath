@@ -32,7 +32,7 @@ NODE_PATH = settings.NODEJS
 PUPPETEER_MODULE = settings.PUPPETEER_MODULE
 HAS_PUPPETEER = os.access(NODE_PATH, os.X_OK) and os.path.isdir(PUPPETEER_MODULE)
 
-HAS_PDF = (os.path.isdir(settings.DMOJ_PDF_PROBLEM_CACHE) and
+HAS_PDF = (os.path.isdir(settings.PDF_PROBLEM_CACHE) and
            (HAS_PHANTOMJS or HAS_SLIMERJS or HAS_PUPPETEER or HAS_SELENIUM))
 
 EXIFTOOL = settings.EXIFTOOL
@@ -44,7 +44,7 @@ class BasePdfMaker(object):
     title = None
 
     def __init__(self, dir=None, clean_up=True):
-        self.dir = dir or os.path.join(settings.DMOJ_PDF_PROBLEM_TEMP_DIR, str(uuid.uuid1()))
+        self.dir = dir or os.path.join(settings.PDF_PROBLEM_TEMP_DIR, str(uuid.uuid1()))
         self.proc = None
         self.log = None
         self.htmlfile = os.path.join(self.dir, 'input.html')

@@ -52,7 +52,7 @@ class Command(BaseCommand):
             }).replace('"//', '"https://').replace("'//", "'https://")
             maker.title = problem_name
             for file in ('style.css', 'pygment-github.css', 'mathjax_config.js'):
-                maker.load(file, os.path.join(settings.DMOJ_RESOURCES, file))
+                maker.load(file, os.path.join(settings.RESOURCES, file))
             maker.make(debug=True)
             if not maker.success:
                 print(maker.log, file=sys.stderr)
