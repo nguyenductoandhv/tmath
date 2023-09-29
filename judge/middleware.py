@@ -2,6 +2,7 @@ import base64
 import hmac
 import re
 import struct
+import logging
 from urllib.parse import quote as urlquote
 
 from django.conf import settings
@@ -15,6 +16,18 @@ from django.db import transaction
 from requests.exceptions import HTTPError
 from typeracer.models import TypoRoom
 
+logger = logging.getLogger('judge.request')
+class LogRequestsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        user = "AnonymousUser" if request.user.is_anonymous else request.user.username
+        # Log the user access URL
+        logger.info(f"User {user} accessed {request.path} - {request.method}")
+
+        response = self.get_response(request)
+        return response
 
 # One session_key to one Person anytime
 class OneSessionPerUser(object):

@@ -175,6 +175,6 @@ def user_logged_in_signal(sender, **kwargs):
     LoggedInUser.objects.get_or_create(user=kwargs.get('user'))
 
 
-@receiver(user_logged_out)
-def user_logged_out_signal(sender, **kwargs):
-    LoggedInUser.objects.filter(user=kwargs.get('user')).delete()
+# @receiver(user_logged_out)
+# def user_logged_out_signal(sender, **kwargs):
+#     LoggedInUser.objects.filter(user=kwargs.get('user')).delete()
