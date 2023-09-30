@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
 
 
+__all__ = ['TypoData', 'TypoContest', 'TypoResult', 'TypoProfile', 'TypoRoom']
+
 # Create your models here.
 
 DIFFICULT = (
@@ -14,7 +16,7 @@ DIFFICULT = (
     ('expert', _('Expert')),
     ('master', _('Master')),
     ('gmaster', _('Grand Master')),
-  )
+)
 
 
 class TypoData(models.Model):

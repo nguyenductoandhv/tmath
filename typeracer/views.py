@@ -14,7 +14,7 @@ from django.views.generic.detail import SingleObjectMixin
 from judge.models import Profile
 from judge.utils.views import TitleMixin, generic_message
 
-from .models import *
+from typeracer.models import *
 
 # Create your views here.
 
@@ -63,7 +63,7 @@ def finishTypoContest(request):
         rank = TypoResult.objects.filter(contest=contest_object, is_finish=True).count()
         result = TypoResult.objects.get(
         user=Profile.objects.get(user__pk=user),
-        contest=contest_object,
+            contest=contest_object,
         )
         result.speed = int(speed)
         result.time = int(time) / 1000
@@ -85,11 +85,11 @@ def getQuote(request, pk):
     contest: TypoContest = room.contest
     if contest._now >= contest.time_start:
         return JsonResponse({
-        'content': room.contest.data.data
+            'content': room.contest.data.data
         })
     else:
         return JsonResponse({
-        'content': ''
+            'content': ''
         })
 
 
@@ -159,7 +159,8 @@ class Ranking(TitleMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ranks'] = TypoResult.objects.filter(contest=self.object, is_finish=True).order_by('-progress', '-speed', 'time')
+        context['ranks'] = TypoResult.objects.filter(contest=self.object, is_finish=True) \
+                                             .order_by('-progress', '-speed', 'time')
         return context
 
 
