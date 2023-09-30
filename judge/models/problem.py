@@ -293,7 +293,7 @@ class Problem(models.Model):
             if user.is_authenticated and \
                     self.organizations.filter(id__in=user.profile.organizations.all()):
                 return True
-        
+
             # If the user can edit all public problems.
             if user.is_authenticated and user.has_perm('judge.edit_public_problem'):
                 return True
