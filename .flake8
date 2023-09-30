@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 120
-application-import-names = dmoj,judge,django_ace
+application-import-names = tmath,judge,django_ace
 import-order-style = pycharm
 enable-extensions = G
 ignore =
@@ -20,5 +20,5 @@ per-file-ignores =
     # PyCharm likes to have double lines between class/def in an if statement.
     ./judge/widgets/pagedown.py:E303
 exclude =
-    ./dmoj/local_settings.py, # belongs to the user
+    ./tmath/local_settings.py, # belongs to the user
     ./.ci.settings.py, # is actually a fragment to be included by settings.py
