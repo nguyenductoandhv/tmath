@@ -186,4 +186,3 @@ class JoinRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
     elif participation[0].is_finish:
       return HttpResponseRedirect(reverse('typeracer:typo_ranking', args=(contest.id, )))
     return HttpResponseRedirect(reverse('typeracer:room_detail', args=(room.id, )))
-  
