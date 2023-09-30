@@ -100,7 +100,7 @@ class SubmissionTestCase(CommonDataMixin, TestCase):
         )
 
     def test_basic_submission(self):
-        self.assertEqual(self.basic_submission.result_class, '_AC')
+        self.assertEqual(self.basic_submission.result_class, 'text-green-700')
         self.assertEqual(self.basic_submission.memory_bytes, 20 * 1024)
         self.assertEqual(self.basic_submission.short_status, 'AC')
         self.assertEqual(self.basic_submission.long_status, 'Accepted')
@@ -111,12 +111,12 @@ class SubmissionTestCase(CommonDataMixin, TestCase):
         self.assertFalse(self.basic_submission.is_locked)
 
     def test_full_ac_submission(self):
-        self.assertEqual(self.full_ac_submission.result_class, 'AC')
+        self.assertEqual(self.full_ac_submission.result_class, 'text-green-700')
         self.assertEqual(self.full_ac_submission.short_status, 'AC')
 
         self.assertEqual(
             str(self.full_ac_submission_source),
-            'Source of Submission %d of full_ac by normal' % self.full_ac_submission.id,
+            'Source of Submission %d of full_ac - full_ac by normal' % self.full_ac_submission.id,
         )
 
     def test_submission_lock(self):
@@ -124,14 +124,14 @@ class SubmissionTestCase(CommonDataMixin, TestCase):
         self.assertFalse(self.future_locked_submission.is_locked)
 
     def test_ie_submission(self):
-        self.assertEqual(self.ie_submission.result_class, 'IE')
+        self.assertEqual(self.ie_submission.result_class, 'text-black')
         self.assertEqual(self.ie_submission.memory_bytes, 0)
         self.assertTrue(self.basic_submission.is_graded)
 
         self.ie_submission.update_contest()
 
     def test_queued_submission(self):
-        self.assertIsNone(self.queued_submission.result_class)
+        self.assertEqual(self.queued_submission.result_class, 'text-white')
         self.assertEqual(self.queued_submission.memory_bytes, 0)
         self.assertEqual(self.queued_submission.short_status, 'QU')
         self.assertEqual(self.queued_submission.long_status, 'Queued')

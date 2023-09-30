@@ -153,7 +153,7 @@ The judge can also grade in the languages listed below. These languages are less
 ```mysql
 CREATE DATABASE tmath DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
-GRANT ALL PRIVILEGES ON tmath.* to 'tmath'@'localhost' IDENTIFIED BY 'emath123@';
+GRANT ALL PRIVILEGES ON tmath.* to 'tmath'@'localhost' IDENTIFIED BY 'tmath123@';
 ```
 
 ### MySQL Server

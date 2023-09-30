@@ -247,8 +247,7 @@ class Problem(models.Model):
             return True
 
         if user.has_perm('judge.edit_public_problem') and self.is_public:
-            if not (self.is_organization_private or user.has_perm('judge.see_organization_problem')):
-                return True
+            return True
 
         return user.has_perm('judge.edit_own_problem') and \
             (user.profile.id in self.editor_ids or
@@ -293,6 +292,10 @@ class Problem(models.Model):
             # If the user is in the organization.
             if user.is_authenticated and \
                     self.organizations.filter(id__in=user.profile.organizations.all()):
+                return True
+        
+            # If the user can edit all public problems.
+            if user.is_authenticated and user.has_perm('judge.edit_public_problem'):
                 return True
 
         if not user.is_authenticated:

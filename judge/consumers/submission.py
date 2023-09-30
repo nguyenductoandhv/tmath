@@ -1,7 +1,6 @@
 import json
 
 from asgiref.sync import async_to_sync
-from autobahn.exception import Disconnected
 from channels.generic.websocket import (AsyncJsonWebsocketConsumer,
                                         JsonWebsocketConsumer)
 
@@ -121,10 +120,7 @@ class AsyncSubmissionConsumer(AsyncJsonWebsocketConsumer):
     groups = ['async_submissions']
 
     async def send(self, *args, **kwargs):
-        try:
-            await super().send(*args, **kwargs)
-        except Disconnected:
-            pass
+        await super().send(*args, **kwargs)
 
     async def done_submission(self, event):
         await self.send_json({

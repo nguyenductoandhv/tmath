@@ -41,6 +41,8 @@ pandoc
 pymdown-extensions
 FeedParser
 
+unidecode
+
 channels
 channels-redis
 # django-semantic-admin @ git+https://github.com/patpro28/semantic-admin.git

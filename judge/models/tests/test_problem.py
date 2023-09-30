@@ -59,7 +59,7 @@ class ProblemTestCase(CommonDataMixin, TestCase):
         )
 
     def test_basic_problem(self):
-        self.assertEqual(str(self.basic_problem), self.basic_problem.name)
+        self.assertEqual(str(self.basic_problem), f'{self.basic_problem.code} - {self.basic_problem.name}')
         self.assertCountEqual(
             self.basic_problem.languages_list(),
             set(Language.objects.values_list('common_name', flat=True)),
