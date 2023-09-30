@@ -6,5 +6,5 @@ from chat.views import make_message
 app_name = 'chat'
 
 urlpatterns = [
-    path('send/', make_message, name="send_message")
+    path('send/', make_message, name="send_message"),
 ]

@@ -233,7 +233,7 @@ class Submission(models.Model):
     def problem_link(self):
         if self.contest_object is not None:
             problem_link = reverse('contest_problem_detail',
-                                   args=(self.contest_object.key, self.contest.problem.order,))
+                                   args=(self.contest_object.key, self.contest.problem.order))
         else:
             problem_link = reverse('problem_detail', args=(self.problem.code,))
         return problem_link

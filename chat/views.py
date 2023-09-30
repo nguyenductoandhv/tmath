@@ -27,7 +27,7 @@ def make_message(request):
         user.save()
         message = ChatMessage(room=user.room, msg=msg, user=user)
         message.save()
-        data = {'id': message.id, }
+        data = {'id': message.id}
         # if event.real:
         #   event.post('messages_%s' % room.id,  data)
     return JsonResponse(data)

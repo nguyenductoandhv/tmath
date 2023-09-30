@@ -60,7 +60,7 @@ class TmathDashboard(Dashboard):
             css_classes=['grp-closed'],
             models=(
                 'judge.models.problem.*',
-                'judge.models.problem_data.PublicSolution'
+                'judge.models.problem_data.PublicSolution',
             ),
         ))
 
@@ -91,7 +91,7 @@ class TmathDashboard(Dashboard):
             css_classes=['grp-closed'],
             models=(
                 'judge.models.submission.*',
-                'judge.models.runtime.*'
+                'judge.models.runtime.*',
             ),
         ))
 

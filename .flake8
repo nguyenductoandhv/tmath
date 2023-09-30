@@ -1,7 +1,7 @@
 [flake8]
 max-line-length = 120
 application-import-names = tmath,judge,django_ace,chat,typeracer,websocket
-import-order-style = pycharm
+import-order-style = pep8
 enable-extensions = G
 ignore =
     # line break occurred after a binary operator
@@ -27,3 +27,4 @@ exclude =
     # is actually a fragment to be included by settings.py
     ./.ci.settings.py, 
     ./emath,
+    ./venv,

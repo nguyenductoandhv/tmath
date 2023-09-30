@@ -81,7 +81,7 @@ register_patterns = [
          template_name='registration/password_reset_complete.html'),
          name='password_reset_complete'),
     path('password/reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='registration/password_reset_done.html'
+        template_name='registration/password_reset_done.html',
     ), name='password_reset_done'),
     path('social/error/', register.social_auth_error, name='social_auth_error'),
 

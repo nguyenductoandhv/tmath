@@ -7,10 +7,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.utils.functional import SimpleLazyObject, new_method_proxy
 
+from judge.models import MiscConfig, NavigationBar, Profile
 # from judge import event_poster as event
 from judge.utils.caniuse import SUPPORT, CanIUse
-
-from .models import MiscConfig, NavigationBar, Profile
 
 # from emath.models.interface import Navigation
 
