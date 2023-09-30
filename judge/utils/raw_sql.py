@@ -5,7 +5,6 @@ from django.db.models.sql.datastructures import Join
 from judge.utils.cachedict import CacheDict
 
 
-
 class RawSQLJoin(Join):
     def __init__(self, subquery, subquery_params, parent_alias, table_alias, join_type, join_field, nullable,
                  filtered_relation=None):

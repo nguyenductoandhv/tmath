@@ -5,11 +5,9 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.http import Http404, HttpResponsePermanentRedirect
-from django.templatetags.static import static
-from django.urls import path, register_converter, reverse
+from django.urls import path, reverse
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page
 from django.views.generic import RedirectView
 from martor.views import markdown_search_user
 
@@ -19,11 +17,11 @@ from judge.feed import (AtomBlogFeed, AtomCommentFeed, AtomProblemFeed,
 from judge.sitemap import (BlogPostSitemap, ContestSitemap, HomePageSitemap,
                            OrganizationSitemap, ProblemSitemap,
                            SolutionSitemap, UrlSitemap, UserSitemap)
-from judge.views import (TitledTemplateView, about, api, blog, comment,
-                         contests, language, license, mailgun, organization,
-                         preview, problem, problem_manage, ranked_submission,
-                         register, stats, status, submission, tasks, ticket,
-                         two_factor, user, widgets)
+from judge.views import (TitledTemplateView, api, blog, comment, contests,
+                         language, license, mailgun, organization, preview,
+                         problem, problem_manage, ranked_submission, register,
+                         stats, status, submission, tasks, ticket, two_factor,
+                         user, widgets)
 from judge.views.contest.problem import (ContestProblemDetailView,
                                          ContestProblemListView,
                                          ContestProblemSubmit)
@@ -43,27 +41,27 @@ admin.autodiscover()
 
 register_patterns = [
     path('activate/complete/',
-        TitledTemplateView.as_view(template_name='registration/activation_complete.html',
-                                   title='Activation Successful!'),
-        name='registration_activation_complete'),
+         TitledTemplateView.as_view(template_name='registration/activation_complete.html',
+                                    title='Activation Successful!'),
+         name='registration_activation_complete'),
     # Activation keys get matched by \w+ instead of the more specific
     # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
     # that way it can return a sensible "invalid key" message instead of a
     # confusing 404.
     path('activate/<slug:activation_key>/',
-        ActivationView.as_view(title='Activation key invalid'),
-        name='registration_activate'),
+         ActivationView.as_view(title='Activation key invalid'),
+         name='registration_activate'),
     path('register/',
-        RegistrationView.as_view(title='Register'),
-        name='registration_register'),
+         RegistrationView.as_view(title='Register'),
+         name='registration_register'),
     path('register/complete/',
-        TitledTemplateView.as_view(template_name='registration/registration_complete.html',
-                                   title='Registration Completed'),
-        name='registration_complete'),
+         TitledTemplateView.as_view(template_name='registration/registration_complete.html',
+                                    title='Registration Completed'),
+         name='registration_complete'),
     path('register/closed/',
-        TitledTemplateView.as_view(template_name='registration/registration_closed.html',
-                                   title='Registration not allowed'),
-        name='registration_disallowed'),
+         TitledTemplateView.as_view(template_name='registration/registration_closed.html',
+                                    title='Registration not allowed'),
+         name='registration_disallowed'),
     path('login/', user.CustomLoginView.as_view(), name='auth_login'),
     path('logout/', user.UserLogoutView.as_view(), name='auth_logout'),
     path('password/change/', user.CustomPasswordChangeView.as_view(), name='password_change'),
@@ -76,12 +74,12 @@ register_patterns = [
         email_template_name='registration/password_reset_email.txt',
     ), name='password_reset'),
     path('password/reset/confirm/<uuid:uidb64>-<slug:token>/',
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name='registration/password_reset_confirm.html',
-        ), name='password_reset_confirm'),
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='registration/password_reset_confirm.html',),
+         name='password_reset_confirm'),
     path('password/reset/complete/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='registration/password_reset_complete.html',
-    ), name='password_reset_complete'),
+         template_name='registration/password_reset_complete.html',),
+         name='password_reset_complete'),
     path('password/reset/done/', auth_views.PasswordResetDoneView.as_view(
         template_name='registration/password_reset_done.html',
     ), name='password_reset_done'),
@@ -135,7 +133,7 @@ urlpatterns = [
 
     path('problems/', problem.ProblemList.as_view(), name='problem_list'),
     path('problems/random/', problem.RandomProblem.as_view(), name='problem_random'),
-	path('problems/new/', problem.ProblemNew.as_view(), name='problem_new'),
+    path('problems/new/', problem.ProblemNew.as_view(), name='problem_new'),
     path('problems/sb3/', problem.getScratch, name='scratch'),
 
     path('problem/<slug:problem>', include([
@@ -170,13 +168,13 @@ urlpatterns = [
             path('', problem_manage.ManageProblemSubmissionView.as_view(), name='problem_manage_submissions'),
             path('/rejudge', problem_manage.RejudgeSubmissionsView.as_view(), name='problem_submissions_rejudge'),
             path('/rejudge/preview', problem_manage.PreviewRejudgeSubmissionsView.as_view(),
-                name='problem_submissions_rejudge_preview'),
+                 name='problem_submissions_rejudge_preview'),
             path('/rejudge/success/<slug:task_id>', problem_manage.rejudge_success,
-                name='problem_submissions_rejudge_success'),
+                 name='problem_submissions_rejudge_success'),
             path('/rescore/all', problem_manage.RescoreAllSubmissionsView.as_view(),
-                name='problem_submissions_rescore_all'),
+                 name='problem_submissions_rescore_all'),
             path('/rescore/success/<slug:task_id>', problem_manage.rescore_success,
-                name='problem_submissions_rescore_success'),
+                 name='problem_submissions_rescore_success'),
         ])),
     ])),
     path('publicsolution/upvote/', problem.upvote_solution, name='solution_upvote'),
@@ -196,7 +194,7 @@ urlpatterns = [
     path('users/', include([
         path('', user.users, name='user_list'),
         path('<slug:page>', lambda request, page:
-            HttpResponsePermanentRedirect('%s?page=%s' % (reverse('user_list'), page))),
+             HttpResponsePermanentRedirect('%s?page=%s' % (reverse('user_list'), page))),
         path('find', user.user_ranking_redirect, name='user_ranking_redirect'),
     ])),
 
@@ -213,7 +211,7 @@ urlpatterns = [
         ])),
         path('/submissions/', paged_list_view(submission.AllUserSubmissions, 'all_user_submissions_old')),
         path('/submissions/', lambda _, user:
-            HttpResponsePermanentRedirect(reverse('all_user_submissions', args=[user]))),
+             HttpResponsePermanentRedirect(reverse('all_user_submissions', args=[user]))),
 
         path('/', lambda _, user: HttpResponsePermanentRedirect(reverse('user_page', args=[user]))),
     ])),
@@ -258,22 +256,23 @@ urlpatterns = [
             path('/submit', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
             path('/resubmit/<slug:submission>', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
             path('/submissions/', paged_list_view(ContestProblemSubmissions, 'contest_problem_submissions')),
-            path('/submissions/<str:user>/', paged_list_view(UserContestProblemSubmissions, 'user_contest_problem_submissions')),
+            path('/submissions/<str:user>/', paged_list_view(UserContestProblemSubmissions,
+                                                             'user_contest_problem_submissions')),
         ])),
 
         path('/rank/<slug:problem>/',
-            paged_list_view(ranked_submission.ContestRankedSubmission, 'contest_ranked_submissions')),
+             paged_list_view(ranked_submission.ContestRankedSubmission, 'contest_ranked_submissions')),
 
         path('/submissions/<str:user>/',
-            paged_list_view(submission.UserAllContestSubmissions, 'contest_all_user_submissions')),
+             paged_list_view(submission.UserAllContestSubmissions, 'contest_all_user_submissions')),
         path('/submissions/<str:user>/<slug:problem>/',
-            paged_list_view(submission.UserContestSubmissions, 'contest_user_submissions')),
+             paged_list_view(submission.UserContestSubmissions, 'contest_user_submissions')),
 
         path('/participations', contests.ContestParticipationList.as_view(), name='contest_participation_own'),
         path('/participations/<str:user>',
-            contests.ContestParticipationList.as_view(), name='contest_participation'),
+             contests.ContestParticipationList.as_view(), name='contest_participation'),
         path('/participation/disqualify', contests.ContestParticipationDisqualify.as_view(),
-            name='contest_participation_disqualify'),
+             name='contest_participation_disqualify'),
 
         path('/', lambda _, contest: HttpResponsePermanentRedirect(reverse('contest_view', args=[contest]))),
         path('/pdf', contests.ContestPdfView.as_view(), name="contest_pdf"),
@@ -294,14 +293,14 @@ urlpatterns = [
 
         path('/request', organization.RequestJoinOrganization.as_view(), name='request_organization'),
         path('/request/<int:rpk>', organization.OrganizationRequestDetail.as_view(),
-            name='request_organization_detail'),
+             name='request_organization_detail'),
         path('/requests/', include([
             path('pending', organization.OrganizationRequestView.as_view(), name='organization_requests_pending'),
             path('log', organization.OrganizationRequestLog.as_view(), name='organization_requests_log'),
             path('approved', organization.OrganizationRequestLog.as_view(states=('A',), tab='approved'),
-                name='organization_requests_approved'),
+                 name='organization_requests_approved'),
             path('rejected', organization.OrganizationRequestLog.as_view(states=('R',), tab='rejected'),
-                name='organization_requests_rejected'),
+                 name='organization_requests_rejected'),
         ])),
 
         path('/', lambda _, pk, slug: HttpResponsePermanentRedirect(reverse('organization_home', args=[pk, slug]))),
@@ -356,7 +355,7 @@ urlpatterns = [
         path('select2/', include([
             path('user_search', UserSearchSelect2View.as_view(), name='user_search_select2_ajax'),
             path('contest_users/<slug:contest>', ContestUserSearchSelect2View.as_view(),
-                name='contest_user_search_select2_ajax'),
+                 name='contest_user_search_select2_ajax'),
             path('ticket_user', TicketUserSelect2View.as_view(), name='ticket_user_select2_ajax'),
             path('ticket_assignee', AssigneeSelect2View.as_view(), name='ticket_assignee_select2_ajax'),
         ])),
@@ -413,7 +412,7 @@ urlpatterns = [
         path('/notes', ticket.TicketNotesEditView.as_view(), name='ticket_notes'),
     ])),
 
-    path('sitemap\.xml', sitemap, {'sitemaps': {
+    path('sitemap.xml', sitemap, {'sitemaps': {
         'problem': ProblemSitemap,
         'user': UserSitemap,
         'home': HomePageSitemap,

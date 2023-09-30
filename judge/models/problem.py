@@ -7,8 +7,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
-from django.db.models import CASCADE, F, Q, QuerySet, SET_NULL, FilteredRelation
-from django.db.models.expressions import RawSQL
+from django.db.models import CASCADE, F, Q, SET_NULL, FilteredRelation
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
@@ -42,7 +41,7 @@ class ProblemCategory(models.Model):
         ordering = ['full_name']
         verbose_name = _('problem category')
         verbose_name_plural = _('problem categories')
-        
+
 
 class ProblemType(models.Model):
     name = models.CharField(max_length=20, verbose_name=_('problem type ID'), unique=True)
@@ -122,6 +121,7 @@ class SubmissionSourceAccess:
     ONLY_OWN = 'O'
     FOLLOW = 'F'
 
+
 class ProblemTestcaseAccess:
     ALWAYS = 'A'
     OUT_CONTEST = 'C'
@@ -165,7 +165,8 @@ class Problem(models.Model):
     group = models.ForeignKey(ProblemGroup, verbose_name=_('problem group'), on_delete=models.SET_NULL, null=True,
                               help_text=_('The group of problem, shown under Category in the problem list.'))
     classes = models.ForeignKey(ProblemClass, verbose_name=_("problem class"), on_delete=models.SET_NULL,
-                              help_text=_('The class of problem, shown under Class in the problem list.'), null=True, blank=False)
+                                help_text=_('The class of problem, shown under Class in the problem list.'),
+                                null=True, blank=False)
 
     time_limit = models.FloatField(verbose_name=_('time limit'),
                                    help_text=_('The time limit for this problem, in seconds. '
@@ -189,7 +190,8 @@ class Problem(models.Model):
     is_public = models.BooleanField(verbose_name=_('publicly visible'), db_index=True, default=False)
     is_manually_managed = models.BooleanField(verbose_name=_('manually managed'), db_index=True, default=False,
                                               help_text=_('Whether judges should be allowed to manage data or not.'))
-    date = models.DateTimeField(verbose_name=_('date of publishing'), null=True, default=timezone.now, blank=True, db_index=True,
+    date = models.DateTimeField(verbose_name=_('date of publishing'),
+                                null=True, default=timezone.now, blank=True, db_index=True,
                                 help_text=_("Doesn't have magic ability to auto-publish due to backward compatibility"))
     banned_users = models.ManyToManyField(Profile, verbose_name=_('personae non gratae'), blank=True,
                                           help_text=_('Bans the selected users from submitting to this problem.'))
@@ -224,7 +226,7 @@ class Problem(models.Model):
 
     def clean(self):
         if self.is_public and len(self.code) != 10:
-            raise ValidationError(_(f'Problem public code must be 10 characters long.'))
+            raise ValidationError(_('Problem public code must be 10 characters long.'))
 
     @cached_property
     def types_list(self):
@@ -266,7 +268,7 @@ class Problem(models.Model):
 
         # Don't need to check for ProblemTestcaseAccess.AUTHOR_ONLY
         return False
-    
+
     def can_submitted_by(self, user, skip_contest_problem_check=False):
         # If we don't want to check if the user is in a contest containing that problem.
         if not skip_contest_problem_check and user.is_authenticated:
@@ -494,7 +496,7 @@ class Problem(models.Model):
         result = self._get_limits('memory_limit')
         cache.set(key, result)
         return result
-    
+
     @cached_property
     def io_method(self):
         if self.is_manually_managed or not hasattr(self, 'data_files'):

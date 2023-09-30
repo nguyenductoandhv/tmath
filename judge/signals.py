@@ -2,23 +2,27 @@ import errno
 import os
 
 from django.conf import settings
+from django.contrib.auth import user_logged_in
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
-from django.contrib.auth import user_logged_in, user_logged_out
 
 from .caching import finished_submission
-from .models import BlogPost, Comment, Contest, ContestSubmission, EFFECTIVE_MATH_ENGINES, Judge, Language, License, \
-    MiscConfig, Organization, Problem, Profile, Submission, WebAuthnCredential, LoggedInUser
+from .models import (EFFECTIVE_MATH_ENGINES, BlogPost, Comment, Contest,
+                     ContestSubmission, Judge, Language, License, LoggedInUser,
+                     MiscConfig, Organization, Problem, Profile, Submission,
+                     WebAuthnCredential)
 
 
 def get_pdf_path(basename):
     return os.path.join(settings.PDF_PROBLEM_CACHE, basename)
 
+
 def get_pdf_contest_path(basename):
     return os.path.join(settings.PDF_CONTEST_CACHE, basename)
+
 
 def unlink_if_exists(file):
     try:

@@ -41,6 +41,7 @@ def checker_args_cleaner(self):
         raise ValidationError(_('Checker arguments is invalid JSON'))
     return data
 
+
 def grader_args_cleaner(self):
     data = self.cleaned_data['grader_args']
     if not data or data.isspace():
@@ -52,11 +53,13 @@ def grader_args_cleaner(self):
         raise ValidationError(_('Grader arguments is invalid JSON'))
     return data
 
+
 class ProblemDataForm(ModelForm):
     io_method = ChoiceField(choices=IO_METHODS, label=_('IO Method'), initial='standard', required=False,
                             widget=Select(attrs={'class': 'w-1/2'}))
     io_input_file = CharField(max_length=100, label=_('Input from file'), required=False)
     io_output_file = CharField(max_length=100, label=_('Output to file'), required=False)
+
     def clean_zipfile(self):
         if hasattr(self, 'zip_valid') and not self.zip_valid:
             raise ValidationError(_('Your zip file is invalid!'))
@@ -67,7 +70,8 @@ class ProblemDataForm(ModelForm):
 
     class Meta:
         model = ProblemData
-        fields = ['zipfile', 'checker', 'checker_args', 'custom_validator', 'io_method', 'io_input_file', 'io_output_file', 'grader_args']
+        fields = ['zipfile', 'checker', 'checker_args', 'custom_validator',
+                  'io_method', 'io_input_file', 'io_output_file', 'grader_args']
         widgets = {
             # 'zipfile': FineUploadFileInput,
             'checker_args': HiddenInput,
@@ -77,13 +81,14 @@ class ProblemDataForm(ModelForm):
             'checker': Select(attrs={'class': 'w-1/2'}),
         }
 
+
 class ProblemCaseForm(ModelForm):
     clean_checker_args = checker_args_cleaner
 
     class Meta:
         model = ProblemTestCase
         fields = ('order', 'type', 'input_file', 'output_file', 'points',
-                  'is_pretest', 'checker', 'checker_args') #, 'output_limit', 'output_prefix', 'generator_args')
+                  'is_pretest', 'checker', 'checker_args')  # 'output_limit', 'output_prefix', 'generator_args')
         widgets = {
             # 'generator_args': HiddenInput,
             'type': Select,
@@ -246,11 +251,11 @@ def problem_data_file(request, problem, path):
         raise Http404()
 
     Log.objects.create(
-        user = request.user.profile,
-        title = 'Download test',
-        message = 'Downloaded test of problem "%s"' % (object.name),
-        object_id = object.pk,
-        object_title = object.code
+        user=request.user.profile,
+        title='Download test',
+        message='Downloaded test of problem "%s"' % (object.name),
+        object_id=object.pk,
+        object_title=object.code
     )
 
     response['Content-Type'] = 'application/octet-stream'

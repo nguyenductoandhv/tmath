@@ -1,5 +1,4 @@
 # coding=utf-8
-from audioop import reverse
 import re
 
 from django import forms
@@ -24,7 +23,8 @@ bad_mail_regex = list(map(re.compile, settings.BAD_MAIL_PROVIDER_REGEX))
 
 
 class CustomRegistrationForm(RegistrationForm):
-    username = forms.RegexField(regex=r'^(?=.{6,30}$)(?![_.])(?!.*[_.]{2})[a-z0-9_]+(?<![_.])$', max_length=30, label=_('Username'),
+    username = forms.RegexField(regex=r'^(?=.{6,30}$)(?![_.])(?!.*[_.]{2})[a-z0-9_]+(?<![_.])$',
+                                max_length=30, label=_('Username'),
                                 error_messages={'invalid': _('A username must contain lower latinh letters, '
                                                              'numbers, min length = 6, max length = 30')})
     timezone = ChoiceField(label=_('Timezone'), choices=TIMEZONE,
@@ -32,8 +32,8 @@ class CustomRegistrationForm(RegistrationForm):
     language = ModelChoiceField(queryset=Language.objects.all(), label=_('Preferred language'), empty_label=None,
                                 widget=Select2Widget(attrs={'style': 'width:100%'}))
     organizations = ModelMultipleChoiceField(queryset=Organization.objects.filter(is_open=True),
-                                              label=_('Organizations'), required=False,
-                                              widget=Select2MultipleWidget(attrs={'style': 'width:100%'}))
+                                             label=_('Organizations'), required=False,
+                                             widget=Select2MultipleWidget(attrs={'style': 'width:100%'}))
     name = forms.RegexField(regex=r'^(?!\s*$).+', max_length=50, required=True, label=_('Fullname'))
 
     if newsletter_id is not None:

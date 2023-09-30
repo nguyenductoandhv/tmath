@@ -7,7 +7,6 @@ from urllib.parse import quote as urlquote
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import Resolver404, resolve, reverse
@@ -17,6 +16,8 @@ from requests.exceptions import HTTPError
 from typeracer.models import TypoRoom
 
 logger = logging.getLogger('judge.request')
+
+
 class LogRequestsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -28,6 +29,7 @@ class LogRequestsMiddleware:
 
         response = self.get_response(request)
         return response
+
 
 # One session_key to one Person anytime
 class OneSessionPerUser(object):
@@ -43,7 +45,7 @@ class OneSessionPerUser(object):
 
             request.user.logged_in_user.session_key = request.session.session_key
             request.user.logged_in_user.save()
-        
+
         return self.get_response(request)
 
 
@@ -68,10 +70,10 @@ class DMOJLoginMiddleware(object):
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            profile = request.profile = request.user.profile
+            request.profile = request.user.profile
             logout_path = reverse('auth_logout')
             login_2fa_path = reverse('login_2fa')
-            webauthn_path = reverse('webauthn_assert')
+            # webauthn_path = reverse('webauthn_assert')
             change_password_path = reverse('password_change')
             change_password_done_path = reverse('password_change_done')
             # has_2fa = profile.is_totp_enabled or profile.is_webauthn_enabled
@@ -119,7 +121,7 @@ class ContestMiddleware(object):
 class TypoMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
-    
+
     def __call__(self, request):
         with transaction.atomic():
             for room in TypoRoom.objects.all().exclude(contest=None):

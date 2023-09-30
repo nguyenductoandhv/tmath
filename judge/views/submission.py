@@ -40,7 +40,7 @@ def submission_related(queryset):
               'locked_after', 'problem__submission_source_visibility_mode') \
         .prefetch_related('contest_object__authors', 'contest_object__curators',
                           Prefetch('contest', queryset=ContestSubmission.objects.select_related('problem')),
-                        )
+                          )
 
 
 class SubmissionMixin(object):
@@ -85,11 +85,11 @@ class SubmissionSource(SubmissionDetailBase):
         context = super(SubmissionSource, self).get_context_data(**kwargs)
         submission = self.object
         Log.objects.create(
-            user = self.request.user.profile,
-            title = 'View source code',
-            message = 'View source code of submission\'s problem "%s"' % (submission.problem),
-            object_id = submission.pk,
-            object_title = submission
+            user=self.request.user.profile,
+            title='View source code',
+            message='View source code of submission\'s problem "%s"' % (submission.problem),
+            object_id=submission.pk,
+            object_title=submission
         )
         context['raw_source'] = submission.source.source.rstrip('\n')
         context['highlighted_source'] = highlight_code(submission.source.source, submission.language.pygments)
@@ -332,7 +332,7 @@ class SubmissionsListBase(DiggPaginatorMixin, TitleMixin, ListView):
         check = self.access_check(request)
         if check is not None:
             return check
-        
+
         self.selected_languages = set(request.GET.getlist('language_code'))
         self.selected_statuses = set(request.GET.getlist('status'))
 
@@ -472,7 +472,8 @@ class UserProblemSubmissions(ConditionalUserTabMixin, UserMixin, ProblemSubmissi
             return format_html('''My submissions for <a class="content_title" href="{3}">{2}</a>''',
                                self.username, reverse('user_page', args=[self.username]),
                                self.problem_name, reverse('problem_detail', args=[self.problem.code]))
-        return format_html('''<a class="content_title" href="{1}">{0}</a>'s submissions for <a class="content_title" href="{3}">{2}</a>''',
+        return format_html('''<a class="content_title" href="{1}">
+                                {0}</a>'s submissions for <a class="content_title" href="{3}">{2}</a>''',
                            self.username, reverse('user_page', args=[self.username]),
                            self.problem_name, reverse('problem_detail', args=[self.problem.code]))
 

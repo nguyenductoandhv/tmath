@@ -1,15 +1,15 @@
 from django.db.models import TextField
-from django.forms import ModelForm, ModelMultipleChoiceField, TextInput
+from django.forms import ModelForm, TextInput
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse, path
+from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
 from django_ace import AceWidget
-from judge.models import Judge, Problem
+from judge.models import Judge
 from judge.widgets import AdminMartorWidget
 
 
@@ -26,7 +26,7 @@ class LanguageAdmin(VersionAdmin):
     list_display = ('key', 'name', 'common_name', 'info')
     form = LanguageForm
     search_fields = ['key', 'short_name', 'name']
-    
+
     def get_form(self, request, obj=None, **kwargs):
         form = super(LanguageAdmin, self).get_form(request, obj, **kwargs)
         if obj is not None:

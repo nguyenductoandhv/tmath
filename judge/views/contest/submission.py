@@ -1,35 +1,24 @@
-import datetime
 import json
-from collections import namedtuple
-from itertools import groupby
-from operator import attrgetter
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist,
-                                    PermissionDenied)
-from django.db.models import Prefetch, Q
-from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseRedirect, JsonResponse)
+from django.core.exceptions import ImproperlyConfigured
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.utils.html import escape, format_html
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
-from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, ListView
+from django.views.generic import ListView
 
 # from judge import event_poster as event
-from judge.highlight_code import highlight_code
-from judge.models import (Contest, Language, Log, Problem, ProblemTranslation,
-                          Profile, Submission, ContestSubmission)
+from judge.models import Contest, Language, Problem, Profile, Submission
 from judge.models.contest import ContestProblem
 from judge.utils.infinite_paginator import InfinitePaginationMixin
-from judge.utils.problem_data import get_problem_testcases_data
 from judge.utils.problems import (get_result_data, user_completed_ids,
                                   user_editable_ids, user_tester_ids)
 from judge.utils.raw_sql import use_straight_join
@@ -43,7 +32,6 @@ def submission_related(queryset):
               'points', 'result', 'status', 'case_points', 'case_total', 'current_testcase', 'contest_object',
               'locked_after', 'problem__submission_source_visibility_mode') \
         .prefetch_related('contest_object__authors', 'contest_object__curators')
-
 
 
 def filter_submissions_by_visible_problems(queryset, user):
@@ -146,7 +134,7 @@ class SubmissionsListBase(LoginRequiredMixin, DiggPaginatorMixin, TitleMixin, Li
         check = self.access_check(request)
         if check is not None:
             return check
-        
+
         self.selected_languages = set(request.GET.getlist('language_code'))
         self.selected_statuses = set(request.GET.getlist('status'))
 
@@ -241,13 +229,15 @@ class ProblemSubmissionsBase(SubmissionsListBase):
     def get(self, request, *args, **kwargs):
         if 'problem' not in kwargs:
             raise ImproperlyConfigured(_('Must pass a problem'))
-        self.contest_problem = get_object_or_404(ContestProblem, contest__key=kwargs['contest'],order=kwargs['problem'])
+        self.contest_problem = get_object_or_404(ContestProblem, contest__key=kwargs['contest'],
+                                                 order=kwargs['problem'])
         self.problem = self.contest_problem.problem
         self.problem_name = self.contest_problem.temporary_name
         return super(ProblemSubmissionsBase, self).get(request, *args, **kwargs)
 
     def get_all_submissions_page(self):
-        return reverse('contest_problem_submissions', kwargs={'problem': self.contest_problem.order, 'contest': self.contest.key})
+        return reverse('contest_problem_submissions', kwargs={'problem': self.contest_problem.order,
+                                                              'contest': self.contest.key})
 
     def get_context_data(self, **kwargs):
         context = super(ProblemSubmissionsBase, self).get_context_data(**kwargs)
@@ -261,8 +251,9 @@ class ProblemSubmissionsBase(SubmissionsListBase):
 class ContestProblemSubmissions(ProblemSubmissionsBase):
     def get_my_submissions_page(self):
         if self.request.user.is_authenticated:
-            return reverse('user_contest_problem_submissions', kwargs={'problem': self.contest_problem.order, 'contest': self.contest.key,
-                                                       'user': self.request.user.username})
+            return reverse('user_contest_problem_submissions',
+                           kwargs={'problem': self.contest_problem.order, 'contest': self.contest.key,
+                                   'user': self.request.user.username})
 
 
 class UserContestProblemSubmissions(ConditionalUserTabMixin, UserMixin, ContestProblemSubmissions):
@@ -286,7 +277,8 @@ class UserContestProblemSubmissions(ConditionalUserTabMixin, UserMixin, ContestP
         if self.request.user.is_authenticated and self.request.profile == self.profile:
             return format_html('''My submissions for <a class="content_title" href="{1}">{0}</a>''',
                                self.problem_name, self.contest_problem.get_absolute_url())
-        return format_html('''<a class="content_title" href="{1}">{0}</a>'s submissions for <a class="content_title" href="{3}">{2}</a>''',
+        return format_html('''<a class="content_title" href="{1}">
+                           {0}</a>'s submissions for <a class="content_title" href="{3}">{2}</a>''',
                            self.username, reverse('user_page', args=[self.username]),
                            self.problem_name, self.contest_problem.get_absolute_url())
 

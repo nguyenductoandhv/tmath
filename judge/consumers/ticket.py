@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
+
 class TicketConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.room_name = 'tickets'
@@ -28,13 +29,13 @@ class TicketConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name, message
         )
-    
+
     async def ticket_message(self, event):
         await self.send_json({
             "type": "ticket-message",
             "message": event['message'],
         })
-    
+
     async def ticket_status(self, event):
         await self.send_json({
             "type": "ticket-status",
@@ -70,13 +71,13 @@ class DetailTicketConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name, message
         )
-    
+
     async def ticket_message(self, event):
         await self.send_json({
             "type": "ticket-message",
             "message": event['message'],
         })
-    
+
     async def ticket_status(self, event):
         await self.send_json({
             "type": "ticket-status",

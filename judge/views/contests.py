@@ -80,7 +80,8 @@ class ContestListMixin(object):
         if not self.request.user.is_authenticated:
             return queryset.filter(is_private=False)
         if not self.request.user.is_superuser:
-            return queryset.filter(Q(is_private=False) | Q(is_private=True, private_contestants=self.request.user.profile))
+            return queryset.filter(Q(is_private=False) |
+                                   Q(is_private=True, private_contestants=self.request.user.profile))
         return Contest.objects.all()
         # return Contest.get_visible_contests(self.request.user)
 
@@ -112,7 +113,8 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
         context = super(ContestList, self).get_context_data(**kwargs)
         present, active, future = [], [], []
         for contest in self._get_queryset().exclude(end_time__lt=self._now):
-            if (contest.pre_time and contest.pre_time > self._now) or (not contest.pre_time and contest.start_time > self._now):
+            if (contest.pre_time and contest.pre_time > self._now) or \
+               (not contest.pre_time and contest.start_time > self._now):
                 future.append(contest)
             else:
                 present.append(contest)
@@ -157,7 +159,6 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
     def get(self, request, *args, **kwargs):
         self.setup_contest_list(request)
         return super().get(request, *args, **kwargs)
-
 
 
 class PrivateContestError(Exception):
@@ -886,7 +887,7 @@ class ContestRawView(ContestMixin, DetailView):
             raise Http404()
 
         contest = self.get_object()
-        
+
         cproblems = contest.contest_problems.order_by('order')
 
         problems = [c.problem for c in cproblems]
@@ -900,7 +901,9 @@ class ContestRawView(ContestMixin, DetailView):
                 trans = None
             list_trans += ((problem, trans),)
         context = super().get_context_data(**kwargs)
-        context['problems'] = [(problem, problem.name if trans is None else trans.name, problem.description if trans is None else trans.description) for problem, trans in list_trans]
+        context['problems'] = [(problem, problem.name if trans is None else
+                                trans.name, problem.description if trans is None else
+                                trans.description) for problem, trans in list_trans]
         context['url'] = self.request.build_absolute_uri()
         context['math_engine'] = 'jax'
         return context
@@ -920,7 +923,7 @@ class ContestPdfView(LoginRequiredMixin, ContestMixin, SingleObjectMixin, View):
             raise Http404()
 
         contest = self.get_object()
-        
+
         cproblems = contest.contest_problems.order_by('order')
 
         problems = [c.problem for c in cproblems]
@@ -941,7 +944,9 @@ class ContestPdfView(LoginRequiredMixin, ContestMixin, SingleObjectMixin, View):
             with DefaultPdfMaker() as maker, translation.override(language):
                 maker.html = get_template('contest/raw.html').render({
                     'contest': contest,
-                    'problems': [(problem, problem.name if trans is None else trans.name, problem.description if trans is None else trans.description) for problem, trans in list_trans],
+                    'problems': [(problem, problem.name if trans is None else
+                                  trans.name, problem.description if trans is None else
+                                  trans.description) for problem, trans in list_trans],
                     'url': request.build_absolute_uri(),
                     'math_engine': maker.math_engine,
                 }).replace('"//', '"https://').replace("'//", "'https://")
@@ -993,7 +998,7 @@ class SampleContestPDF(SingleObjectMixin, View):
             raise Http404()
 
         contest: SampleContest = self.get_object()
-        
+
         cproblems = contest.contest_problems.all().order_by('order')
         problems = [problem.problem for problem in cproblems]
 
@@ -1017,7 +1022,9 @@ class SampleContestPDF(SingleObjectMixin, View):
             with DefaultPdfMaker() as maker, translation.override(language):
                 maker.html = get_template('contest/raw.html').render({
                     'contest': contest,
-                    'problems': [(problem, problem.name if trans is None else trans.name, problem.description if trans is None else trans.description) for problem, trans in list_trans],
+                    'problems': [(problem, problem.name if trans is None else
+                                  trans.name, problem.description if trans is None else
+                                  trans.description) for problem, trans in list_trans],
                     'url': request.build_absolute_uri(),
                     'math_engine': maker.math_engine,
                 }).replace('"//', '"https://').replace("'//", "'https://")
@@ -1046,6 +1053,7 @@ class SampleContestPDF(SingleObjectMixin, View):
         response['Content-Type'] = 'application/pdf'
         response['Content-Disposition'] = 'inline; filename=%s.%s.pdf' % (contest.key, language)
         return response
+
 
 def exportcsv(request, contest):
     import codecs

@@ -14,9 +14,8 @@ class JudgeAppConfig(AppConfig):
         # noinspection PyUnresolvedReferences
         from . import signals, jinja2  # noqa: F401, imported for side effects
 
-        from judge.models import Language, Profile, Organization, Problem, LoggedInUser
+        from judge.models import Organization
         from chat.models import ChatRoom, ChatParticipation
-        from django.contrib.auth.models import User
 
         # try:
         #     lang = Language.get_default_language()
@@ -37,7 +36,7 @@ class JudgeAppConfig(AppConfig):
         #     description = description.replace('~', '$')
         #     problem.description = description
         #     problem.save()
-        
+
         try:
             for org in Organization.objects.filter(chat_room=None):
                 room = ChatRoom(organization=org, title=org.name)

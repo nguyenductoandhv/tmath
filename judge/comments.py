@@ -18,7 +18,7 @@ from reversion import revisions
 from reversion.models import Revision, Version
 
 from judge.dblock import LockModel
-from judge.models import Comment, CommentLock, CommentVote
+from judge.models import Comment, CommentLock
 from judge.widgets import HeavyPreviewPageDownWidget
 
 

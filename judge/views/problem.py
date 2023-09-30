@@ -8,46 +8,54 @@ from operator import itemgetter
 from random import randrange
 
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count, F, Prefetch, Q, FilteredRelation, CharField
+from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q
 from django.db.models.functions import Coalesce
 from django.db.utils import ProgrammingError
-from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         HttpResponseForbidden, HttpResponseRedirect,
+                         )
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _, gettext_lazy
-from django.views.generic import ListView, View, CreateView, UpdateView
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
+from django.views.generic import CreateView, ListView, UpdateView, View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
 from reversion import revisions
 
 from judge.comments import CommentedDetailView
-from judge.forms import LanguageInlineFormset, ProblemCloneForm, ProblemCreateForm, \
-    ProblemSubmitForm, ProblemUpdateForm, CreatePublicSolutionForm
-from judge.models import ContestSubmission, Judge, Language, Problem, ProblemGroup, \
-    ProblemTranslation, ProblemType, RuntimeVersion, Solution, Submission, SubmissionSource, \
-    Profile
+from judge.forms import (CreatePublicSolutionForm, LanguageInlineFormset,
+                         ProblemCloneForm, ProblemCreateForm,
+                         ProblemSubmitForm, ProblemUpdateForm)
+from judge.models import (ContestSubmission, Judge, Language, Problem,
+                          ProblemGroup, ProblemTranslation, ProblemType,
+                          Profile, RuntimeVersion, Solution, Submission,
+                          SubmissionSource)
 from judge.models.contest import Contest
-from judge.models.problem import ProblemClass
-from judge.models.problem_data import ProblemData, ProblemTestCase, PublicSolution, SolutionVote
-from judge.pdf_problems import DefaultPdfMaker, HAS_PDF
+from judge.models.problem_data import (ProblemData, ProblemTestCase,
+                                       PublicSolution, SolutionVote)
+from judge.pdf_problems import HAS_PDF, DefaultPdfMaker
 from judge.utils.diggpaginator import DiggPaginator
 from judge.utils.opengraph import generate_opengraph
-from judge.utils.problems import contest_attempted_ids, contest_completed_ids, hot_problems, user_attempted_ids, \
-    user_completed_ids
-from judge.utils.strings import safe_float_or_none, safe_int_or_none
+from judge.utils.problems import (contest_attempted_ids, contest_completed_ids,
+                                  hot_problems, user_attempted_ids,
+                                  user_completed_ids)
+from judge.utils.strings import safe_int_or_none
 from judge.utils.tickets import own_ticket_filter
-from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, SingleObjectFormView, TitleMixin, add_file_response, generic_message
+from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
+                               SingleObjectFormView, TitleMixin,
+                               add_file_response, generic_message)
 from judge.views.widgets import submission_uploader
 
 
@@ -193,7 +201,8 @@ class ProblemDetail(ProblemMixin, SolvedProblemMixin, CommentedDetailView):
                                                   get_contest_submission_count(self.object, user.profile,
                                                                                user.profile.current_contest.virtual), 0)
             num_solution = self.contest.limit_solution
-            num_solution -= PublicSolution.objects.filter(author=user.profile, problem=self.object, contest=self.contest).count()
+            num_solution -= PublicSolution.objects.filter(author=user.profile, problem=self.object,
+                                                          contest=self.contest).count()
             context['can_add_solution'] = num_solution > 0
             context['num_solution'] = num_solution
 
@@ -349,7 +358,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             elif sort_key == 'type':
                 queryset = list(queryset)
                 queryset.sort(key=lambda problem: problem.types_list[0] if problem.types_list else '',
-                                reverse=self.order.startswith('-'))
+                              reverse=self.order.startswith('-'))
             paginator.object_list = queryset
         return paginator
 
@@ -368,7 +377,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
             )).annotate(i18n_name=Coalesce(
                 F('i18n_translation__name'), F('problem__name'), output_field=CharField(),
             )).order_by('order')
-        
+
         return [{
             'link': p.get_absolute_url(),
             'id': p.problem_id,
@@ -693,7 +702,7 @@ class ProblemSubmit(LoginRequiredMixin, ProblemMixin, TitleMixin, SingleObjectFo
                 origin_url = ''
 
             source = SubmissionSource(
-                submission=self.new_submission, 
+                submission=self.new_submission,
                 source=form.cleaned_data['source'] + source_url,
                 file=origin_url
             )
@@ -726,14 +735,15 @@ class ProblemSubmit(LoginRequiredMixin, ProblemMixin, TitleMixin, SingleObjectFo
                 kwargs.get(self.slug_url_kwarg),
             )
             return HttpResponseForbidden('<h1>Do you want me to ban you?</h1>')
-        
+
     def get(self, request, *args, **kwargs):
         self.object: Problem = self.get_object()
         if not self.object.can_submitted_by(request.user):
             return generic_message(request,
-                        _('Can\'t submit to problem'), 
-                        _('You don\'t have the permission to submit this problem. Please contact admin for permission.'), 
-                        status=403)
+                                   _('Can\'t submit to problem'),
+                                   _('You don\'t have the permission to submit this problem.'
+                                     ' Please contact admin for permission.'),
+                                   status=403)
         return super().get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
@@ -747,7 +757,7 @@ class ProblemSubmit(LoginRequiredMixin, ProblemMixin, TitleMixin, SingleObjectFo
                 raise PermissionDenied()
         else:
             self.old_submission = None
-        
+
         if request.in_contest and request.participation.contest.start_time > timezone.now():
             return generic_message(request, _('Contest not ongoing'),
                                    _('You cannot submit now.'), status=403)
@@ -825,14 +835,14 @@ class ProblemNew(ProblemMixin, PermissionRequiredMixin, TitleMixin, CreateView):
         for language in language_limits:
             language.problem = self.object
             language.save()
-        
+
         # solution = solutionform.save(commit=False)
         # for sol in solution:
         #     sol.problem = self.object
         #     sol.save()
-        
+
         return HttpResponseRedirect(self.get_success_url())
-    
+
     def form_invalid(self, form, languagelimitform):
         return self.render_to_response(
             self.get_context_data(
@@ -841,7 +851,7 @@ class ProblemNew(ProblemMixin, PermissionRequiredMixin, TitleMixin, CreateView):
                 # solutionform=solutionform
             )
         )
-    
+
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission():
             return self.handle_no_permission()
@@ -851,7 +861,6 @@ class ProblemNew(ProblemMixin, PermissionRequiredMixin, TitleMixin, CreateView):
         elif request.method == 'GET':
             return self.get(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
-        
 
 
 class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView):
@@ -878,7 +887,7 @@ class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView)
         form = self.get_form(form_class)
         languagelimitform = LanguageInlineFormset(self.request.POST, instance=self.object)
         # solutionform = SolutionInlineFormset(self.request.POST, instance=self.object)
-        if form.is_valid() and languagelimitform.is_valid(): # and solutionform.is_valid():
+        if form.is_valid() and languagelimitform.is_valid():  # and solutionform.is_valid():
             return self.form_valid(form, languagelimitform)
         else:
             return self.form_invalid(form, languagelimitform)
@@ -890,7 +899,7 @@ class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView)
         for language in language_limits:
             language.problem_id = self.object.id
             language.save()
-        
+
         for language in languagelimitform.deleted_objects:
             language.delete()
 
@@ -899,12 +908,12 @@ class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView)
         # for sol in solution:
         #     sol.problem_id = self.object.id
         #     sol.save()
-        
+
         # for sol in solutionform.deleted_objects:
         #     sol.delete()
 
         return HttpResponseRedirect(self.get_success_url())
-    
+
     def form_invalid(self, form, languagelimitform):
         # print(languagelimitform.errors)
         return self.render_to_response(
@@ -943,9 +952,10 @@ class PublicSolutionCreateView(TitleMixin, LoginRequiredMixin, CreateView):
         self.problem: Problem = Problem.objects.get(code=code)
         if profile.current_contest is not None:
             self.contest: Contest = profile.current_contest.contest
-            if not self.problem in self.contest.problems.all():
+            if self.problem not in self.contest.problems.all():
                 raise Http404()
-            num_solution = PublicSolution.objects.filter(contest=self.contest, problem=self.problem, author=profile).count()
+            num_solution = PublicSolution.objects.filter(contest=self.contest,
+                                                         problem=self.problem, author=profile).count()
             if num_solution >= self.contest.limit_solution:
                 raise Http404()
 
@@ -974,7 +984,7 @@ class PublicSolutionListView(TitleMixin, DiggPaginatorMixin, ListView):
         code = self.kwargs.get('problem', None)
         self.problem: Problem = Problem.objects.get(code=code)
         return super().dispatch(request, *args, **kwargs)
-    
+
     def _get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(problem=self.problem)
@@ -990,7 +1000,8 @@ class PublicSolutionListView(TitleMixin, DiggPaginatorMixin, ListView):
         queryset = self._get_queryset()
         if self.profile is None or not self.request.user.is_superuser:
             queryset = queryset.filter(approved=True)
-        return queryset 
+        return queryset
+
 
 class SolutionMixin(object):
     model = PublicSolution
@@ -1037,7 +1048,8 @@ class PublicSolutionDetailView(TitleMixin, LoginRequiredMixin, SolutionMixin, Co
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if SolutionVote.objects.filter(voter=self.request.user.profile, solution=self.get_object()).exists():
-            context['vote'] = SolutionVote.objects.filter(voter=self.request.user.profile, solution=self.get_object()).first().score
+            context['vote'] = SolutionVote.objects.filter(voter=self.request.user.profile,
+                                                          solution=self.get_object()).first().score
         else:
             context['vote'] = 0
         return context
@@ -1080,8 +1092,10 @@ def vote_solution(request, delta):
 def upvote_solution(request):
     return vote_solution(request, 1)
 
+
 def downvote_solution(request):
     return vote_solution(request, -1)
+
 
 def getScratch(request):
     problems = Problem.objects.filter(pk__gt=2799, pk__lt=3000)
@@ -1101,7 +1115,7 @@ def getScratch(request):
         tmp_case = json.loads(cases)
         e['fields']['is_organization_private'] = False
         e['fields']['organizations'] = []
-        e['fields']['allowed_languages'] = [1,2,3,4,5,6,7,8,9]
+        e['fields']['allowed_languages'] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         e['fields']['authors'] = [2]
         e['fields']['points'] = 100
         # e['fields']['classes'] = 4

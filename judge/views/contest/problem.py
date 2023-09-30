@@ -13,17 +13,18 @@ from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView, TemplateView
+from django.views.generic import DetailView
 
 from judge.forms import ProblemSubmitForm
 from judge.models import (Contest, ContestProblem, ContestSubmission, Judge,
-                          Language, Problem, Profile, RuntimeVersion,
+                          Language, RuntimeVersion,
                           Submission, SubmissionSource)
 from judge.utils.views import SingleObjectFormView, TitleMixin, generic_message
 from judge.views.contests import ContestMixin, PrivateContestError
 from judge.views.problem import SolvedProblemMixin
 
 user_logger = logging.getLogger('judge.user')
+
 
 def get_contest_submission_count(problem: ContestProblem, profile, virtual):
     print(profile)
@@ -40,18 +41,19 @@ class ContestProblemListView(LoginRequiredMixin, ContestMixin, TitleMixin, Solve
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['problems'] = self.object.contest_problems.select_related('problem').defer('problem__description') \
-                              .annotate(user_count=Count('submission__participation', distinct=True)).order_by('order')
+            .annotate(user_count=Count('submission__participation', distinct=True)).order_by('order')
         context['completed_problem_ids'] = self.get_completed_problems()
         context['attempted_problems'] = self.get_attempted_problems()
         return context
-    
+
 
 class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, SolvedProblemMixin, DetailView):
     template_name = 'contest/problem/detail.html'
 
     def get_object(self, queryset=None):
         contest = super().get_object(queryset)
-        self.problem: ContestProblem = ContestProblem.objects.filter(contest=contest, order=self.kwargs['problem']).first()
+        self.problem: ContestProblem = ContestProblem.objects.filter(contest=contest,
+                                                                     order=self.kwargs['problem']).first()
         if not self.problem:
             raise Http404()
         return contest
@@ -64,7 +66,7 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
         user = self.request.user
         authed = user.is_authenticated
         context['has_submissions'] = authed and ContestSubmission.objects.filter(participation__user=user.profile,
-                                                                          problem=self.problem).exists()
+                                                                                 problem=self.problem).exists()
         context['problem'] = self.problem
         context['description'] = self.problem.problem.description
         context['completed_problem_ids'] = self.get_completed_problems()
@@ -75,12 +77,12 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
         if user.profile.current_contest and user.profile.current_contest.contest == self.object:
             context['submission_limit'] = self.problem.max_submissions
             if self.problem.max_submissions:
-                context['submissions_left'] = max(self.problem.max_submissions -
-                                                    get_contest_submission_count(self.problem, user.profile,
-                                                                                user.profile.current_contest.virtual), 0)
+                contest_submission_count = get_contest_submission_count(self.problem, user.profile,
+                                                                        user.profile.current_contest.virtual)
+                context['submissions_left'] = max(self.problem.max_submissions - contest_submission_count, 0)
         context['show_languages'] = self.problem.problem.allowed_languages.count() != Language.objects.count()
         return context
-    
+
 
 class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleObjectFormView):
     template_name = 'contest/problem/submit.html'
@@ -88,12 +90,13 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
 
     def get_object(self, queryset=None):
         contest = super().get_object(queryset)
-        self.contest_problem: ContestProblem = ContestProblem.objects.filter(contest=contest, order=self.kwargs['problem']).first()
+        self.contest_problem: ContestProblem = ContestProblem.objects.filter(contest=contest,
+                                                                             order=self.kwargs['problem']).first()
         if not self.contest_problem:
             raise Http404()
         self.problem = self.contest_problem.problem
         return contest
-    
+
     @cached_property
     def remaining_submission_count(self):
         if self.request.profile.current_contest is None:
@@ -213,7 +216,7 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             origin_url = ''
 
             source = SubmissionSource(
-                submission=self.new_submission, 
+                submission=self.new_submission,
                 source=form.cleaned_data['source'] + source_url,
                 file=origin_url
             )
@@ -246,13 +249,14 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
                 kwargs.get(self.slug_url_kwarg),
             )
             return HttpResponseForbidden('<h1>Do you want me to ban you?</h1>')
-        
+
     def get(self, request, *args, **kwargs):
         if not self.problem.can_submitted_by(request.user):
             return generic_message(request,
-                        _('Can\'t submit to problem'), 
-                        _('You don\'t have the permission to submit this problem. Please contact admin for permission.'), 
-                        status=403)
+                                   _('Can\'t submit to problem'),
+                                   _('You don\'t have the permission to submit this problem. '
+                                     'Please contact admin for permission.'),
+                                   status=403)
         return super().get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
@@ -265,16 +269,16 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             return render(request, 'contest/private.html', {
                 'error': e, 'title': _('Access to contest "%s" denied') % e.name,
             }, status=403)
-        
+
         profile = request.profile
         if not profile.current_contest or (profile.current_contest and profile.current_contest.contest != self.object):
             return generic_message(request, _('Not in contest'),
                                    _('You are not in a contest.'), status=403)
-        
+
         if request.in_contest and request.participation.contest.start_time > timezone.now():
             return generic_message(request, _('Contest not ongoing'),
                                    _('You cannot submit now.'), status=403)
-        
+
         submission_id = kwargs.get('submission')
         if submission_id is not None:
             self.old_submission = get_object_or_404(

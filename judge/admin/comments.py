@@ -37,15 +37,15 @@ class CommentAdmin(VersionAdmin):
     def hide_comment(self, request, queryset):
         count = queryset.update(hidden=True)
         self.message_user(request, ngettext('%d comment successfully hidden.',
-                                             '%d comments successfully hidden.',
-                                             count) % count)
+                                            '%d comments successfully hidden.',
+                                            count) % count)
     hide_comment.short_description = _('Hide comments')
 
     def unhide_comment(self, request, queryset):
         count = queryset.update(hidden=False)
         self.message_user(request, ngettext('%d comment successfully unhidden.',
-                                             '%d comments successfully unhidden.',
-                                             count) % count)
+                                            '%d comments successfully unhidden.',
+                                            count) % count)
     unhide_comment.short_description = _('Unhide comments')
 
     def linked_page(self, obj):

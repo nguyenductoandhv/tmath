@@ -1,24 +1,20 @@
 import zipfile
-import io
 from typing import Any
 
-from django import forms, http
-from django.db import transaction
+from django import forms
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
-from django.http import (Http404, HttpRequest, HttpResponse,
-                         HttpResponseRedirect)
-from django.http.response import HttpResponse
+from django.db import transaction
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 
-from judge.models import (Contest, ContestProblem, ContestSubmission, Profile,
-                          Submission, SubmissionSource, ContestParticipation)
+from judge.models import (Contest, ContestParticipation, ContestProblem,
+                          ContestSubmission, Profile, Submission,
+                          SubmissionSource)
 from judge.models.runtime import Language
 from judge.utils.views import TitleMixin, generic_message
-from judge.views.contests import ContestMixin
 
 EXTS = ('.c', '.cpp', '.java', '.py', '.pas')
 
@@ -29,6 +25,7 @@ LANGS = {
     'py': 'PY3',
     'pas': 'PAS',
 }
+
 
 class ContestDataForm(forms.Form):
     # zipfile field
@@ -68,7 +65,7 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                 except UnicodeDecodeError:
                     from sys import stderr
                     print(file, file=stderr)
-                    
+
                 ext = file.split('.')[-1]
                 if temp[0] not in data:
                     data[temp[0]] = {}

@@ -59,8 +59,8 @@ class ContestLevel(models.Model):
     code = models.CharField(_("code"), max_length=50, unique=True, blank=False,
                             help_text=_('code for this contest level'))
     about = models.CharField(_("description"), max_length=255, blank=False,
-                            help_text=_('detail for this contest level'))
-    
+                             help_text=_('detail for this contest level'))
+
     def __str__(self) -> str:
         return self.code
 
@@ -171,7 +171,8 @@ class Contest(models.Model):
     pre_time = models.DateTimeField(_("Pre-time"), auto_now=False, auto_now_add=False, null=True, blank=True)
 
     is_limit_language = models.BooleanField(_("language restriction"), default=False)
-    limit_language = models.ForeignKey("judge.Language", verbose_name=_("limit language"), on_delete=models.SET_NULL, null=True, blank=True)
+    limit_language = models.ForeignKey("judge.Language", verbose_name=_("limit language"),
+                                       on_delete=models.SET_NULL, null=True, blank=True)
 
     is_public_contest = models.BooleanField(_("Public contest"), default=False)
 
@@ -310,7 +311,7 @@ class Contest(models.Model):
     @cached_property
     def started(self):
         return self.start_time < self._now
-    
+
     @cached_property
     def author_ids(self):
         return Contest.authors.through.objects.filter(contest=self).values_list('profile_id', flat=True)
@@ -406,7 +407,7 @@ class Contest(models.Model):
             return False
         else:
             return True
-        
+
     def is_accessible_by(self, user):
         if self.is_public_contest:
             return True
@@ -426,7 +427,8 @@ class Contest(models.Model):
     @classmethod
     def get_visible_contests(cls, user):
         if not user.is_authenticated:
-            q = Q(is_visible=True, is_organization_private=False, is_private=False) | Q(is_visible=True, is_public_contest=True)
+            q = (Q(is_visible=True, is_organization_private=False, is_private=False) |
+                 Q(is_visible=True, is_public_contest=True))
             return cls.objects.filter(q).defer('description').distinct()
 
         queryset = cls.objects.defer('description')
@@ -487,9 +489,11 @@ class SampleContest(models.Model):
                                                  'specified organizations.'))
     is_rated = models.BooleanField(verbose_name=_('contest rated'), help_text=_('Whether this contest can be rated.'),
                                    default=False)
-    scoreboard_visibility = models.CharField(verbose_name=_('scoreboard visibility'), default=Contest.SCOREBOARD_VISIBLE,
-                                             max_length=1, help_text=_('Scoreboard visibility through the duration '
-                                                                       'of the contest'), choices=Contest.SCOREBOARD_VISIBILITY)
+    scoreboard_visibility = models.CharField(verbose_name=_('scoreboard visibility'),
+                                             default=Contest.SCOREBOARD_VISIBLE,
+                                             max_length=1, choices=Contest.SCOREBOARD_VISIBILITY,
+                                             help_text=_('Scoreboard visibility through the duration '
+                                                         'of the contest'), )
     use_clarifications = models.BooleanField(verbose_name=_('no comments'),
                                              help_text=_("Use clarification system instead of comments."),
                                              default=True)
@@ -533,7 +537,8 @@ class SampleContest(models.Model):
     points_precision = models.IntegerField(verbose_name=_('precision points'), default=3,
                                            validators=[MinValueValidator(0), MaxValueValidator(10)],
                                            help_text=_('Number of digits to round points to.'))
-    level = models.ForeignKey(ContestLevel, verbose_name=_("contest level"), on_delete=models.SET_NULL, null=True, blank=True)
+    level = models.ForeignKey(ContestLevel, verbose_name=_("contest level"), on_delete=models.SET_NULL,
+                              null=True, blank=True)
 
     @property
     def markdown_style(self):
@@ -549,13 +554,12 @@ class SampleContest(models.Model):
 
     @cached_property
     def get_label_for_problem(self):
-        if not self.problem_label_script:
-            return self.format.get_label_for_problem
+        return self.format.get_label_for_problem
 
-        def DENY_ALL(obj, attr_name, is_setting):
-            raise AttributeError()
-        lua = LuaRuntime(attribute_filter=DENY_ALL, register_eval=False, register_builtins=False)
-        return lua.eval(self.problem_label_script)
+        # def DENY_ALL(obj, attr_name, is_setting):
+        #     raise AttributeError()
+        # lua = LuaRuntime(attribute_filter=DENY_ALL, register_eval=False, register_builtins=False)
+        # return lua.eval(self.problem_label_script)
 
     class Meta:
         verbose_name = _('sample contest')
@@ -656,7 +660,8 @@ class ContestParticipation(models.Model):
 
 class SampleContestProblem(models.Model):
     problem = models.ForeignKey(Problem, verbose_name=_('problem'), related_name='samplecontests', on_delete=CASCADE)
-    contest = models.ForeignKey(SampleContest, verbose_name=_('contest'), related_name='contest_problems', on_delete=CASCADE)
+    contest = models.ForeignKey(SampleContest, verbose_name=_('contest'),
+                                related_name='contest_problems', on_delete=CASCADE)
     points = models.IntegerField(verbose_name=_('points'))
     partial = models.BooleanField(default=True, verbose_name=_('partial'))
     is_pretested = models.BooleanField(default=False, verbose_name=_('is pretested'))
@@ -681,7 +686,8 @@ class ContestProblem(models.Model):
     problem = models.ForeignKey(Problem, verbose_name=_('problem'), related_name='contests', on_delete=CASCADE)
     contest = models.ForeignKey(Contest, verbose_name=_('contest'), related_name='contest_problems', on_delete=CASCADE)
     points = models.IntegerField(verbose_name=_('points'))
-    first_accept = models.ForeignKey(ContestParticipation, verbose_name=_('first user accept this problem'), default=None, null=True, on_delete=models.SET_NULL)
+    first_accept = models.ForeignKey(ContestParticipation, verbose_name=_('first user accept this problem'),
+                                     default=None, null=True, on_delete=models.SET_NULL)
     partial = models.BooleanField(default=True, verbose_name=_('partial'))
     is_pretested = models.BooleanField(default=False, verbose_name=_('is pretested'))
     order = models.PositiveIntegerField(db_index=True, verbose_name=_('order'))
@@ -692,7 +698,7 @@ class ContestProblem(models.Model):
                                           default=None, null=True, blank=True,
                                           validators=[MinValueOrNoneValidator(1, _('Why include a problem you '
                                                                                    'can\'t submit to?'))])
-    
+
     @classmethod
     def get_order(cls, order: str | int):
         if isinstance(order, str):
@@ -704,21 +710,20 @@ class ContestProblem(models.Model):
             if self.first_accept.contest == self.contest:
                 return
             self.first_accept = None
-        queryset = ContestSubmission.objects.filter(problem=self, points=self.points, 
-                                                    submission__date__lte=self.contest.end_time, 
+        queryset = ContestSubmission.objects.filter(problem=self, points=self.points,
+                                                    submission__date__lte=self.contest.end_time,
                                                     submission__date__gte=self.contest.start_time)
         submission = queryset.order_by('id').first()
         self.first_accept = submission.participation if submission is not None else None
         self.save()
     update_first_accept.alters_data = True
-    
+
     @cached_property
     def temporary_name(self):
         return f'Problem {self.contest.get_label_for_problem(self.order)}'
-    
+
     def get_absolute_url(self):
         return reverse("contest_problem_detail", kwargs={"contest": self.contest.key, "problem": self.order})
-    
 
     class Meta:
         unique_together = ('problem', 'contest')

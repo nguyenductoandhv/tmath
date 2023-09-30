@@ -9,7 +9,7 @@ from mptt.admin import DraggableMPTTAdmin
 from reversion.admin import VersionAdmin
 
 from judge.dblock import LockModel
-from judge.models import NavigationBar, Log
+from judge.models import NavigationBar
 from judge.widgets import AdminHeavySelect2MultipleWidget, AdminHeavySelect2Widget, AdminMartorWidget
 
 
@@ -90,6 +90,7 @@ class CourseForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(CourseForm, self).__init__(*args, **kwargs)
 
+
 class CourseAdmin(VersionAdmin):
     fieldsets = (
         (None, {
@@ -140,6 +141,7 @@ class UserListFilter(admin.SimpleListFilter):
             return queryset.filter(user_id=self.value(), user__is_staff=True)
         return queryset
 
+
 class UserListFilter2(admin.SimpleListFilter):
     title = _('user')
     parameter_name = 'user'
@@ -151,6 +153,7 @@ class UserListFilter2(admin.SimpleListFilter):
         if self.value():
             return queryset.filter(user__user_id=self.value(), user__user__is_staff=True)
         return queryset
+
 
 class LogEntryAdmin(admin.ModelAdmin):
     readonly_fields = ('user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message')
@@ -203,4 +206,3 @@ class LogAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-

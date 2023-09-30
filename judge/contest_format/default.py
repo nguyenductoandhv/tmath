@@ -49,9 +49,12 @@ class DefaultContestFormat(BaseContestFormat):
         format_data = (participation.format_data or {}).get(str(contest_problem.id))
         if format_data:
             return format_html(
-                u'<td class="{state} default_format"><a href="{url}">{points}<div class="solving-time">{time}</div></a></td>',
+                u'''<td class="{state} default_format">
+                    <a href="{url}">{points}<div class="solving-time">{time}</div></a>
+                </td>''',
                 state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                       self.best_solution_state(format_data['points'], contest_problem.points, contest_problem.first_accept == participation)),
+                       self.best_solution_state(format_data['points'], contest_problem.points,
+                                                contest_problem.first_accept == participation)),
                 url=reverse('user_contest_problem_submissions',
                             args=[self.contest.key, contest_problem.order, participation.user.user.username]),
                 points=floatformat(format_data['points']),
@@ -62,7 +65,9 @@ class DefaultContestFormat(BaseContestFormat):
 
     def display_participation_result(self, participation):
         return format_html(
-            u'<td class="sticky right-0 default_format"><a class="font-bold text-black" href="{url}">{points}<div class="solving-time">{cumtime}</div></a></td>',
+            u'''<td class="sticky right-0 default_format">
+                <a class="font-bold text-black" href="{url}">{points}<div class="solving-time">{cumtime}</div></a>
+            </td>''',
             url=reverse('contest_all_user_submissions',
                         args=[self.contest.key, participation.user.user.username]),
             points=floatformat(participation.score, -self.contest.points_precision),

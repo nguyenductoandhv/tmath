@@ -9,22 +9,29 @@ from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from django.template.defaultfilters import filesizeformat
 from django.db.models import Q
-from django.forms import BooleanField, CharField, ChoiceField, Form, ModelForm, MultipleChoiceField, inlineformset_factory
+from django.forms import (BooleanField, CharField, ChoiceField, Form,
+                          ModelForm, MultipleChoiceField,
+                          inlineformset_factory)
+from django.template.defaultfilters import filesizeformat
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django_ace import AceWidget
-from judge.models import Contest, Language, Organization, Problem, Profile, Submission, WebAuthnCredential
+from judge.models import (Contest, Language, Organization, Problem, Profile,
+                          Submission, WebAuthnCredential)
 from judge.models.contest import SampleContest, SampleContestProblem
 from judge.models.problem import LanguageLimit, Solution
 from judge.models.problem_data import PublicSolution
 from judge.utils.subscription import newsletter_id
-from judge.widgets import HeavyPreviewPageDownWidget, Select2MultipleWidget, Select2Widget, MartorWidget
-from martor.fields import MartorFormField
-from judge.widgets.select2 import HeavySelect2MultipleWidget, SemanticSelect, SemanticSelectMultiple, SemanticCheckboxSelectMultiple
+from judge.widgets import (HeavyPreviewPageDownWidget, MartorWidget,
+                           Select2MultipleWidget, Select2Widget)
+from judge.widgets.select2 import (HeavySelect2MultipleWidget,
+                                   SemanticCheckboxSelectMultiple,
+                                   SemanticSelect, SemanticSelectMultiple)
+
+from .admin.contest import ProblemInlineFormset
 
 TOTP_CODE_LENGTH = 6
 
@@ -64,13 +71,14 @@ class ProfileForm(ModelForm):
     if newsletter_id is not None:
         newsletter = forms.BooleanField(label=_('Subscribe to contest updates'), initial=False, required=False)
     test_site = forms.BooleanField(label=_('Enable experimental features'), initial=False, required=False)
-    name = forms.RegexField(regex=r'^(?!\s*$).+', label=_('Fullname'), max_length=50, required=True, 
+    name = forms.RegexField(regex=r'^(?!\s*$).+', label=_('Fullname'), max_length=50, required=True,
                             widget=forms.TextInput(attrs={'style': 'width:200px'}),
                             error_messages={'invalid': _("Don't use empty string")})
 
     class Meta:
         model = Profile
-        fields = ['name', 'about', 'organizations', 'timezone', 'language', 'ace_theme', 'user_script', 'last_change_name']
+        fields = ['name', 'about', 'organizations', 'timezone', 'language',
+                  'ace_theme', 'user_script', 'last_change_name']
         widgets = {
             'user_script': AceWidget(theme='github'),
             'timezone': Select2Widget(attrs={'style': 'width:200px'}),
@@ -158,9 +166,10 @@ def validate_source_length(value):
     if len(value) > settings.MAX_LEN_SOURCE:
         raise ValidationError(f'Source code is too long (maximum is {settings.MAX_LEN_SOURCE} characters)')
 
+
 class ProblemSubmitForm(ModelForm):
     source = CharField(
-        required=False, 
+        required=False,
         widget=AceWidget(theme='twilight', no_ace_media=True),
         validators=[validate_source_length]
     )
@@ -226,7 +235,7 @@ class EditOrganizationForm(ModelForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     remember_me = BooleanField(required=False, label=_('Remember me'))
-    
+
     def __init__(self, *args, **kwargs):
         super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'placeholder': _('Username')})
@@ -372,11 +381,11 @@ class ProblemUpdateForm(ModelForm):
 
     class Meta:
         model = Problem
-        fields = ['code', 'name', 'is_public', 'is_manually_managed', 'authors', 'curators', 'testers', 
-                'banned_users', 'is_organization_private', 'organizations', 'testcase_visibility_mode',
-                'submission_source_visibility_mode', 'is_full_markup', 'description', 'license', 'og_image', 'summary',
-                'types', 'group', 'classes', 
-                'time_limit', 'memory_limit', 'points', 'partial', 'allowed_languages']
+        fields = ['code', 'name', 'is_public', 'is_manually_managed', 'authors', 'curators', 'testers',
+                  'banned_users', 'is_organization_private', 'organizations', 'testcase_visibility_mode',
+                  'submission_source_visibility_mode', 'is_full_markup', 'description',
+                  'license', 'og_image', 'summary', 'types', 'group', 'classes',
+                  'time_limit', 'memory_limit', 'points', 'partial', 'allowed_languages']
         widgets = {
             'code': forms.TextInput(attrs={'placeholder': _('Problem code')}),
             'name': forms.TextInput(attrs={'placeholder': _('Problem name')}),
@@ -458,9 +467,6 @@ class SampleProblemForm(ModelForm):
         fields = '__all__'
 
 
-from .admin.contest import ProblemInlineFormset
-
-
 SampleProblemInlineFormset = inlineformset_factory(
     SampleContest,
     SampleContestProblem,
@@ -481,7 +487,7 @@ class SampleContestForm(ModelForm):
         qs = SampleContest.objects.filter(key=key)
         if qs.count() > 0:
             raise forms.ValidationError(_('Sample contest with key already exists.'))
-        
+
 
 class CreatePublicSolutionForm(ModelForm):
     class Meta:

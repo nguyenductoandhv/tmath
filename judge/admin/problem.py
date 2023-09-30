@@ -16,6 +16,7 @@ from judge.models.problem import ProblemClass, ProblemGroup, ProblemType
 from judge.utils.views import NoBatchDeleteMixin
 from judge.widgets import AdminMartorWidget, CheckboxSelectMultipleWithSelectAll
 
+
 class ProblemForm(ModelForm):
     change_message = forms.CharField(max_length=256, label='Edit reason', required=False)
     # classes = forms.CharField(max_length=255, label="Problem class", required=True)
@@ -147,7 +148,7 @@ class ProblemTranslationInline(admin.StackedInline):
 class HasTestCaseFilter(admin.SimpleListFilter):
     title = 'has test cases'
     parameter_name = 'has_test_cases'
-    
+
     def lookups(self, request, model_admin):
         return (
             ('1', _('Has test cases')),
@@ -180,13 +181,13 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         (_('History'), {'fields': ('change_message',)}),
     )
     autocomplete_fields = [
-        'authors', 
-        'curators', 
-        'testers', 
-        'organizations', 
-        'banned_users', 
-        'classes', 
-        'types', 
+        'authors',
+        'curators',
+        'testers',
+        'organizations',
+        'banned_users',
+        'classes',
+        'types',
         'group',
         'license',
     ]
@@ -194,20 +195,20 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
     ordering = ['-pk']
     search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name',)
     inlines = [
-        LanguageLimitInline, 
-        ProblemClarificationInline, 
-        ProblemSolutionInline, 
+        LanguageLimitInline,
+        ProblemClarificationInline,
+        ProblemSolutionInline,
         ProblemTranslationInline,
     ]
     list_max_show_all = 1000
     actions_on_top = True
     actions_on_bottom = True
     list_filter = (
-        'is_public', 
-        ProblemCreatorListFilter, 
-        ProblemClassFilter, 
-        ProblemGroupFilter, 
-        ProblemTypeFilter, 
+        'is_public',
+        ProblemCreatorListFilter,
+        ProblemClassFilter,
+        ProblemGroupFilter,
+        ProblemTypeFilter,
         HasTestCaseFilter,
     )
     form = ProblemForm
@@ -257,8 +258,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
     def update_publish_date(self, request, queryset):
         count = queryset.update(date=timezone.now())
         self.message_user(request, ngettext("%d problem's publish date successfully updated.",
-                                             "%d problems' publish date successfully updated.",
-                                             count) % count)
+                                            "%d problems' publish date successfully updated.",
+                                            count) % count)
 
     update_publish_date.short_description = _('Set publish date to now')
 
@@ -267,8 +268,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         for problem_id in queryset.values_list('id', flat=True):
             self._rescore(request, problem_id)
         self.message_user(request, ngettext('%d problem successfully marked as public.',
-                                             '%d problems successfully marked as public.',
-                                             count) % count)
+                                            '%d problems successfully marked as public.',
+                                            count) % count)
 
     make_public.short_description = _('Mark problems as public')
 
@@ -277,8 +278,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         for problem_id in queryset.values_list('id', flat=True):
             self._rescore(request, problem_id)
         self.message_user(request, ngettext('%d problem successfully marked as private.',
-                                             '%d problems successfully marked as private.',
-                                             count) % count)
+                                            '%d problems successfully marked as private.',
+                                            count) % count)
 
     make_private.short_description = _('Mark problems as private')
 
@@ -315,10 +316,13 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        if 'autocomplete' in request.path and request.GET.get('model_name') == 'contestproblem' and request.GET.get('field_name') == 'problem':
-            queryset = queryset.annotate(case_count=Count('cases')).filter(case_count__gt=0).order_by('-pk')
-        if 'autocomplete' in request.path and request.GET.get('model_name') == 'publicproblem' and request.GET.get('field_name') == 'problem':
-            queryset = queryset.annotate(case_count=Count('cases')).filter(case_count__gt=0, is_public=False).order_by('-pk')
+        if 'autocomplete' in request.path:
+            if request.GET.get('model_name') == 'contestproblem' and request.GET.get('field_name') == 'problem':
+                queryset = queryset.annotate(case_count=Count('cases')) \
+                    .filter(case_count__gt=0).order_by('-pk')
+            if request.GET.get('model_name') == 'publicproblem' and request.GET.get('field_name') == 'problem':
+                queryset = queryset.annotate(case_count=Count('cases')) \
+                    .filter(case_count__gt=0, is_public=False).order_by('-pk')
         return queryset, use_distinct
 
 
@@ -347,7 +351,7 @@ class PublicSolutionAdmin(admin.ModelAdmin):
             ),
         }),
     )
-    
+
     form = PublicSolutionAdminForm
     readonly_fields = ['author', 'problem', 'created', 'score']
 
@@ -362,7 +366,7 @@ class PublicSolutionAdmin(admin.ModelAdmin):
     def approve_all_solution(self, request, queryset):
         count = queryset.update(approved=True)
         self.message_user(request, ngettext('%d solution successfully marked as approve.',
-                                             '%d solutions successfully marked as approve.',
-                                             count) % count)
+                                            '%d solutions successfully marked as approve.',
+                                            count) % count)
 
     approve_all_solution.short_description = _('Mark solutions as approve')

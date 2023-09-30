@@ -72,8 +72,8 @@ class ContestSubmissionInline(admin.StackedInline):
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         submission = kwargs.pop('obj', None)
-        label = None
         if submission:
+            # label = None
             if db_field.name == 'participation':
                 kwargs['queryset'] = ContestParticipation.objects.filter(user=submission.user,
                                                                          contest__problems=submission.problem) \
@@ -110,17 +110,17 @@ class SubmissionSourceInline(admin.StackedInline):
 class SubmissionAdmin(admin.ModelAdmin):
     change_form_template = 'admin/judge/submission/change_form.html'
     readonly_fields = (
-        'user', 
-        'problem', 
-        'date', 
+        'user',
+        'problem',
+        'date',
         'judged_date',
-        'time', 
-        'memory', 
+        'time',
+        'memory',
         'points',
         'status',
-        'result', 
-        'case_points', 
-        'case_total', 
+        'result',
+        'case_points',
+        'case_total',
         'judged_on',
     )
     fields = ('user', 'problem', 'date', 'judged_date', 'locked_after', 'time', 'memory', 'points', 'language',
@@ -182,8 +182,8 @@ class SubmissionAdmin(admin.ModelAdmin):
         for model in queryset:
             model.judge(rejudge=True, batch_rejudge=True)
         self.message_user(request, ngettext('%d submission was successfully scheduled for rejudging.',
-                                             '%d submissions were successfully scheduled for rejudging.',
-                                             judged) % judged)
+                                            '%d submissions were successfully scheduled for rejudging.',
+                                            judged) % judged)
     judge.short_description = _('Rejudge the selected submissions')
 
     def recalculate_score(self, request, queryset):
@@ -211,8 +211,8 @@ class SubmissionAdmin(admin.ModelAdmin):
             participation.recompute_results()
 
         self.message_user(request, ngettext('%d submission were successfully rescored.',
-                                             '%d submissions were successfully rescored.',
-                                             len(submissions)) % len(submissions))
+                                            '%d submissions were successfully rescored.',
+                                            len(submissions)) % len(submissions))
     recalculate_score.short_description = _('Rescore the selected submissions')
 
     def problem_code(self, obj):

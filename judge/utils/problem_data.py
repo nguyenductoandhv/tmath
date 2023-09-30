@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import shutil
 import zipfile
 
 import yaml
@@ -151,7 +150,7 @@ class ProblemDataCompiler(object):
                     'args': json.loads(case.checker_args),
                 }
             return case.checker
-        
+
         def make_grader(init, case):
             grader_args = {}
             if case.grader_args:

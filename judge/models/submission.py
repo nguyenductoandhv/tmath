@@ -1,5 +1,4 @@
 import hashlib
-import os
 import hmac
 
 from django.conf import settings
@@ -59,6 +58,7 @@ SUBMISSION_RESULT_BACKGROUND = {
     'SC': 'default-result',
     'AB': 'default-result',
 }
+
 
 class Submission(models.Model):
     STATUS = (
@@ -125,13 +125,13 @@ class Submission(models.Model):
     @property
     def result_class(self):
         # This exists to save all these conditionals from being executed (slowly) in each row.jade template
-        if not self.status in ('D', 'IE', 'CE', 'AB'):
+        if self.status not in ('D', 'IE', 'CE', 'AB'):
             return 'text-white'
         return SUBMISSION_RESULT_COLOR.get(self.result, 'text-white')
 
     @property
     def result_background(self):
-        if not self.status in ('D', 'IE', 'CE', 'AB'):
+        if self.status not in ('D', 'IE', 'CE', 'AB'):
             return 'grading-result'
         return SUBMISSION_RESULT_BACKGROUND.get(self.result, 'default-result')
 
@@ -220,7 +220,7 @@ class Submission(models.Model):
 
     def get_absolute_url(self):
         return reverse('submission_status', args=(self.id,))
-    
+
     @cached_property
     def problem_name(self):
         if self.contest_object is not None:
@@ -232,7 +232,8 @@ class Submission(models.Model):
     @cached_property
     def problem_link(self):
         if self.contest_object is not None:
-            problem_link = reverse('contest_problem_detail', args=(self.contest_object.key, self.contest.problem.order,))
+            problem_link = reverse('contest_problem_detail',
+                                   args=(self.contest_object.key, self.contest.problem.order,))
         else:
             problem_link = reverse('problem_detail', args=(self.problem.code,))
         return problem_link

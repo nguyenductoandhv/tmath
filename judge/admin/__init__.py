@@ -1,24 +1,33 @@
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
-from django.contrib.flatpages.models import FlatPage
 from django.contrib.auth.models import User
+from django.contrib.flatpages.models import FlatPage
 
 from judge.admin.comments import CommentAdmin
-from judge.admin.contest import ContestAdmin, ContestParticipationAdmin, ContestTagAdmin, ContestSubmissionAdmin
-from judge.admin.interface import BlogPostAdmin, CourseAdmin, FlatPageAdmin, LicenseAdmin, LogEntryAdmin, NavigationBarAdmin, LogAdmin
-from judge.admin.organization import OrganizationAdmin, OrganizationRequestAdmin
+from judge.admin.contest import (ContestAdmin, ContestParticipationAdmin,
+                                 ContestSubmissionAdmin, ContestTagAdmin)
+from judge.admin.curriculum import CurriculumAdmin
+from judge.admin.interface import (BlogPostAdmin, CourseAdmin, FlatPageAdmin,
+                                   LicenseAdmin, LogAdmin, LogEntryAdmin,
+                                   NavigationBarAdmin)
+from judge.admin.organization import (OrganizationAdmin,
+                                      OrganizationRequestAdmin)
 from judge.admin.problem import ProblemAdmin, PublicSolutionAdmin
 from judge.admin.profile import ProfileAdmin, UserAdmin
 from judge.admin.runtime import JudgeAdmin, LanguageAdmin
 from judge.admin.submission import SubmissionAdmin
-from judge.admin.taxon import ProblemGroupAdmin, ProblemTypeAdmin, ProblemClassAdmin, SchoolYearAdmin
+from judge.admin.taxon import (ProblemClassAdmin, ProblemGroupAdmin,
+                               ProblemTypeAdmin, SchoolYearAdmin)
 from judge.admin.ticket import TicketAdmin
-from judge.models import BlogPost, Comment, CommentLock, Contest, ContestParticipation, \
-    ContestTag, Judge, Language, License, MiscConfig, NavigationBar, Organization, \
-    OrganizationRequest, Problem, ProblemGroup, ProblemType, Profile, Submission, Ticket, \
-    CourseModel, ProblemClass, ContestLevel, Log, SchoolYear, ContestSubmission, Curriculum
+from judge.models import (BlogPost, Comment, CommentLock, Contest,
+                          ContestLevel, ContestParticipation,
+                          ContestSubmission, ContestTag, CourseModel,
+                          Curriculum, Judge, Language, License, Log,
+                          MiscConfig, NavigationBar, Organization,
+                          OrganizationRequest, Problem, ProblemClass,
+                          ProblemGroup, ProblemType, Profile, SchoolYear,
+                          Submission, Ticket)
 from judge.models.problem_data import PublicSolution
-from judge.admin.curriculum import CurriculumAdmin
 
 admin.site.register(BlogPost, BlogPostAdmin)
 admin.site.register(Comment, CommentAdmin)

@@ -10,7 +10,6 @@ import pyotp
 import webauthn
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.sessions.models import Session
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -33,6 +32,7 @@ from judge.utils.two_factor import webauthn_decode
 from typeracer.models import TypoResult
 
 __all__ = ['Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential', 'LoggedInUser']
+
 
 class LoggedInUser(models.Model):
 
@@ -67,7 +67,7 @@ class SchoolYear(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.start.year, self.finish.year)
-    
+
     def clean(self) -> None:
         if self.start and self.finish and self.start >= self.finish:
             raise ValidationError('What is this? A school year that ended before it starts?')
@@ -136,6 +136,7 @@ class Organization(models.Model):
 def get_default_time():
     return now() - datetime.timedelta(days=30)
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, verbose_name=_('user associated'), on_delete=models.CASCADE)
     name = models.CharField(max_length=255, null=True)
@@ -151,7 +152,7 @@ class Profile(models.Model):
     last_access = models.DateTimeField(verbose_name=_('last access time'), default=now)
     ip = models.GenericIPAddressField(verbose_name=_('last IP'), blank=True, null=True)
     organizations = models.ManyToManyField(Organization, verbose_name=_('organization'), blank=True,
-                                          related_name='members', related_query_name='member')
+                                           related_name='members', related_query_name='member')
     display_rank = models.CharField(max_length=10, default='user', verbose_name=_('display rank'),
                                     choices=(
                                         ('user', _('Normal User')),
@@ -166,7 +167,7 @@ class Profile(models.Model):
                                    help_text=_('User-defined JavaScript for site customization.'))
     current_contest = models.OneToOneField('ContestParticipation', verbose_name=_('current contest'),
                                            null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
-    typo_contest = models.OneToOneField('typeracer.TypoContest', verbose_name=_('current typo contest'), 
+    typo_contest = models.OneToOneField('typeracer.TypoContest', verbose_name=_('current typo contest'),
                                         null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
     math_engine = models.CharField(verbose_name=_('math engine'), choices=MATH_ENGINES_CHOICES, max_length=4,
                                    default=settings.MATHOID_DEFAULT_TYPE,
@@ -194,15 +195,10 @@ class Profile(models.Model):
     notes = models.TextField(verbose_name=_('internal notes'), null=True, blank=True,
                              help_text=_('Notes for administrators regarding this user.'))
     data_last_downloaded = models.DateTimeField(verbose_name=_('last data download time'), null=True, blank=True)
-
     last_change_name = models.DateTimeField(_("last change fullname"), default=get_default_time)
-
     last_name = models.CharField(_("prev name"), max_length=255, null=True, default=None)
-    
-    verified = models.BooleanField(_("verified"), default=False)    
-
+    verified = models.BooleanField(_("verified"), default=False)
     expiration_date = models.DateTimeField(null=True, blank=True)
-
     super_admin = models.BooleanField(_("super admin"), default=False)
 
     @cached_property
@@ -281,7 +277,7 @@ class Profile(models.Model):
     def remove_typo(self):
         self.typo_contest = None
         self.save()
-    
+
     remove_typo.alters_data = True
 
     def update_typo(self):
@@ -380,7 +376,8 @@ class WebAuthnCredential(models.Model):
 
 class OrganizationRequest(models.Model):
     user = models.ForeignKey(Profile, verbose_name=_('user'), related_name='requests', on_delete=models.CASCADE)
-    admin = models.ForeignKey(Profile, verbose_name=_('admin'), null=True, blank=True, related_name='actions', on_delete=models.SET_NULL)
+    admin = models.ForeignKey(Profile, verbose_name=_('admin'), null=True, blank=True,
+                              related_name='actions', on_delete=models.SET_NULL)
     organization = models.ForeignKey(Organization, verbose_name=_('organization'), related_name='requests',
                                      on_delete=models.CASCADE)
     time = models.DateTimeField(verbose_name=_('request time'), auto_now_add=True)

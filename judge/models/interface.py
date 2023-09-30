@@ -49,7 +49,7 @@ class NavigationBar(MPTTModel):
     parent = TreeForeignKey('self', verbose_name=_('parent item'), null=True, blank=True,
                             related_name='children', on_delete=models.CASCADE)
     is_admin = models.BooleanField(default=False, verbose_name=_('Admin view'),
-                            help_text=_('Only superuser can view link'))
+                                   help_text=_('Only superuser can view link'))
 
     def __str__(self):
         return self.label

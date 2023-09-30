@@ -1,8 +1,6 @@
-from typing import Any, List, Optional, Tuple, Union
 from django.contrib import admin
 from django.forms import ModelForm
-from django.http.request import HttpRequest
-from django.urls import reverse_lazy, path
+from django.urls import reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import gettext, gettext_lazy as _, ngettext
 from reversion.admin import VersionAdmin
@@ -11,6 +9,7 @@ from django_ace import AceWidget
 from judge.models import Profile, WebAuthnCredential
 from judge.utils.views import NoBatchDeleteMixin
 from judge.widgets import AdminMartorWidget
+
 
 class ProfileForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -55,7 +54,7 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
     fieldsets = (
         (None, {
             "fields": (
-                'user', 
+                'user',
                 'name',
             ),
         }),
@@ -63,50 +62,50 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
             "fields": (
                 'verified',
                 'display_rank',
-                'is_unlisted', 
-                'timezone', 
-                'language', 
+                'is_unlisted',
+                'timezone',
+                'language',
                 'ace_theme',
-                'math_engine', 
+                'math_engine',
                 'mute',
             ),
         }),
         (_('Information'), {
             "fields": (
-                'about', 
-                'organizations', 
-                'last_access', 
+                'about',
+                'organizations',
+                'last_access',
                 'ip',
                 'current_contest',
             ),
         }),
         (_('Authorized'), {
-            "fields" : (
+            "fields": (
                 'notes',
                 'expiration_date',
-                # 'is_totp_enabled', 
+                # 'is_totp_enabled',
                 # 'user_script',
             ),
         }),
     )
-    
+
     readonly_fields = (
-        'user', 
-        'organizations', 
-        'about', 
-        'last_access', 
-        'ip', 
+        'user',
+        'organizations',
+        'about',
+        'last_access',
+        'ip',
         'current_contest',
         'expiration_date',
     )
     list_display = (
-        'admin_user_admin', 
-        'email', 
-        # 'is_totp_enabled', 
+        'admin_user_admin',
+        'email',
+        # 'is_totp_enabled',
         'timezone_full',
-        'date_joined', 
-        'last_access', 
-        'ip', 
+        'date_joined',
+        'last_access',
+        'ip',
         'show_public',
     )
     ordering = ('user__username',)
@@ -172,8 +171,8 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
             profile.calculate_points()
             count += 1
         self.message_user(request, ngettext('%d user have scores recalculated.',
-                                             '%d users have scores recalculated.',
-                                             count) % count)
+                                            '%d users have scores recalculated.',
+                                            count) % count)
     recalculate_points.short_description = _('Recalculate scores')
 
     def get_form(self, request, obj=None, **kwargs):

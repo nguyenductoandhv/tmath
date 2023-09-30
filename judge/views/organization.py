@@ -7,19 +7,23 @@ from django.core.cache.utils import make_template_fragment_key
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.forms import Form, modelformset_factory
-from django.http import Http404, HttpResponsePermanentRedirect, HttpResponseRedirect
+from django.http import (Http404, HttpResponsePermanentRedirect,
+                         HttpResponseRedirect)
 from django.urls import reverse
-from django.utils.translation import gettext as _, gettext_lazy, ngettext
-from django.views.generic import DetailView, FormView, ListView, UpdateView, View
-from django.views.generic.detail import SingleObjectMixin, SingleObjectTemplateResponseMixin
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy, ngettext
+from django.views.generic import (DetailView, FormView, ListView, UpdateView,
+                                  View)
+from django.views.generic.detail import (SingleObjectMixin,
+                                         SingleObjectTemplateResponseMixin)
 from reversion import revisions
 
+from chat.models import ChatMessage
 from judge.forms import EditOrganizationForm
 from judge.models import Organization, OrganizationRequest, Profile
 from judge.models.profile import SchoolYear
 from judge.utils.ranker import ranker
 from judge.utils.views import TitleMixin, generic_message
-from chat.models import ChatMessage, ChatParticipation
 
 __all__ = ['OrganizationList', 'OrganizationHome', 'OrganizationUsers', 'OrganizationMembershipChange',
            'JoinOrganization', 'LeaveOrganization', 'EditOrganization', 'RequestJoinOrganization',
@@ -80,7 +84,7 @@ class OrganizationList(TitleMixin, ListView):
 
     def get_queryset(self):
         return self._get_queryset().exclude(member=self.request.profile).annotate(member_count=Count('member'))
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         my_org = []
@@ -97,7 +101,7 @@ class OrganizationList(TitleMixin, ListView):
         if self.selected_year:
             context['selected_year'] = int(self.selected_year)
         return context
-    
+
     def setup_year(self, request):
         self.selected_year = None
 

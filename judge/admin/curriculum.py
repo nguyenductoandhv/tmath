@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 from django.contrib import admin
 from django import forms
 from django.db.models import Count
@@ -27,9 +27,10 @@ class PublicProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "problem":
-            kwargs["queryset"] = Problem.objects.annotate(case_count=Count('cases')).filter(case_count__gt=0, is_public=False).order_by('-pk')
+            kwargs["queryset"] = Problem.objects.annotate(case_count=Count('cases')) \
+                .filter(case_count__gt=0, is_public=False).order_by('-pk')
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    
+
 
 class CurriculumForm(forms.ModelForm):
     class Meta:
@@ -46,7 +47,7 @@ class CurriculumAdmin(admin.ModelAdmin):
     def count_contest(self, obj: Curriculum) -> Optional[int]:
         return obj.contests.count()
     count_contest.short_description = "Contests"
-    
+
     def count_problem(self, obj: Curriculum) -> Optional[int]:
         return obj.problems.count()
     count_problem.short_description = "Problems"

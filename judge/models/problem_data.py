@@ -1,9 +1,7 @@
 import errno
 import os
-from zipfile import BadZipFile, ZipFile
 
 from django.core.validators import FileExtensionValidator
-from django.core.cache import cache
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
@@ -41,6 +39,7 @@ IO_METHODS = (
     ('file', _('Via files')),
 )
 
+
 class ProblemData(models.Model):
     problem = models.OneToOneField('Problem', verbose_name=_('problem'), related_name='data_files',
                                    on_delete=models.CASCADE)
@@ -55,7 +54,7 @@ class ProblemData(models.Model):
     checker_args = models.TextField(verbose_name=_('checker arguments'), blank=True,
                                     help_text=_('checker arguments as a JSON object'))
     grader_args = models.TextField(verbose_name=_('grader arguments'), blank=True,
-                                    help_text=_('grader arguments as a JSON object'))
+                                   help_text=_('grader arguments as a JSON object'))
     custom_validator = models.FileField(verbose_name=_('custom checker file'),
                                         storage=problem_data_storage,
                                         null=True,
@@ -116,7 +115,8 @@ class ProblemTestCase(models.Model):
 class PublicSolution(models.Model):
     author = models.ForeignKey("judge.Profile", verbose_name=_("user"), on_delete=models.CASCADE)
     problem = models.ForeignKey("judge.Problem", verbose_name=_("problem"), on_delete=models.CASCADE)
-    contest = models.ForeignKey("judge.Contest", verbose_name=_("contest"), on_delete=models.CASCADE, null=True, blank=True)
+    contest = models.ForeignKey("judge.Contest", verbose_name=_("contest"), on_delete=models.CASCADE,
+                                null=True, blank=True)
     description = models.TextField(_("solution"))
     score = models.IntegerField(_('votes'), default=0)
     created = models.DateTimeField(_("date created"), auto_now_add=True)

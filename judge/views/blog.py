@@ -4,8 +4,7 @@ from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.views import View
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView
 
 from judge.comments import CommentedDetailView
 from judge.models import BlogPost, Comment, Contest, Language, Problem, ProblemClarification, Profile, Submission, \

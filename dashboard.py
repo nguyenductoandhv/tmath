@@ -7,10 +7,7 @@ To activate your index dashboard add the following to your settings.py::
 """
 
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-
-from grappelli.dashboard import modules, Dashboard
-from grappelli.dashboard.utils import get_admin_site_name
+from grappelli.dashboard import Dashboard, modules
 
 
 class TmathDashboard(Dashboard):
@@ -38,7 +35,7 @@ class TmathDashboard(Dashboard):
             collapsible=True,
             css_classes=['grp-closed', ],
             models=(
-                'django.contrib.auth.models.User', 
+                'django.contrib.auth.models.User',
                 "django.contrib.auth.models.Group",
                 'judge.models.profile.Profile',
                 'django.contrib.admin.models.LogEntry',

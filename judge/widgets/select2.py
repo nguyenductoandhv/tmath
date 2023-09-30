@@ -279,6 +279,7 @@ class SemanticSelect(forms.Select):
 class SemanticSelectMultiple(forms.SelectMultiple, SemanticSelect):
     pass
 
+
 class SemanticCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     template_name = "forms/widgets/checkbox_select.html"
     option_template_name = "forms/widgets/checkbox_option.html"

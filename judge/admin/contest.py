@@ -1,27 +1,29 @@
 from random import randrange
+
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.db import connection, transaction
-from django.db.models import Q, TextField, Count
+from django.db.models import Count, Q, TextField
 from django.forms import ModelForm, ModelMultipleChoiceField
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse, reverse_lazy, path
+from django.urls import path, reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.html import format_html
-from django.utils.translation import gettext_lazy as _, ngettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
+from grappelli.forms import GrappelliSortableHiddenMixin
 from reversion.admin import VersionAdmin
 
 from django_ace import AceWidget
-from judge.models import Contest, ContestProblem, ContestSubmission, Profile, Rating, Submission, Organization, SampleContest, \
-    Problem
+from judge.models import (Contest, ContestProblem, ContestSubmission, Problem,
+                          Profile, Rating, SampleContest, Submission)
 from judge.models.contest import ContestLevel, SampleContestProblem
 from judge.ratings import rate_contest
 from judge.utils.views import NoBatchDeleteMixin
-from judge.widgets import AdminHeavySelect2MultipleWidget, AdminHeavySelect2Widget, AdminMartorWidget
-
-from grappelli.forms import GrappelliSortableHiddenMixin
+from judge.widgets import (AdminHeavySelect2MultipleWidget,
+                           AdminHeavySelect2Widget, AdminMartorWidget)
 
 
 class AdminHeavySelect2Widget(AdminHeavySelect2Widget):
@@ -58,7 +60,7 @@ class ContestProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     readonly_fields = ('rejudge_column',)
     sortable_field_name = 'order'
     autocomplete_fields = [
-        'problem', 
+        'problem',
     ]
     # form = ContestProblemInlineForm
 
@@ -80,11 +82,10 @@ class ContestProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'problem':
-            kwargs['queryset'] = Problem.objects.annotate(case_count=Count('cases')).filter(case_count__gt=0).order_by('-pk')
+            kwargs['queryset'] = Problem.objects.annotate(case_count=Count('cases')) \
+                .filter(case_count__gt=0).order_by('-pk')
             # kwargs['queryset'] = Problem.objects.filter(is_public=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    
 
 
 class ContestForm(ModelForm):
@@ -121,28 +122,35 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
     change_list_template = 'admin/judge/contest/change_list.html'
     fieldsets = (
         (None, {'fields': ('key', 'name', 'topic', 'authors', 'curators', 'testers')}),
-        (_('Settings'), {'fields': ('is_visible', 'is_public_contest', 'use_clarifications', 'hide_problem_tags', 'hide_problem_authors',
-                                    'run_pretests_only', 'locked_after', 'scoreboard_visibility',
-                                    'points_precision', 'add_solution', 'limit_solution')}),
+        (_('Settings'), {
+            'fields': ('is_visible', 'is_public_contest', 'use_clarifications', 'hide_problem_tags',
+                       'hide_problem_authors', 'run_pretests_only', 'locked_after', 'scoreboard_visibility',
+                       'points_precision', 'add_solution', 'limit_solution')
+        }),
         (_('Scheduling'), {'fields': ('start_time', 'end_time', 'time_limit', 'pre_time')}),
-        (_('Details'), {'fields': ('is_full_markup', 'description', 'og_image', 'logo_override_image', 'tags', 'summary')}),
-        (_('Format'), {'fields': ('format_name', 'format_config', 'is_limit_language', 'limit_language', 'problem_label_script')}),
+        (_('Details'), {
+            'fields': ('is_full_markup', 'description', 'og_image', 'logo_override_image', 'tags', 'summary')
+        }),
+        (_('Format'), {
+            'fields': ('format_name', 'format_config', 'is_limit_language', 'limit_language', 'problem_label_script')
+        }),
         (_('Rating'), {'fields': ('is_rated', 'rate_all', 'rating_floor', 'rating_ceiling', 'rate_exclude')}),
         (_('Access'), {'fields': ('access_code', 'is_private', 'private_contestants', 'is_organization_private',
                                   'organizations', 'view_contest_scoreboard')}),
         (_('Justice'), {'fields': ('banned_users',)}),
     )
-    list_display = ('key', 'name', 'topic', 'is_visible', 'is_rated', 'locked_after', 'start_time', 'end_time', 'time_limit',
+    list_display = ('key', 'name', 'topic', 'is_visible', 'is_rated', 'locked_after',
+                    'start_time', 'end_time', 'time_limit',
                     'user_count', 'show_word')
     search_fields = ('key', 'name', 'topic')
     inlines = [ContestProblemInline]
     autocomplete_fields = [
-        'authors', 
-        'curators', 
-        'testers', 
-        'private_contestants', 
-        'organizations', 
-        'banned_users', 
+        'authors',
+        'curators',
+        'testers',
+        'private_contestants',
+        'organizations',
+        'banned_users',
         'view_contest_scoreboard',
         'tags'
     ]
@@ -163,7 +171,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
         if request.user.has_perm('judge.lock_contest'):
             for action in ('set_locked', 'set_unlocked'):
                 actions[action] = self.get_action(action)
-        
+
         # if request.user.is_superuser:
         #     actions['update_rate'] = self.get_action('update_rate')
 
@@ -232,8 +240,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             queryset = queryset.filter(Q(is_private=True) | Q(is_organization_private=True))
         count = queryset.update(is_visible=True)
         self.message_user(request, ngettext('%d contest successfully marked as visible.',
-                                             '%d contests successfully marked as visible.',
-                                             count) % count)
+                                            '%d contests successfully marked as visible.',
+                                            count) % count)
     make_visible.short_description = _('Mark contests as visible')
 
     def make_hidden(self, request, queryset):
@@ -241,8 +249,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             queryset = queryset.filter(Q(is_private=True) | Q(is_organization_private=True))
         count = queryset.update(is_visible=True)
         self.message_user(request, ngettext('%d contest successfully marked as hidden.',
-                                             '%d contests successfully marked as hidden.',
-                                             count) % count)
+                                            '%d contests successfully marked as hidden.',
+                                            count) % count)
     make_hidden.short_description = _('Mark contests as hidden')
 
     def set_locked(self, request, queryset):
@@ -250,8 +258,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             self.set_locked_after(row, timezone.now())
         count = queryset.count()
         self.message_user(request, ngettext('%d contest successfully locked.',
-                                             '%d contests successfully locked.',
-                                             count) % count)
+                                            '%d contests successfully locked.',
+                                            count) % count)
     set_locked.short_description = _('Lock contest submissions')
 
     def set_unlocked(self, request, queryset):
@@ -259,8 +267,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             self.set_locked_after(row, None)
         count = queryset.count()
         self.message_user(request, ngettext('%d contest successfully unlocked.',
-                                             '%d contests successfully unlocked.',
-                                             count) % count)
+                                            '%d contests successfully unlocked.',
+                                            count) % count)
     set_unlocked.short_description = _('Unlock contest submissions')
 
     def set_locked_after(self, contest, locked_after):
@@ -289,10 +297,13 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
         ] + super(ContestAdmin, self).get_urls()
 
     def export_word(self, request, id):
-        from judge.signals import unlink_if_exists
-        from django.conf import settings
+        import io
+        import os
+
         import pandoc
-        import io, os
+        from django.conf import settings
+
+        from judge.signals import unlink_if_exists
 
         contest = get_object_or_404(Contest, id=id)
         problems = ContestProblem.objects.filter(contest=contest).order_by('order')
@@ -301,9 +312,10 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             unlink_if_exists(file)
         md = "# {}\r\n\r\n".format(contest.name)
         for index, problem in enumerate(problems):
-            md += "# Problem %s" % (contest.get_label_for_problem(index)) + "\r\n\r\n" + str(problem.problem.description) + "\r\n\r\n"
+            md += "# Problem %s" % (contest.get_label_for_problem(index)) + "\r\n\r\n"
+            md += str(problem.problem.description) + "\r\n\r\n"
             md += "\r\n\r\n"
-        
+
         md = md.replace('~', '$')
         md = md.replace('##', '## ')
         md = md.replace('](/', '](%s/' % settings.SITE_FULL_URL)
@@ -324,8 +336,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             model.submission.judge(rejudge=True)
 
         self.message_user(request, ngettext('%d submission was successfully scheduled for rejudging.',
-                                             '%d submissions were successfully scheduled for rejudging.',
-                                             len(queryset)) % len(queryset))
+                                            '%d submissions were successfully scheduled for rejudging.',
+                                            len(queryset)) % len(queryset))
         return HttpResponseRedirect(reverse('admin:judge_contest_change', args=(contest_id,)))
 
     def rate_all_view(self, request):
@@ -363,23 +375,23 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             Q(user__user_permissions__codename__in=perms),
         ).distinct()
         return form
-        
+
     def show_word(self, obj):
-        return format_html('<a href="{0}" style="white-space:nowrap; background-color: blue; padding: 0.5rem; font-weight:600; border-radius: 6px;">{1}</a>',
-                        reverse('admin:export_word', kwargs={'id': obj.id,}), _('Export word'))
-    
+        styles = 'white-space:nowrap; background-color: blue; padding: 0.5rem; font-weight:600; border-radius: 6px;'
+        return format_html('<a href="{0}" style="{2}">{1}</a>',
+                           reverse('admin:export_word', kwargs={'id': obj.id, }), _('Export word'), styles)
+
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        if 'autocomplete' in request.path and request.GET.get('model_name') == 'curriculumcontest' and request.GET.get('field_name') == 'contest':
+        if 'autocomplete' in request.path and request.GET.get('model_name') == 'curriculumcontest' \
+           and request.GET.get('field_name') == 'contest':
             queryset = queryset.filter(is_visible=False).order_by('-pk')
         return queryset, use_distinct
 
 
 class ProblemInlineForm(ModelForm):
-    
     def has_changed(self) -> bool:
         return True
-    
 
 
 class ProblemInlineFormset(forms.BaseInlineFormSet):
@@ -399,7 +411,7 @@ class ProblemInlineFormset(forms.BaseInlineFormSet):
                     'problem': problem,
                     'contest': qs.first().contest.key
                 })
-    
+
     def save(self, commit: bool = True):
         level = self.instance.level
         instances = super().save(commit=False)
@@ -409,13 +421,13 @@ class ProblemInlineFormset(forms.BaseInlineFormSet):
             instance.level = level
             instance.save()
         self.save_m2m()
-        
+
 
 class ProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = SampleContestProblem
     verbose_name = _('Problem')
     verbose_name_plural = 'Problems'
-    fields = ( 'order', 'problem', 'points', 'partial', 'is_pretested', 'max_submissions', 'output_prefix_override',)
+    fields = ('order', 'problem', 'points', 'partial', 'is_pretested', 'max_submissions', 'output_prefix_override',)
     autocomplete_fields = ['problem']
     formset = ProblemInlineFormset
     form = ProblemInlineForm
@@ -428,6 +440,7 @@ class SampleContestForm(ModelForm):
         widgets = {
             'description': AdminMartorWidget(attrs={'data-markdownfy-url': reverse_lazy('contest_preview')}),
         }
+
 
 class ContestLevelFilter(admin.SimpleListFilter):
     title = parameter_name = 'level'
@@ -463,10 +476,10 @@ class SampleContestAdmin(VersionAdmin):
     actions_on_top = True
     actions_on_bottom = True
     form = SampleContestForm
-    
+
     def get_number_problems(self, obj):
         return obj.contest_problems.count()
-    
+
     get_number_problems.short_description = 'Problems'
 
     def get_urls(self):
@@ -474,9 +487,11 @@ class SampleContestAdmin(VersionAdmin):
             path('<int:id>/clone/', self.clone, name='judge_samplecontest_clone'),
             path('<int:id>/pdf', self.pdf, name='judge_samplecontest_pdf'),
         ] + super().get_urls()
-    
+
     def pdf(self, request, id):
-        samplecontest = get_object_or_404(SampleContest, id=id)
+        # Check samplecontest has existed
+        if not SampleContest.objects.filter(id=id).exists():
+            raise Http404()
         return HttpResponseRedirect(reverse('sample_contest_pdf', args=(id,)))
 
     def clone(self, request, id):
@@ -484,7 +499,7 @@ class SampleContestAdmin(VersionAdmin):
         user = request.user
         profile = Profile.objects.filter(user=user)
         contest = Contest.objects.create(
-            key=str(samplecontest.id) + 'clone'+ str(randrange(0, 10000000, 1)),
+            key=str(samplecontest.id) + 'clone' + str(randrange(0, 10000000, 1)),
             name=samplecontest.name,
             description=samplecontest.description,
             time_limit=samplecontest.time_limit,
@@ -503,17 +518,16 @@ class SampleContestAdmin(VersionAdmin):
         contest.save()
         for problem in SampleContestProblem.objects.filter(contest=samplecontest):
             ContestProblem.objects.create(
-                contest=contest, 
-                problem=problem.problem, 
-                points=problem.points, 
+                contest=contest,
+                problem=problem.problem,
+                points=problem.points,
                 max_submissions=problem.max_submissions,
                 is_pretested=problem.is_pretested,
                 partial=problem.partial,
                 order=problem.order
             )
-        
-        return HttpResponseRedirect(reverse('admin:judge_contest_change', args=(contest.id,)))
 
+        return HttpResponseRedirect(reverse('admin:judge_contest_change', args=(contest.id,)))
 
     def clone_button(self, obj):
         return format_html('<a class="button rejudge-link" href="{}">Clone</a>',
@@ -522,7 +536,6 @@ class SampleContestAdmin(VersionAdmin):
     def pdf_button(self, obj):
         return format_html('<a class="button rejudge-link" href="{}">PDF</a>',
                            reverse('admin:judge_samplecontest_pdf', args=(obj.id,)))
-
 
 
 class ContestParticipationAdmin(admin.ModelAdmin):
@@ -551,8 +564,8 @@ class ContestParticipationAdmin(admin.ModelAdmin):
             participation.recompute_results()
             count += 1
         self.message_user(request, ngettext('%d participation recalculated.',
-                                             '%d participations recalculated.',
-                                             count) % count)
+                                            '%d participations recalculated.',
+                                            count) % count)
     recalculate_results.short_description = _('Recalculate results')
 
     def username(self, obj):

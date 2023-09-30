@@ -350,7 +350,7 @@ BLEACH_USER_SAFE_TAGS = [
     'style', 'noscript', 'center',
     'details', 'summary',
 ]
-    
+
 BLEACH_USER_SAFE_ATTRS = {
     '*': ['id', 'class', 'style'],
     'img': ['src', 'alt', 'title', 'width', 'height', 'data-src'],
@@ -359,8 +359,8 @@ BLEACH_USER_SAFE_ATTRS = {
     'dfn': ['title'],
     'time': ['datetime'],
     'data': ['value'],
-    'td':  ['colspan', 'rowspan'],
-    'th':  ['colspan', 'rowspan'],
+    'td': ['colspan', 'rowspan'],
+    'th': ['colspan', 'rowspan'],
     'audio': ['autoplay', 'controls', 'crossorigin', 'muted', 'loop', 'preload', 'src'],
     'video': ['autoplay', 'controls', 'crossorigin', 'height', 'muted', 'loop', 'poster', 'preload', 'src', 'width'],
     'source': ['src', 'srcset', 'type'],

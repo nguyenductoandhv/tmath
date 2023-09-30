@@ -1,60 +1,64 @@
+import csv
+import datetime as dt
 import itertools
 import json
 import os
-import datetime as dt
 from datetime import datetime, timedelta
 from operator import attrgetter, itemgetter
-from typing import Any, Dict, Mapping, Optional, Type, Union
-from django.db import models, transaction
-from django.forms.utils import ErrorList
-from unidecode import unidecode
-from django import forms, http
 
+from django import forms
 from django.conf import settings
-from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Permission, User
-from django.contrib.auth.views import LoginView, PasswordChangeView, redirect_to_login, LogoutView as BaseLogoutView
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LogoutView as BaseLogoutView
+from django.contrib.auth.views import PasswordChangeView, redirect_to_login
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import Count, Max, Min
 from django.db.models.fields import DateField
 from django.db.models.functions import Cast, ExtractYear
-from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from django.views.decorators.http import require_POST
-from django.views.generic import DetailView, FormView, ListView, UpdateView, View, TemplateView
+from django.views.generic import (DetailView, FormView, ListView, TemplateView,
+                                  UpdateView, View)
 from reversion import revisions
+from unidecode import unidecode
 
-from judge.forms import CustomAuthenticationForm, DownloadDataForm, ProfileForm, newsletter_id, CreateManyUserForm
-from judge.models import Profile, Rating, Submission, Language
+from judge.forms import (CreateManyUserForm, CustomAuthenticationForm,
+                         DownloadDataForm, ProfileForm, newsletter_id)
+from judge.models import Language, Profile, Rating, Submission
 from judge.models.profile import Organization
 from judge.performance_points import get_pp_breakdown
 from judge.ratings import rating_class, rating_progress
 from judge.tasks import prepare_user_data
 from judge.utils.celery import task_status_by_id, task_status_url_by_id
 from judge.utils.problems import contest_completed_ids, user_completed_ids
-from judge.utils.pwned import PwnedPasswordsValidator
 from judge.utils.ranker import ranker
 from judge.utils.subscription import Subscription
 from judge.utils.unicode import utf8text
-from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, TitleMixin, add_file_response, generic_message
+from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
+                               TitleMixin, add_file_response, generic_message)
+
 from .contests import ContestRanking
-from judge.widgets.fields import FileInput
 
 __all__ = ['UserPage', 'UserAboutPage', 'UserProblemsPage', 'UserDownloadData', 'UserPrepareData',
-           'users', 'edit_profile', 'EditProfile', 
+           'users', 'edit_profile', 'EditProfile',
            'CreateCSVUser', 'ConfirmCSVUser', 'SuccessCSVUser',
            'ListModule',
-]
+           ]
 
 
 def remap_keys(iterable, mapping):
@@ -377,25 +381,25 @@ class EditProfile(LoginRequiredMixin, TitleMixin, UpdateView):
             self.object = form.save()
             revisions.set_user(self.request.user)
             revisions.set_comment(_('Updated on site'))
-        
+
         return HttpResponseRedirect(self.request.path)
-    
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.object.user
         return kwargs
-    
+
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get(self, request, *args, **kwargs) -> HttpResponse:
         if request.profile.mute:
             raise Http404()
         if request.profile != self.object and not request.user.is_superuser:
             raise Http404()
         return super().get(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tzmap = settings.TIMEZONE_MAP
@@ -405,6 +409,7 @@ class EditProfile(LoginRequiredMixin, TitleMixin, UpdateView):
         context['has_math_config'] = bool(settings.MATHOID_URL)
         context['ignore_user_script'] = True
         return context
+
 
 @login_required
 def edit_profile(request):
@@ -501,7 +506,8 @@ class UserList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ListView):
     default_sort = '-performance_points'
 
     def get_queryset(self):
-        return (Profile.objects.filter(is_unlisted=False, user__is_active=True).order_by(self.order).select_related('user')
+        return (Profile.objects.filter(is_unlisted=False, user__is_active=True).order_by(self.order)
+                .select_related('user')
                 .only('display_rank', 'user__username', 'points', 'rating', 'performance_points',
                       'problem_count'))
 
@@ -561,7 +567,6 @@ class UserLogoutView(TitleMixin, BaseLogoutView):
             return HttpResponseRedirect(reverse('auth_login'))
         return super().dispatch(request, *args, **kwargs)
 
-import csv
 
 class CreateManyUser(TitleMixin, FormView):
     form_class = CreateManyUserForm
@@ -606,7 +611,7 @@ class CreateManyUser(TitleMixin, FormView):
             writer.writerow([username, password])
 
         return response
-    
+
 
 class CreateCSVUserForm(forms.Form):
     organization = forms.ChoiceField(choices=(), label='Organization')
@@ -643,7 +648,7 @@ class CreateCSVUser(TitleMixin, FormView):
         context = super().get_context_data(**kwargs)
         context['all_organization'] = Organization.objects.all().values_list('id', 'name')
         return context
-    
+
     def get_username(self, fullname, index):
         names = unidecode(fullname).lower().split()
         n = len(names)
@@ -671,7 +676,7 @@ class CreateCSVUser(TitleMixin, FormView):
         }
         self.request.session['create_csv_user'] = context
         return super().form_valid(form)
-    
+
 
 class ConfirmCSVUserForm(forms.Form):
     mshv = forms.CharField(widget=forms.HiddenInput(), required=True)
@@ -681,7 +686,7 @@ class ConfirmCSVUserForm(forms.Form):
     email = forms.EmailField(label='Email', required=False)
     day_expire = forms.IntegerField(label='Day expire', required=False)
     organization = forms.ChoiceField(choices=(), label='Organization', required=False)
-    
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields['organization'].choices = Organization.objects.all().values_list('id', 'name')
@@ -712,19 +717,19 @@ class ConfirmCSVUser(TitleMixin, FormView):
         if self.request.method == 'POST':
             return formset_class(self.request.POST)
         return formset_class(initial=formset_data)
-    
+
     def get(self, request, *args, **kwargs):
         if not request.session.get('create_csv_user', None):
             return HttpResponseRedirect(reverse_lazy('create_csv_user'))
         formset = self.get_formset()
         return self.render_to_response(self.get_context_data(formset=formset))
-    
+
     def post(self, request, *args, **kwargs):
         formset = self.get_formset()
         if formset.is_valid():
             return self.form_valid(formset)
         return self.form_invalid(formset)
-    
+
     def form_valid(self, formset) -> HttpResponse:
         language = Language.get_default_language()
         update_list = []
@@ -733,7 +738,7 @@ class ConfirmCSVUser(TitleMixin, FormView):
             for form in formset:
                 index = form.cleaned_data['mshv']
                 username = form.cleaned_data['username']
-                password = None # form.cleaned_data['password']
+                password = None  # form.cleaned_data['password']
                 fullname = form.cleaned_data['fullname']
                 day_expire = form.cleaned_data['day_expire']
                 if not day_expire:
@@ -744,13 +749,14 @@ class ConfirmCSVUser(TitleMixin, FormView):
                 if User.objects.filter(username=username).exists():
                     User.objects.filter(username=username).delete()
                 new_user = User.objects.create_user(username=username, email=email, password=password)
-                new_profile = Profile(user=new_user, name=fullname, language=language, verified=True, expiration_date=now + timedelta(days=day_expire))
+                new_profile = Profile(user=new_user, name=fullname, language=language, verified=True,
+                                      expiration_date=now + timedelta(days=day_expire))
                 new_profile.save()
                 org_id = form.cleaned_data['organization']
                 data = [
                     index,
-                    fullname, 
-                    username, 
+                    fullname,
+                    username,
                     password,
                     (now + timedelta(days=day_expire)).strftime("%Y-%m-%d %H:%M:%S"),
                 ]
@@ -762,7 +768,7 @@ class ConfirmCSVUser(TitleMixin, FormView):
         del self.request.session['create_csv_user']
         self.request.session['update_list'] = update_list
         return super().form_valid(formset)
-    
+
 
 class SuccessCSVUser(TitleMixin, TemplateView):
     template_name: str = 'user/success_csv_user.html'
@@ -772,12 +778,12 @@ class SuccessCSVUser(TitleMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['update_list'] = self.request.session.get('update_list', [])
         return context
-    
+
     def get(self, request, *args, **kwargs) -> HttpResponse:
         if request.GET.get('download', '') == 'true':
             return self.download_data()
         return super().get(request, *args, **kwargs)
-    
+
     def download_data(self):
         list = self.request.session.get('update_list', [])
         if not list:
@@ -789,7 +795,7 @@ class SuccessCSVUser(TitleMixin, TemplateView):
         for data in list:
             writer.writerow(data)
         return response
-    
+
 
 class ListModule(TitleMixin, ListView):
     template_name: str = 'user/list_module.html'
@@ -799,10 +805,9 @@ class ListModule(TitleMixin, ListView):
     paginate_by = 50
 
     MODULES = [
-        { 'link': reverse_lazy('many_user'), 'name': 'Create many user' },
-        { 'link': reverse_lazy('create_user_csv'), 'name': 'Create many user from csv' },
+        {'link': reverse_lazy('many_user'), 'name': 'Create many user'},
+        {'link': reverse_lazy('create_user_csv'), 'name': 'Create many user from csv'},
     ]
 
     def get_queryset(self):
         return self.MODULES
-    

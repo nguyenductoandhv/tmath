@@ -20,29 +20,29 @@ socket_messages_logger = logging.getLogger('channels')
 
 def _post_update_submission(submission, done=False):
     # if submission.problem.is_public:
-        # if done:
-        #     socket_messages_logger.info('Submission %s done', submission.id)
-        # else:
-        #     socket_messages_logger.info('Submission %s updating', submission.id)
-        async_to_sync(channel_layer.group_send)(
-            'async_submissions', 
-            {
-                'type': 'done.submission' if done else 'update.submission',
-                'message': {
-                    'id': submission.id,
-                    'contest': submission.contest_key,
-                    'user': submission.user_id, 
-                    'problem': submission.problem_id,
-                    'status': submission.status, 
-                    'language': submission.language.key
-                }
+    #     if done:
+    #         socket_messages_logger.info('Submission %s done', submission.id)
+    #     else:
+    #         socket_messages_logger.info('Submission %s updating', submission.id)
+    async_to_sync(channel_layer.group_send)(
+        'async_submissions',
+        {
+            'type': 'done.submission' if done else 'update.submission',
+            'message': {
+                'id': submission.id,
+                'contest': submission.contest_key,
+                'user': submission.user_id,
+                'problem': submission.problem_id,
+                'status': submission.status,
+                'language': submission.language.key
             }
-        )
-        # event.post('submissions', {'type': 'done-submission' if done else 'update-submission',
-        #                            'id': submission.id,
-        #                            'contest': submission.contest_key,
-        #                            'user': submission.user_id, 'problem': submission.problem_id,
-        #                            'status': submission.status, 'language': submission.language.key})
+        }
+    )
+    # event.post('submissions', {'type': 'done-submission' if done else 'update-submission',
+    #                            'id': submission.id,
+    #                            'contest': submission.contest_key,
+    #                            'user': submission.user_id, 'problem': submission.problem_id,
+    #                            'status': submission.status, 'language': submission.language.key})
 
 
 def judge_request(packet, reply=True):

@@ -2,8 +2,10 @@ import json
 
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied, ValidationError
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.core.exceptions import (ImproperlyConfigured, PermissionDenied,
+                                    ValidationError)
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import truncatechars
 from django.template.loader import get_template
@@ -11,7 +13,8 @@ from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html, linebreaks
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import SingleObjectMixin
@@ -19,18 +22,20 @@ from django.views.generic.detail import SingleObjectMixin
 from judge.models import Problem, Profile, Ticket, TicketMessage
 from judge.utils.diggpaginator import DiggPaginator
 from judge.utils.tickets import filter_visible_tickets, own_ticket_filter
-from judge.utils.views import SingleObjectFormView, TitleMixin, paginate_query_context
+from judge.utils.views import (SingleObjectFormView, TitleMixin,
+                               paginate_query_context)
 from judge.views.problem import ProblemMixin
 from judge.widgets import HeavyPreviewPageDownWidget
 
 # from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+# from asgiref.sync import async_to_sync
 
 ticket_widget = (forms.Textarea() if HeavyPreviewPageDownWidget is None else
                  HeavyPreviewPageDownWidget(preview=reverse_lazy('ticket_preview'),
                                             preview_timeout=1000, hide_preview_button=True))
 
 # channel_layer = get_channel_layer()
+
 
 class TicketForm(forms.Form):
     title = forms.CharField(max_length=100, label=gettext_lazy('Ticket title'))
@@ -77,17 +82,17 @@ class NewTicketView(LoginRequiredMixin, SingleObjectFormView):
         #         'type': 'new.ticket',
         #         'message': {
         #             'id': ticket.id,
-        #             'message': message.id, 
+        #             'message': message.id,
         #             'user': ticket.user_id,
         #             'assignees': list(ticket.assignees.values_list('id', flat=True)),
         #         }
         #     }
         # )
-            # event.post('tickets', {
-            #     'type': 'new-ticket', 'id': ticket.id,
-            #     'message': message.id, 'user': ticket.user_id,
-            #     'assignees': list(ticket.assignees.values_list('id', flat=True)),
-            # })
+        # event.post('tickets', {
+        #     'type': 'new-ticket', 'id': ticket.id,
+        #     'message': message.id, 'user': ticket.user_id,
+        #     'assignees': list(ticket.assignees.values_list('id', flat=True)),
+        # })
         return HttpResponseRedirect(reverse('ticket', args=[ticket.id]))
 
 
@@ -153,7 +158,7 @@ class TicketView(TitleMixin, TicketMixin, SingleObjectFormView):
         #         'type': 'ticket.message',
         #         'message': {
         #             'id': self.object.id,
-        #             'message': message.id, 
+        #             'message': message.id,
         #             'user': self.object.user_id,
         #             'assignees': list(self.object.assignees.values_list('id', flat=True)),
         #         }
@@ -162,7 +167,7 @@ class TicketView(TitleMixin, TicketMixin, SingleObjectFormView):
         # async_to_sync(channel_layer.group_send)(
         #     'ticket-%d' % self.object.id,
         #     {
-        #         'type': 'ticket.message', 
+        #         'type': 'ticket.message',
         #         'message': message.id,
         #     }
         # )
@@ -205,7 +210,7 @@ class TicketStatusChangeView(TicketMixin, SingleObjectMixin, View):
             #         'type': 'ticket.status',
             #         'message': {
             #             'id': ticket.id,
-            #             'open': self.open, 
+            #             'open': self.open,
             #             'user': ticket.user_id,
             #             'assignees': list(ticket.assignees.values_list('id', flat=True)),
             #             'title': ticket.title,
@@ -215,7 +220,7 @@ class TicketStatusChangeView(TicketMixin, SingleObjectMixin, View):
             # async_to_sync(channel_layer.group_send)(
             #     'ticket-%d' % ticket.id,
             #     {
-            #         'type': 'ticket.status', 
+            #         'type': 'ticket.status',
             #         'message': {
             #             'open': self.open,
             #         },

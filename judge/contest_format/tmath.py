@@ -105,10 +105,14 @@ class TmathContestFormat(DefaultContestFormat):
         if format_data:
             penalty = format_html('<small style="color:red"> ({penalty})</small>',
                                   penalty=floatformat(format_data['penalty'])) if format_data['penalty'] else ''
+            point = contest_problem.points * (self.config['weight'] ** format_data['penalty'])
             return format_html(
-                '<td class="{state} icpc_format"><a href="{url}">{points}{penalty}<div class="solving-time">{time}</div></a></td>',
+                '''<td class="{state} icpc_format">
+                        <a href="{url}">{points}{penalty}<div class="solving-time">{time}</div></a>
+                    </td>''',
                 state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                       self.best_solution_state(format_data['points'], contest_problem.points * (self.config['weight'] ** format_data['penalty']), contest_problem.first_accept == participation)),
+                       self.best_solution_state(format_data['points'], point,
+                                                contest_problem.first_accept == participation)),
                 url=reverse('user_contest_problem_submissions',
                             args=[self.contest.key, contest_problem.order, participation.user.user.username]),
                 points=floatformat(format_data['points']),

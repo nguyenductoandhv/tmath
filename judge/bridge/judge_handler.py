@@ -29,7 +29,7 @@ URL_VALIDATOR = URLValidator()
 UPDATE_RATE_LIMIT = 5
 UPDATE_RATE_TIME = 0.5
 SubmissionData = namedtuple(
-    'SubmissionData', 
+    'SubmissionData',
     'time memory short_circuit pretests_only contest_no attempt_no user_id file_only file_size_limit'
 )
 
@@ -206,11 +206,12 @@ class JudgeHandler(ZlibPacketHandler):
         try:
             pid, time, memory, short_circuit, lid, is_pretested, sub_date, uid, part_virtual, part_id, \
                 file_only, file_size_limit = (
-                Submission.objects.filter(id=submission)
-                          .values_list('problem__id', 'problem__time_limit', 'problem__memory_limit',
-                                       'problem__short_circuit', 'language__id', 'is_pretested', 'date', 'user__id',
-                                       'contest__participation__virtual', 'contest__participation__id',
-                                       'language__file_only', 'language__file_size_limit')).get()
+                    Submission.objects.filter(id=submission)
+                    .values_list('problem__id', 'problem__time_limit', 'problem__memory_limit',
+                                 'problem__short_circuit', 'language__id', 'is_pretested',
+                                 'date', 'user__id',
+                                 'contest__participation__virtual', 'contest__participation__id',
+                                 'language__file_only', 'language__file_size_limit')).get()
         except Submission.DoesNotExist:
             logger.error('Submission vanished: %s', submission)
             json_log.error(self._make_json_log(
@@ -527,7 +528,8 @@ class JudgeHandler(ZlibPacketHandler):
                     'message': ''
                 }
             )
-            # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']), {'type': 'compile-message'})
+            # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
+            #            {'type': 'compile-message'})
             json_log.info(self._make_json_log(packet, action='compile-message', log=packet['log']))
         else:
             logger.warning('Unknown submission: %s', packet['submission-id'])
@@ -573,7 +575,8 @@ class JudgeHandler(ZlibPacketHandler):
                     'message': 'Aborted'
                 }
             )
-            # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']), {'type': 'aborted-submission'})
+            # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
+            #            {'type': 'aborted-submission'})
             self._post_update_submission(packet['submission-id'], 'terminated', done=True)
             json_log.info(self._make_json_log(packet, action='aborted', finish=True, result='AB'))
         else:
@@ -734,19 +737,19 @@ class JudgeHandler(ZlibPacketHandler):
         async_to_sync(channel_layer.group_send)('async_submissions', {
             'type': 'done.submission' if done else 'update.submission',
             'message': {
-                'state': state, 
+                'state': state,
                 'id': id,
                 'contest': data['contest_object_id'],
-                'user': data['user_id'], 
+                'user': data['user_id'],
                 'problem': data['problem_id'],
-                'status': data['status'], 
+                'status': data['status'],
                 'language': data['language__key'],
             }
         })
-            # event.post('submissions', {
-            #     'type': 'done-submission' if done else 'update-submission',
-            #     'state': state, 'id': id,
-            #     'contest': data['contest_object_id'],
-            #     'user': data['user_id'], 'problem': data['problem_id'],
-            #     'status': data['status'], 'language': data['language__key'],
-            # })
+        # event.post('submissions', {
+        #     'type': 'done-submission' if done else 'update-submission',
+        #     'state': state, 'id': id,
+        #     'contest': data['contest_object_id'],
+        #     'user': data['user_id'], 'problem': data['problem_id'],
+        #     'status': data['status'], 'language': data['language__key'],
+        # })
