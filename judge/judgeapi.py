@@ -33,9 +33,9 @@ def _post_update_submission(submission, done=False):
                 'user': submission.user_id,
                 'problem': submission.problem_id,
                 'status': submission.status,
-                'language': submission.language.key
-            }
-        }
+                'language': submission.language.key,
+            },
+        },
     )
     # event.post('submissions', {'type': 'done-submission' if done else 'update-submission',
     #                            'id': submission.id,
@@ -142,8 +142,8 @@ def abort_submission(submission):
             'async_sub_%s' % Submission.get_id_secret(submission.id),
             {
                 'type': 'aborted.submission',
-                'message': 'Aborted'
-            }
+                'message': 'Aborted',
+            },
         )
         # event.post('sub_%s' % Submission.get_id_secret(submission.id), {'type': 'aborted-submission'})
         _post_update_submission(submission, done=True)

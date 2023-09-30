@@ -26,7 +26,8 @@ class LogRequestsMiddleware:
     def __call__(self, request):
         user = "AnonymousUser" if request.user.is_anonymous else request.user.username
         # Log the user access URL
-        logger.info(f"User {user} accessed {request.path} - {request.method}")
+        info = f"User {user} accessed {request.path} - {request.method}"
+        logger.info(info)
 
         response = self.get_response(request)
         return response
