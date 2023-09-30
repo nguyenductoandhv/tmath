@@ -1,8 +1,7 @@
 from operator import attrgetter
 
+from judge.jinja2 import registry
 from judge.models import SubmissionSourceAccess
-
-from . import registry
 
 
 # TODO: maybe refactor this?

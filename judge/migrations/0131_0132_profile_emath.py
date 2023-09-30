@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     replaces = [
         ('judge', '0131_profile_current_exam'),
-        ('judge', '0132_profile_emath')
+        ('judge', '0132_profile_emath'),
     ]
 
     operations = [

@@ -1,8 +1,7 @@
 import six
 
+from judge.jinja2 import registry
 from judge.ratings import rating_class, rating_name, rating_progress
-
-from . import registry
 
 
 def _get_rating_value(func, obj):

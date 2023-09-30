@@ -1,6 +1,5 @@
+from judge.jinja2 import registry
 from judge.utils.camo import client as camo_client
-
-from . import registry
 
 
 @registry.filter

@@ -32,7 +32,7 @@ RATE = (
     (CMASTER, _('Candidate Master')),
     (MASTER, _('Master')),
     (GMASTER, _('Grandmaster')),
-    (TARGET, _('Target'))
+    (TARGET, _('Target')),
 )
 
 TIMEZONE = make_timezones()

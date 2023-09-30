@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from django_ace import AceWidget
+from judge.admin.contest import ProblemInlineFormset
 from judge.models import (Contest, Language, Organization, Problem, Profile,
                           Submission, WebAuthnCredential)
 from judge.models.contest import SampleContest, SampleContestProblem
@@ -30,8 +31,6 @@ from judge.widgets import (HeavyPreviewPageDownWidget, MartorWidget,
 from judge.widgets.select2 import (HeavySelect2MultipleWidget,
                                    SemanticCheckboxSelectMultiple,
                                    SemanticSelect, SemanticSelectMultiple)
-
-from .admin.contest import ProblemInlineFormset
 
 TOTP_CODE_LENGTH = 6
 
@@ -171,7 +170,7 @@ class ProblemSubmitForm(ModelForm):
     source = CharField(
         required=False,
         widget=AceWidget(theme='twilight', no_ace_media=True),
-        validators=[validate_source_length]
+        validators=[validate_source_length],
     )
     submission_file = forms.FileField(
         label=_('Source file'),
@@ -402,7 +401,7 @@ class ProblemUpdateForm(ModelForm):
             # 'summary': MartorWidget(attrs={'data-markdownfy-url': reverse_lazy('problem_preview')}),
             'license': SemanticSelect,
             'description': MartorWidget(attrs={'data-markdownfy-url': reverse_lazy('problem_preview')}),
-            'allowed_languages': SemanticCheckboxSelectMultiple
+            'allowed_languages': SemanticCheckboxSelectMultiple,
         }
 
 
@@ -430,7 +429,7 @@ class SolutionForm(ModelForm):
             Q(user__is_staff=True) |
             Q(user__user_permissions__codename='add_solution') |
             Q(user__user_permissions__codename='change_solution') |
-            Q(user__user_permissions__codename='delete_solution')
+            Q(user__user_permissions__codename='delete_solution'),
         ).distinct()
 
     class Meta:
@@ -457,7 +456,7 @@ SolutionInlineFormset = inlineformset_factory(
     form=SolutionForm,
     extra=0,
     can_delete=True,
-    max_num=1
+    max_num=1,
 )
 
 

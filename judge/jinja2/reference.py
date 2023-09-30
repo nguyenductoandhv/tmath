@@ -9,10 +9,9 @@ from django.utils.safestring import mark_safe
 from lxml.html import Element
 
 from judge import lxml_tree
+from judge.jinja2 import registry
 from judge.models import Contest, Problem, Profile
 from judge.ratings import rating_class, rating_progress
-
-from . import registry
 
 rereference = re.compile(r'\[(r?user):(\w+)\]')
 

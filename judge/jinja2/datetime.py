@@ -4,7 +4,7 @@ from django.template.defaultfilters import date, time
 from django.templatetags.tz import localtime
 from django.utils.translation import gettext as _
 
-from . import registry
+from judge.jinja2 import registry
 
 
 def localtime_wrapper(func):

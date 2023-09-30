@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from django_social_share.templatetags.social_share import (
     post_to_facebook_url, post_to_twitter_url)
 
-from . import registry
+from judge.jinja2 import registry
 
 SHARES = [
     ('post_to_twitter', 'django_social_share/templatetags/post_to_twitter.html', post_to_twitter_url),

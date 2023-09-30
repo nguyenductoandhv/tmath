@@ -1,8 +1,7 @@
 import datetime
 
+from judge.jinja2 import registry
 from judge.utils.timedelta import nice_repr
-
-from . import registry
 
 
 @registry.filter

@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 120
-application-import-names = tmath,judge,django_ace,chat,typeracer
+application-import-names = tmath,judge,django_ace,chat,typeracer,websocket
 import-order-style = pycharm
 enable-extensions = G
 ignore =

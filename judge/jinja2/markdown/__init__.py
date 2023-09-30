@@ -7,11 +7,11 @@ from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
 from markupsafe import Markup
 
+from judge.jinja2 import registry
+from judge.jinja2.markdown.bleach_whitelist import (all_styles, mathml_attrs,
+                                                    mathml_tags)
+from judge.jinja2.markdown.lazy_load import lazy_load as lazy_load_processor
 from judge.utils.camo import client as camo_client
-
-from .. import registry
-from .bleach_whitelist import all_styles, mathml_attrs, mathml_tags
-from .lazy_load import lazy_load as lazy_load_processor
 
 logger = logging.getLogger('judge.html')
 
