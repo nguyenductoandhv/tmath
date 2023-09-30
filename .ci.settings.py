@@ -1,6 +1,6 @@
 COMPRESS_OUTPUT_DIR = 'cache'
 STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = BASE_DIR / 'static'
 
 CACHES = {
     'default': {
