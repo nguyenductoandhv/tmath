@@ -1,6 +1,7 @@
-from django.urls import path
 from django.conf.urls import include
-from .views import make_message
+from django.urls import path
+
+from chat.views import make_message
 
 app_name = 'chat'
 

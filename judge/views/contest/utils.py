@@ -47,13 +47,13 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
 
     def has_permission(self):
         return self.request.user.is_superuser
-    
+
     def get_contest(self):
         return get_object_or_404(Contest, key=self.kwargs['contest'])
-    
+
     def get_title(self):
         return 'Contest data'
-    
+
     def get_data(self, upload):
         data = {}
         with zipfile.ZipFile(upload, 'r') as zip_ref:
@@ -75,7 +75,7 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                 order = ContestProblem.get_order(temp[1].split('.')[0])
                 data[temp[0]][order] = (source, LANGS[ext])
         return data
-    
+
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         try:
             self.contest = self.get_contest()
@@ -128,7 +128,7 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                         problem=problem,
                         participation=participation,
                     )
-        
+
         self.contest.update_user_count()
-        
+
         return super().form_valid(form)

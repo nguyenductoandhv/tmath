@@ -1,54 +1,61 @@
 import json
-from calendar import Calendar, SUNDAY
+import logging
+import os
+import shutil
+from calendar import SUNDAY, Calendar
 from collections import defaultdict, namedtuple
 from datetime import date, datetime, time, timedelta
 from functools import partial
 from itertools import chain
-import logging
 from operator import attrgetter, itemgetter
-import os
-import shutil
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Case, Count, F, FloatField, IntegerField, Max, Min, Q, Sum, Value, When
+from django.db.models import (Case, Count, F, FloatField, IntegerField, Max,
+                              Min, Q, Sum, Value, When)
 from django.db.models.expressions import CombinedExpression
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, render
 from django.template.defaultfilters import date as date_filter
+from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
-from django.utils.translation import gettext as _, gettext_lazy
-from django.views.generic import ListView, TemplateView, CreateView
-from django.template.loader import get_template
-from django.views.generic.detail import BaseDetailView, DetailView, SingleObjectMixin, View
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
+from django.views.generic import ListView, TemplateView
+from django.views.generic.detail import (BaseDetailView, DetailView,
+                                         SingleObjectMixin, View)
 from reversion import revisions
 
 # from judge import event_poster as event
 from judge.comments import CommentedDetailView
-from judge.forms import ContestCloneForm, SampleContestForm
-from judge.models import Contest, ContestMoss, ContestParticipation, ContestProblem, ContestTag, \
-    Problem, Profile, Submission
+from judge.forms import ContestCloneForm
+from judge.models import (Contest, ContestMoss, ContestParticipation,
+                          ContestProblem, ContestTag, Problem, Profile,
+                          Submission)
 from judge.models.contest import SampleContest
 from judge.models.problem import ProblemTranslation
-from judge.pdf_problems import DefaultPdfMaker, HAS_PDF
 from judge.models.profile import Organization
+from judge.pdf_problems import HAS_PDF, DefaultPdfMaker
 from judge.tasks import run_moss
 from judge.utils.celery import redirect_to_task_status
 from judge.utils.opengraph import generate_opengraph
 from judge.utils.problems import _get_result_data
 from judge.utils.ranker import ranker
 from judge.utils.stats import get_bar_chart, get_pie_chart
-from judge.utils.views import DiggPaginatorMixin, QueryStringSortMixin, SingleObjectFormView, TitleMixin, add_file_response, \
-    generic_message
+from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
+                               SingleObjectFormView, TitleMixin,
+                               add_file_response, generic_message)
 
 __all__ = ['ContestList', 'ContestDetail', 'ContestRanking', 'ContestJoin', 'ContestLeave', 'ContestCalendar',
            'ContestClone', 'ContestStats', 'ContestMossView', 'ContestMossDelete', 'contest_ranking_ajax',
