@@ -1,25 +1,25 @@
 import hmac
 import json
 import logging
-import urllib
 import threading
 import time
+import urllib
 from collections import deque, namedtuple
 from operator import itemgetter
 
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django import db
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.utils import timezone
-
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
 # from judge import event_poster as event
 from judge.bridge.base_handler import ZlibPacketHandler, proxy_list
 from judge.caching import finished_submission
-from judge.models import Judge, Language, LanguageLimit, Problem, RuntimeVersion, Submission, SubmissionTestCase
+from judge.models import (Judge, Language, LanguageLimit, Problem,
+                          RuntimeVersion, Submission, SubmissionTestCase)
 
 logger = logging.getLogger('judge.bridge')
 json_log = logging.getLogger('judge.json.bridge')

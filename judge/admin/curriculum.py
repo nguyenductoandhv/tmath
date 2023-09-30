@@ -1,10 +1,12 @@
 from typing import Optional
-from django.contrib import admin
-from django import forms
-from django.db.models import Count
 
-from judge.models import Curriculum, CurriculumContest, PublicProblem, Problem, Contest
+from django import forms
+from django.contrib import admin
+from django.db.models import Count
 from grappelli.forms import GrappelliSortableHiddenMixin
+
+from judge.models import (Contest, Curriculum, CurriculumContest, Problem,
+                          PublicProblem)
 
 
 class CurriculumContestInline(GrappelliSortableHiddenMixin, admin.TabularInline):

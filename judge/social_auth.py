@@ -13,7 +13,8 @@ from reversion import revisions
 from social_core.backends.github import GithubOAuth2
 from social_core.exceptions import InvalidEmail, SocialAuthBaseException
 from social_core.pipeline.partial import partial
-from social_django.middleware import SocialAuthExceptionMiddleware as OldSocialAuthExceptionMiddleware
+from social_django.middleware import \
+    SocialAuthExceptionMiddleware as OldSocialAuthExceptionMiddleware
 
 from judge.forms import ProfileForm
 from judge.models import Language, Profile

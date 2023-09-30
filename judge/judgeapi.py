@@ -4,11 +4,10 @@ import socket
 import struct
 import zlib
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.conf import settings
 from django.utils import timezone
-
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
 # from judge import event_poster as event
 

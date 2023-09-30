@@ -1,16 +1,17 @@
 import logging
 
+import markdown as md
 from bleach.sanitizer import Cleaner
 from django.conf import settings
-from markupsafe import Markup
 from lxml import html
 from lxml.etree import ParserError, XMLSyntaxError
-import markdown as md
+from markupsafe import Markup
 
-from .lazy_load import lazy_load as lazy_load_processor
 from judge.utils.camo import client as camo_client
-from .bleach_whitelist import all_styles, mathml_attrs, mathml_tags
+
 from .. import registry
+from .bleach_whitelist import all_styles, mathml_attrs, mathml_tags
+from .lazy_load import lazy_load as lazy_load_processor
 
 logger = logging.getLogger('judge.html')
 

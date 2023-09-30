@@ -5,9 +5,10 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
-from django.db.models import CASCADE, F, Q, SET_NULL, FilteredRelation
+from django.db.models import CASCADE, SET_NULL, F, FilteredRelation, Q
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone

@@ -4,8 +4,9 @@ from django.utils import timezone
 
 from judge.models import Language, LanguageLimit, Problem
 from judge.models.problem import disallowed_characters_validator
-from judge.models.tests.util import CommonDataMixin, create_organization, create_problem, create_problem_type, \
-    create_solution, create_user
+from judge.models.tests.util import (CommonDataMixin, create_organization,
+                                     create_problem, create_problem_type,
+                                     create_solution, create_user)
 
 
 class ProblemTestCase(CommonDataMixin, TestCase):

@@ -10,8 +10,8 @@ import pyotp
 import webauthn
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Max
 from django.urls import reverse
@@ -22,14 +22,17 @@ from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 # from fernet_fields import EncryptedCharField
 from pyotp.utils import strings_equal
-# from sortedm2m.fields import SortedManyToManyField
 
-from judge.models.choices import ACE_THEMES, MATH_ENGINES_CHOICES, TIMEZONE, RATE, NEWBIE
+from judge.models.choices import (ACE_THEMES, MATH_ENGINES_CHOICES, NEWBIE,
+                                  RATE, TIMEZONE)
 from judge.models.runtime import Language
 # from judge.models.contest import RATE, NEWBIE
 from judge.ratings import rating_class
 from judge.utils.two_factor import webauthn_decode
 from typeracer.models import TypoResult
+
+# from sortedm2m.fields import SortedManyToManyField
+
 
 __all__ = ['Organization', 'Profile', 'OrganizationRequest', 'WebAuthnCredential', 'LoggedInUser']
 

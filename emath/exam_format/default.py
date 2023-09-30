@@ -1,14 +1,16 @@
 from datetime import timedelta
-from django.utils.translation import gettext_lazy
+
 from django.db.models import Max
+from django.template.defaultfilters import floatformat
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.template.defaultfilters import floatformat
+from django.utils.translation import gettext_lazy
+
+from judge.utils.timedelta import nice_repr
 
 from .base import BaseExamFormat
 from .registry import registry_exam_format
 
-from judge.utils.timedelta import nice_repr
 
 @registry_exam_format('default')
 class DefaultExamFormat(BaseExamFormat):

@@ -2,25 +2,26 @@ import json
 from collections import defaultdict
 
 from django.conf import settings
+from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist,
+                                    PermissionDenied)
+from django.db.models import Count, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist, PermissionDenied
 from django.urls import reverse
-from django.utils.html import format_html
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.db.models import Q, Count
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.list import ListView
-from judge.models.profile import Profile
 
+from emath.models import Exam, Submission
+from judge.models.profile import Profile
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.problems import _get_result_data
 from judge.utils.raw_sql import join_sql_subquery, use_straight_join
 from judge.utils.views import DiggPaginatorMixin, TitleMixin
 
-from emath.models import Submission, Exam
 
 def filter_submissions_by_visible_exams(queryset, user):
     join_sql_subquery(

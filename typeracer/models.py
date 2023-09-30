@@ -1,10 +1,9 @@
 import datetime
 
-from django.utils.functional import cached_property
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.functional import cached_property
 from django.utils.timezone import now
-
+from django.utils.translation import gettext_lazy as _
 
 __all__ = ['TypoData', 'TypoContest', 'TypoResult', 'TypoProfile', 'TypoRoom']
 

@@ -3,11 +3,12 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db.models import Count, FilteredRelation, F, Q
+from django.db.models import Count, F, FilteredRelation, Q
 from django.db.models.expressions import Value
 from django.db.models.functions import Coalesce
 from django.forms import ModelForm
-from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
+                         HttpResponseNotFound, HttpResponseRedirect)
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _

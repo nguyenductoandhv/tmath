@@ -1,10 +1,13 @@
+from django.conf.urls import include, url
 from django.urls import path
-from django.conf.urls import url, include
 
 from emath.views.exam import ExamDetail, ExamJoin, ExamLeave, ExamRanking
-from .views import ExamProblemView, ProblemDetail, ProblemList, ExamList, AllSubmissions
-from emath.views.submission import AllUserSubmissions, UserExamSubmissions, ExamSubmissions
+from emath.views.submission import (AllUserSubmissions, ExamSubmissions,
+                                    UserExamSubmissions)
 from tmath.urls import paged_list_view
+
+from .views import (AllSubmissions, ExamList, ExamProblemView, ProblemDetail,
+                    ProblemList)
 
 app_name = 'emath'
 

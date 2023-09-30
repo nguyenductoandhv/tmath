@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import TypoContest, TypoData, TypoRoom, TypoResult
+
+from typeracer.models import TypoContest, TypoData, TypoResult, TypoRoom
 
 # Register your models here.
 
@@ -9,7 +10,7 @@ class TypoResultAdmin(admin.ModelAdmin):
 
 
 class TypoRoomAdmin(admin.ModelAdmin):
-    autocomplete_fields = ['contest', ]
+    autocomplete_fields = ['contest']
 
 
 class TypoContestAdmin(admin.ModelAdmin):

@@ -8,7 +8,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.forms import BaseModelFormSet, CharField, ChoiceField, ModelForm, formset_factory, Select
+from django.forms import (BaseModelFormSet, CharField, ChoiceField, ModelForm,
+                          Select, formset_factory)
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -18,13 +19,14 @@ from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 
 from judge.highlight_code import highlight_code
-from judge.models import Problem, ProblemData, ProblemTestCase, Submission, problem_data_storage, Log
+from judge.models import (Log, Problem, ProblemData, ProblemTestCase,
+                          Submission, problem_data_storage)
+from judge.models.problem_data import IO_METHODS
 from judge.utils.problem_data import ProblemDataCompiler
 from judge.utils.unicode import utf8text
 from judge.utils.views import TitleMixin, add_file_response
 from judge.views.problem import ProblemMixin
-from judge.widgets.fields import NumberInput, CheckboxInput, HiddenInput
-from judge.models.problem_data import IO_METHODS
+from judge.widgets.fields import CheckboxInput, HiddenInput, NumberInput
 
 mimetypes.init()
 mimetypes.add_type('application/x-yaml', '.yml')
@@ -255,7 +257,7 @@ def problem_data_file(request, problem, path):
         title='Download test',
         message='Downloaded test of problem "%s"' % (object.name),
         object_id=object.pk,
-        object_title=object.code
+        object_title=object.code,
     )
 
     response['Content-Type'] = 'application/octet-stream'

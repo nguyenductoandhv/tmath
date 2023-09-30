@@ -5,8 +5,9 @@ from django.db.models import F, OuterRef, Prefetch, Subquery
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 
+from judge.models import (Contest, ContestParticipation, ContestTag, Problem,
+                          Profile, Rating, Submission)
 from tmath import settings
-from judge.models import Contest, ContestParticipation, ContestTag, Problem, Profile, Rating, Submission
 
 
 def sane_time_repr(delta):

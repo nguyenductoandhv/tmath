@@ -1,17 +1,18 @@
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.db import ProgrammingError
 from django.db.models import Q
-from django.views.generic import ListView
-from django.utils.functional import cached_property
 from django.http import Http404
+from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import ListView
 
 from emath.models import Problem
 from emath.models.problem import MathGroup
 from judge.comments import CommentedDetailView
 from judge.pdf_problems import HAS_PDF
 from judge.utils.strings import safe_int_or_none
-from judge.utils.views import QueryStringSortMixin, TitleMixin, DiggPaginator, generic_message
+from judge.utils.views import (DiggPaginator, QueryStringSortMixin, TitleMixin,
+                               generic_message)
 
 
 class ProblemListMixin(object):

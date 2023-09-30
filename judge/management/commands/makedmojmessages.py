@@ -5,7 +5,9 @@ import sys
 
 from django.conf import settings
 from django.core.management import CommandError
-from django.core.management.commands.makemessages import Command as MakeMessagesCommand, check_programs
+from django.core.management.commands.makemessages import \
+    Command as MakeMessagesCommand
+from django.core.management.commands.makemessages import check_programs
 
 from judge.models import NavigationBar, ProblemType
 

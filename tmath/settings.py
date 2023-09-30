@@ -8,10 +8,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-# Build paths inside the project like this: BASE_DIR / ...
-from pathlib import Path
 import datetime
 import tempfile
+# Build paths inside the project like this: BASE_DIR / ...
+from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 from django_jinja.builtins import DEFAULT_EXTENSIONS

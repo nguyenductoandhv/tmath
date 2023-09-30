@@ -23,7 +23,7 @@ def get_random_contest(limit=120):
         data=data[i],
         time_start=timezone.now() + timezone.timedelta(seconds=limit),
         time_join=timezone.now(),
-        limit=300
+        limit=300,
     )
     return contest
 
@@ -39,7 +39,7 @@ def updateProgress(request):
     #     })
     return JsonResponse({
         'result': 'success',
-        'status': 200
+        'status': 200,
     })
 
 
@@ -87,11 +87,11 @@ def getQuote(request, pk):
     contest: TypoContest = room.contest
     if contest._now >= contest.time_start:
         return JsonResponse({
-            'content': room.contest.data.data
+            'content': room.contest.data.data,
         })
     else:
         return JsonResponse({
-            'content': ''
+            'content': '',
         })
 
 

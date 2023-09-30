@@ -1,9 +1,12 @@
 from django.test import TestCase
 from django.utils import timezone
 
-from judge.models import ContestSubmission, Language, Submission, SubmissionSource
-from judge.models.tests.util import CommonDataMixin, create_contest, create_contest_participation, \
-    create_contest_problem, create_problem, create_user
+from judge.models import (ContestSubmission, Language, Submission,
+                          SubmissionSource)
+from judge.models.tests.util import (CommonDataMixin, create_contest,
+                                     create_contest_participation,
+                                     create_contest_problem, create_problem,
+                                     create_user)
 
 
 class SubmissionTestCase(CommonDataMixin, TestCase):

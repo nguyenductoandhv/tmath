@@ -1,9 +1,10 @@
-from django.conf import settings
 import six
+from django.conf import settings
 from django.utils.safestring import SafeData, mark_safe
 
 if settings.USE_I18N:
-    from django.utils.translation.trans_real import DjangoTranslation, get_language
+    from django.utils.translation.trans_real import (DjangoTranslation,
+                                                     get_language)
 
     _translations = {}
 

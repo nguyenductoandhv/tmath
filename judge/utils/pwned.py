@@ -40,8 +40,9 @@ import requests
 from django.conf import settings
 from django.contrib.auth.password_validation import CommonPasswordValidator
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext
 from six import string_types
-from django.utils.translation import gettext as _, ngettext
 
 from judge.utils.unicode import utf8bytes
 

@@ -1,33 +1,38 @@
+import random
 from collections import namedtuple
 from functools import partial
 from itertools import chain
 from operator import attrgetter
-import random
+
 from django import forms
 from django.conf import settings
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
 from django.db import IntegrityError
+from django.db.models import (Case, Count, F, FloatField, IntegerField, Max,
+                              Min, Q, Sum, Value, When)
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import DetailView, ListView
-from django.views.generic.detail import BaseDetailView
-from django.db.models import Case, Count, F, FloatField, IntegerField, Max, Min, Q, Sum, Value, When
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.http import JsonResponse, Http404, HttpResponseRedirect
-from django.urls import reverse
+from django.views.generic import DetailView, ListView
+from django.views.generic.detail import BaseDetailView
+
+from emath.forms import ProblemForm
+from emath.models import (Answer, Exam, ExamParticipation, ExamProblem,
+                          ExamSubmission, Submission)
 from emath.models.problem import Problem
 from emath.models.submission import SubmissionProblem
-
+from judge.comments import CommentedDetailView
 from judge.models import Profile
 from judge.utils.opengraph import generate_opengraph
-from judge.utils.views import TitleMixin, QueryStringSortMixin, DiggPaginatorMixin, generic_message
-from judge.comments import CommentedDetailView
-from emath.forms import ProblemForm
-from emath.models import Exam, ExamProblem, ExamParticipation, ExamSubmission, Submission, Answer
+from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
+                               TitleMixin, generic_message)
+
 
 def get_exam_problem(exam, profile):
     return ExamProblem.objects.filter(exam=exam)

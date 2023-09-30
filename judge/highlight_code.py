@@ -16,10 +16,10 @@ def _wrap_code(inner):
 
 try:
     import pygments
-    import pygments.lexers
     import pygments.formatters.html
+    import pygments.lexers
     import pygments.util
-except ImportError:
+except importError:
     def highlight_code(code, language, cssclass=None):
         return _make_pre_code(code)
 else:

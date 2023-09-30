@@ -19,5 +19,5 @@ urlpatterns = [
     ])),
     path('contest/<int:pk>', include([
         path('/rank', Ranking.as_view(), name="typo_ranking"),
-    ]))
+    ])),
 ]

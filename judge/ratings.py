@@ -3,7 +3,7 @@ from bisect import bisect
 from operator import attrgetter, itemgetter
 
 from django.db import transaction
-from django.db.models import Count, OuterRef, Subquery, IntegerField
+from django.db.models import Count, IntegerField, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -119,7 +119,7 @@ def recalculate_ratings(old_rating, old_volatility, actual_rank, times_rated, is
 
 
 def rate_contest(contest):
-    from judge.models import Rating, Profile
+    from judge.models import Profile, Rating
 
     rating_subquery = Rating.objects.filter(user=OuterRef('user'))
     rating_sorted = rating_subquery.order_by('-contest__end_time')

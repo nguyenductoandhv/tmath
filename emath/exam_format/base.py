@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 
 import six
 
+
 class BaseExamFormat(six.with_metaclass(ABCMeta)):
     @abstractmethod
     def __init__(self, exam):

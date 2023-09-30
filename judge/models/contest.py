@@ -493,7 +493,7 @@ class SampleContest(models.Model):
                                              default=Contest.SCOREBOARD_VISIBLE,
                                              max_length=1, choices=Contest.SCOREBOARD_VISIBILITY,
                                              help_text=_('Scoreboard visibility through the duration '
-                                                         'of the contest'), )
+                                                         'of the contest'))
     use_clarifications = models.BooleanField(verbose_name=_('no comments'),
                                              help_text=_("Use clarification system instead of comments."),
                                              default=True)

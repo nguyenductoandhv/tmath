@@ -5,7 +5,7 @@ from threading import RLock
 
 try:
     from llist import dllist
-except ImportError:
+except importError:
     from pyllist import dllist
 
 logger = logging.getLogger('judge.bridge')

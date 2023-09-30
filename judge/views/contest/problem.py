@@ -17,8 +17,8 @@ from django.views.generic import DetailView
 
 from judge.forms import ProblemSubmitForm
 from judge.models import (Contest, ContestProblem, ContestSubmission, Judge,
-                          Language, RuntimeVersion,
-                          Submission, SubmissionSource)
+                          Language, RuntimeVersion, Submission,
+                          SubmissionSource)
 from judge.utils.views import SingleObjectFormView, TitleMixin, generic_message
 from judge.views.contests import ContestMixin, PrivateContestError
 from judge.views.problem import SolvedProblemMixin
@@ -218,7 +218,7 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
             source = SubmissionSource(
                 submission=self.new_submission,
                 source=form.cleaned_data['source'] + source_url,
-                file=origin_url
+                file=origin_url,
             )
             source.save()
 

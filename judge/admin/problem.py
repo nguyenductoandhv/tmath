@@ -8,13 +8,17 @@ from django.forms import ModelForm
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.html import format_html
-from django.utils.translation import gettext, gettext_lazy as _, ngettext
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 from reversion.admin import VersionAdmin
 
-from judge.models import LanguageLimit, Problem, ProblemClarification, ProblemTranslation, Profile, Solution
+from judge.models import (LanguageLimit, Problem, ProblemClarification,
+                          ProblemTranslation, Profile, Solution)
 from judge.models.problem import ProblemClass, ProblemGroup, ProblemType
 from judge.utils.views import NoBatchDeleteMixin
-from judge.widgets import AdminMartorWidget, CheckboxSelectMultipleWithSelectAll
+from judge.widgets import (AdminMartorWidget,
+                           CheckboxSelectMultipleWithSelectAll)
 
 
 class ProblemForm(ModelForm):

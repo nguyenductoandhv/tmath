@@ -1,16 +1,17 @@
 import itertools
 import json
-
 from urllib.parse import quote as urlquote
+
 from jinja2.ext import Extension
 from mptt.utils import get_cached_trees
 from statici18n.templatetags.statici18n import inlinei18n
 
 from judge.highlight_code import highlight_code
 from judge.user_translations import gettext
-from . import (camo, datetime, filesize, gravatar, language, markdown, rating, reference, render, social,
-               spaceless, submission, timedelta)
-from . import registry
+
+from . import (camo, datetime, filesize, gravatar, language, markdown, rating,
+               reference, registry, render, social, spaceless, submission,
+               timedelta)
 
 registry.function('str', str)
 registry.filter('str', str)

@@ -1,7 +1,9 @@
 import json
-from channels.generic.websocket import AsyncJsonWebsocketConsumer, JsonWebsocketConsumer
+
 from asgiref.sync import async_to_sync
 from autobahn.exception import Disconnected
+from channels.generic.websocket import (AsyncJsonWebsocketConsumer,
+                                        JsonWebsocketConsumer)
 
 
 class SubmissionConsumer(JsonWebsocketConsumer):

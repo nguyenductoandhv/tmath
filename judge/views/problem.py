@@ -18,8 +18,7 @@ from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q
 from django.db.models.functions import Coalesce
 from django.db.utils import ProgrammingError
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden, HttpResponseRedirect,
-                         )
+                         HttpResponseForbidden, HttpResponseRedirect)
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse
@@ -704,7 +703,7 @@ class ProblemSubmit(LoginRequiredMixin, ProblemMixin, TitleMixin, SingleObjectFo
             source = SubmissionSource(
                 submission=self.new_submission,
                 source=form.cleaned_data['source'] + source_url,
-                file=origin_url
+                file=origin_url,
             )
             source.save()
 
@@ -814,7 +813,7 @@ class ProblemNew(ProblemMixin, PermissionRequiredMixin, TitleMixin, CreateView):
                 form=form,
                 languagelimitform=languagelimitform,
                 # solutionform=solutionform,
-            )
+            ),
         )
 
     def post(self, request, *args, **kwargs):
@@ -849,7 +848,7 @@ class ProblemNew(ProblemMixin, PermissionRequiredMixin, TitleMixin, CreateView):
                 form=form,
                 languagelimitform=languagelimitform,
                 # solutionform=solutionform
-            )
+            ),
         )
 
     def dispatch(self, request, *args, **kwargs):
@@ -879,7 +878,7 @@ class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView)
                 form=form,
                 languagelimitform=languagelimitform,
                 # solutionform=solutionform,
-            )
+            ),
         )
 
     def post(self, request, *args, **kwargs):
@@ -921,7 +920,7 @@ class ProblemEdit(ProblemMixin, PermissionRequiredMixin, TitleMixin, UpdateView)
                 form=form,
                 languagelimitform=languagelimitform,
                 # solutionform=solutionform
-            )
+            ),
         )
 
     def dispatch(self, request, *args, **kwargs):

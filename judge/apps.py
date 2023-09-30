@@ -10,12 +10,12 @@ class JudgeAppConfig(AppConfig):
     def ready(self):
         # WARNING: AS THIS IS NOT A FUNCTIONAL PROGRAMMING LANGUAGE,
         #          OPERATIONS MAY HAVE SIDE EFFECTS.
-        #          DO NOT REMOVE THINKING THE IMPORT IS UNUSED.
+        #          DO NOT REMOVE THINKING THE import IS UNUSED.
         # noinspection PyUnresolvedReferences
-        from . import signals, jinja2  # noqa: F401, imported for side effects
-
+        from chat.models import ChatParticipation, ChatRoom
         from judge.models import Organization
-        from chat.models import ChatRoom, ChatParticipation
+
+        from . import jinja2, signals  # noqa: F401, imported for side effects
 
         # try:
         #     lang = Language.get_default_language()
@@ -29,7 +29,6 @@ class JudgeAppConfig(AppConfig):
         #         logged_in_user.save()
         # except DatabaseError:
         #     pass
-
         # problems = Problem.objects.all()
         # for problem in problems:
         #     description: str = problem.description

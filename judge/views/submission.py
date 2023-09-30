@@ -1,5 +1,5 @@
-import json
 import datetime
+import json
 from collections import namedtuple
 from itertools import groupby
 from operator import attrgetter
@@ -7,27 +7,32 @@ from operator import attrgetter
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import (ImproperlyConfigured, ObjectDoesNotExist,
+                                    PermissionDenied)
 from django.db.models import Prefetch, Q
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect, JsonResponse)
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext as _, gettext_lazy
-from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, ListView
-from django.views.decorators.cache import never_cache
 
 # from judge import event_poster as event
 from judge.highlight_code import highlight_code
-from judge.models import Contest, Language, Problem, ProblemTranslation, Profile, Submission, Log, ContestSubmission
+from judge.models import (Contest, ContestSubmission, Language, Log, Problem,
+                          ProblemTranslation, Profile, Submission)
 from judge.utils.infinite_paginator import InfinitePaginationMixin
 from judge.utils.problem_data import get_problem_testcases_data
-from judge.utils.problems import get_result_data, user_completed_ids, user_editable_ids, user_tester_ids
+from judge.utils.problems import (get_result_data, user_completed_ids,
+                                  user_editable_ids, user_tester_ids)
 from judge.utils.raw_sql import use_straight_join
 from judge.utils.views import DiggPaginatorMixin, TitleMixin
 
@@ -89,7 +94,7 @@ class SubmissionSource(SubmissionDetailBase):
             title='View source code',
             message='View source code of submission\'s problem "%s"' % (submission.problem),
             object_id=submission.pk,
-            object_title=submission
+            object_title=submission,
         )
         context['raw_source'] = submission.source.source.rstrip('\n')
         context['highlighted_source'] = highlight_code(submission.source.source, submission.language.pygments)

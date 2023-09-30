@@ -51,8 +51,7 @@ from judge.utils.subscription import Subscription
 from judge.utils.unicode import utf8text
 from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
                                TitleMixin, add_file_response, generic_message)
-
-from .contests import ContestRanking
+from judge.views.contests import ContestRanking
 
 __all__ = ['UserPage', 'UserAboutPage', 'UserProblemsPage', 'UserDownloadData', 'UserPrepareData',
            'users', 'edit_profile', 'EditProfile',
@@ -589,7 +588,7 @@ class CreateManyUser(TitleMixin, FormView):
         end = form.cleaned_data['end_id']
         org_id = form.cleaned_data['organization']
         org: Organization = Organization.objects.get(id=org_id)
-        response = HttpResponse(content_type='text/csv',)
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="%s_list_user.csv"' % prefix
         writer = csv.writer(response)
         writer.writerow(['Username', 'Password'])
@@ -788,7 +787,7 @@ class SuccessCSVUser(TitleMixin, TemplateView):
         list = self.request.session.get('update_list', [])
         if not list:
             return Http404()
-        response = HttpResponse(content_type='text/csv',)
+        response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="list_user.csv"'
         writer = csv.writer(response)
         writer.writerow(['MSHV', 'Fullname', 'Username', 'Password', 'Expire', 'Organization'])

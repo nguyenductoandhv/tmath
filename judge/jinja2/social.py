@@ -1,6 +1,7 @@
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
-from django_social_share.templatetags.social_share import post_to_facebook_url, post_to_twitter_url
+from django_social_share.templatetags.social_share import (
+    post_to_facebook_url, post_to_twitter_url)
 
 from . import registry
 
@@ -32,6 +33,7 @@ for name, template, url_func in SHARES:
 
 @registry.function
 def recaptcha_init(language=None):
-    from snowpenguin.django.recaptcha2.templatetags.recaptcha2 import recaptcha_common_init
+    from snowpenguin.django.recaptcha2.templatetags.recaptcha2 import \
+        recaptcha_common_init
     return get_template('snowpenguin/recaptcha/recaptcha_init.html').render(
         recaptcha_common_init(language, {'explicit': False}))

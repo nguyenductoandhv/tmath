@@ -4,7 +4,8 @@ from uuid import UUID
 
 from celery.result import AsyncResult
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
+from django.http import (Http404, HttpResponseBadRequest, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme

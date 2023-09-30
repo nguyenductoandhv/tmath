@@ -1,5 +1,5 @@
-from functools import partial
 import random
+from functools import partial
 
 from django.conf import settings
 from django.contrib.auth.context_processors import PermWrapper
@@ -8,8 +8,10 @@ from django.core.cache import cache
 from django.utils.functional import SimpleLazyObject, new_method_proxy
 
 # from judge import event_poster as event
-from judge.utils.caniuse import CanIUse, SUPPORT
+from judge.utils.caniuse import SUPPORT, CanIUse
+
 from .models import MiscConfig, NavigationBar, Profile
+
 # from emath.models.interface import Navigation
 
 

@@ -12,7 +12,7 @@ __all__ = ['PagedownWidget', 'AdminPagedownWidget',
 
 try:
     from pagedown.widgets import PagedownWidget as OldPagedownWidget
-except ImportError:
+except importError:
     PagedownWidget = None
     AdminPagedownWidget = None
     MathJaxPagedownWidget = None

@@ -6,15 +6,18 @@ from django.contrib import admin, messages
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.urls import path
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import path
 from django.utils.html import format_html
-from django.utils.translation import gettext, gettext_lazy as _, pgettext, ngettext
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext, pgettext
 
 from django_ace import AceWidget
-from judge.models import ContestParticipation, ContestProblem, ContestSubmission, Profile, Submission, \
-    SubmissionSource, SubmissionTestCase
+from judge.models import (ContestParticipation, ContestProblem,
+                          ContestSubmission, Profile, Submission,
+                          SubmissionSource, SubmissionTestCase)
 from judge.utils.raw_sql import use_straight_join
 
 

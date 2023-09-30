@@ -1,2 +1,3 @@
-from .submission import SubmissionConsumer, DetailSubmission, AsyncSubmissionConsumer, AsyncDetailSubmission
+from .submission import (AsyncDetailSubmission, AsyncSubmissionConsumer,
+                         DetailSubmission, SubmissionConsumer)
 from .ticket import DetailTicketConsumer, TicketConsumer
