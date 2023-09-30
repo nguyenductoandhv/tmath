@@ -1,9 +1,7 @@
-import datetime
 from random import randint
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -13,35 +11,37 @@ from django.views.generic.detail import SingleObjectMixin
 # from judge import event_poster as event
 from judge.models import Profile
 from judge.utils.views import TitleMixin, generic_message
-
-from typeracer.models import *
+from typeracer.models import TypoContest, TypoData, TypoResult, TypoRoom
 
 # Create your views here.
+
 
 def get_random_contest(limit=120):
     data = TypoData.objects.all()
     i = randint(0, data.count() - 1)
     contest = TypoContest.objects.create(
-        data = data[i],
-        time_start = timezone.now() + timezone.timedelta(seconds=limit),
-        time_join = timezone.now(),
-        limit = 300
+        data=data[i],
+        time_start=timezone.now() + timezone.timedelta(seconds=limit),
+        time_join=timezone.now(),
+        limit=300
     )
     return contest
 
+
 def updateProgress(request):
-    if request.method == 'POST':
-        user = request.POST.get('user')
-        progress = request.POST.get('progress')
-        contest = request.POST.get('contest')
-        # event.post('typocontest_%s' % contest, {
-        #   'user': user,
-        #   'progress': progress,
-        # })
+    # if request.method == 'POST':
+    #     user = request.POST.get('user')
+    #     progress = request.POST.get('progress')
+    #     contest = request.POST.get('contest')
+    #     event.post('typocontest_%s' % contest, {
+    #       'user': user,
+    #       'progress': progress,
+    #     })
     return JsonResponse({
         'result': 'success',
         'status': 200
     })
+
 
 def get_rank(index):
     if index == 0:
@@ -51,6 +51,7 @@ def get_rank(index):
     if index == 2:
         return '3rd'
     return str(index + 1) + 'th'
+
 
 def finishTypoContest(request):
     if request.method == 'POST':
@@ -62,7 +63,7 @@ def finishTypoContest(request):
         contest_object = TypoContest.objects.get(pk=contest)
         rank = TypoResult.objects.filter(contest=contest_object, is_finish=True).count()
         result = TypoResult.objects.get(
-        user=Profile.objects.get(user__pk=user),
+            user=Profile.objects.get(user__pk=user),
             contest=contest_object,
         )
         result.speed = int(speed)
@@ -79,6 +80,7 @@ def finishTypoContest(request):
         'result': 'success',
         'status': 200,
     })
+
 
 def getQuote(request, pk):
     room: TypoRoom = TypoRoom.objects.get(pk=pk)
@@ -105,7 +107,7 @@ class Racer(TemplateView):
         index = request.GET.get('user')
         self.object = TypoResult.objects.get(pk=index)
         return super().dispatch(request, *args, **kwargs)
-  
+
 
 class TypoRoomList(TitleMixin, ListView):
     model = TypoRoom
@@ -132,7 +134,7 @@ class RoomDetail(TitleMixin, RoomMixin, DetailView):
 
     def get_title(self):
         return self.object.name
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         participations = TypoResult.objects.filter(contest=self.object.contest)
@@ -156,7 +158,7 @@ class Ranking(TitleMixin, DetailView):
     context_object_name = 'contest'
     template_name: str = 'typeracer/rank.html'
     title: str = 'Typo Contest'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ranks'] = TypoResult.objects.filter(contest=self.object, is_finish=True) \

@@ -2,33 +2,32 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.views.generic import DetailView
 
-from judge.jinja2.gravatar import gravatar
+from chat.models import ChatMessage, ChatParticipation
 from judge.models import Organization
 from judge.models.profile import Profile
-
-from chat.models import ChatMessage, ChatParticipation
 
 # from judge import event_poster as event
 
 # Create your views here.
 
-def make_message(request): 
+
+def make_message(request):
     if request.method == 'POST':
         user_id = request.POST.get('user')
         org_id = request.POST.get('org')
         msg = request.POST.get('msg')
         organization = Organization.objects.get(pk=org_id)
         profile = Profile.objects.get(user__id=user_id)
-        if not profile in organization:
+        if profile not in organization:
             response = JsonResponse({'error': 'You not in this organization'})
-            response.status_code = 403 
+            response.status_code = 403
             return response
         room = organization.room
         user = ChatParticipation.objects.get_or_create(user=profile, room=room)[0]
         user.save()
         message = ChatMessage(room=user.room, msg=msg, user=user)
         message.save()
-        data = {'id': message.id,}
+        data = {'id': message.id, }
         # if event.real:
         #   event.post('messages_%s' % room.id,  data)
     return JsonResponse(data)

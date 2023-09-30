@@ -83,7 +83,7 @@ class TypoContest(models.Model):
     @property
     def is_opened(self):
         return self._now >= self.time_join
-    
+
 
 class TypoResult(models.Model):
     user = models.ForeignKey('judge.Profile', verbose_name=_('user'), related_name='typos', on_delete=models.CASCADE)
@@ -93,7 +93,8 @@ class TypoResult(models.Model):
     order = models.PositiveIntegerField(_('order'), default=1)
     progress = models.IntegerField(_("progress"), default=0)
     is_finish = models.BooleanField(_("is finished"), default=False)
-    contest = models.ForeignKey("typeracer.TypoContest", verbose_name=_("contest"), related_name='participations', null=True, blank=True, on_delete=models.CASCADE)
+    contest = models.ForeignKey("typeracer.TypoContest", verbose_name=_("contest"), related_name='participations',
+                                null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return "%s - %s" % (self.user, self.contest)

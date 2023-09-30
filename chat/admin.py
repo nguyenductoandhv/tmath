@@ -2,14 +2,12 @@ from django import forms
 from django.contrib import admin
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from django.db import models
 from reversion.admin import VersionAdmin
 
 from chat.models import ChatMessage, ChatRoom
-from judge.widgets import (AdminHeavySelect2MultipleWidget,
-                           AdminHeavySelect2Widget)
 
 # Register your models here.
+
 
 class ChatRoomForm(forms.ModelForm):
     class Meta:
@@ -28,6 +26,7 @@ class ChatRoomAdmin(VersionAdmin):
     class Meta:
         model = ChatRoom
 
+
 # Resource: http://masnun.rocks/2017/03/20/django-admin-expensive-count-all-queries/
 class CachingPaginator(Paginator):
     def _get_count(self):
@@ -43,7 +42,7 @@ class CachingPaginator(Paginator):
                     self._count = super().count
                     cache.set(key, self._count, 3600)
 
-            except:
+            except (AttributeError, TypeError):
                 self._count = len(self.object_list)
         return self._count
 

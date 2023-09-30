@@ -1,5 +1,8 @@
 from django.urls import include, path
-from .views import *
+
+from typeracer.views import (JoinRoom, Racer, Ranking, RoomDetail,
+                             TypoRoomList, finishTypoContest, getQuote,
+                             updateProgress)
 
 app_name = 'typeracer'
 
