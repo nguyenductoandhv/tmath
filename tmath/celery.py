@@ -11,8 +11,10 @@ app = Celery('tmath')
 from django.conf import settings  # noqa: E402, I202, django must be imported here
 # app.config_from_object(settings, namespace='CELERY')
 
-app.conf.broker_url = settings.CELERY_BROKER_URL
-app.conf.result_backend = settings.CELERY_RESULT_BACKEND
+if hasattr(settings, 'CELERY_BROKER_URL'):
+    app.conf.broker_url = settings.CELERY_BROKER_URL
+if hasattr(settings, 'CELERY_RESULT_BACKEND'):
+    app.conf.result_backend = settings.CELERY_RESULT_BACKEND
 
 if hasattr(settings, 'CELERY_BROKER_URL_SECRET'):
     app.conf.broker_url = settings.CELERY_BROKER_URL_SECRET
