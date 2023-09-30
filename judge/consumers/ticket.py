@@ -11,7 +11,7 @@ class TicketConsumer(AsyncJsonWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
         await self.accept()
@@ -20,7 +20,7 @@ class TicketConsumer(AsyncJsonWebsocketConsumer):
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
     async def receive(self, text_data):
@@ -28,7 +28,7 @@ class TicketConsumer(AsyncJsonWebsocketConsumer):
 
         # Send message to room group
         await self.channel_layer.group_send(
-            self.room_group_name, message
+            self.room_group_name, message,
         )
 
     async def ticket_message(self, event):
@@ -53,7 +53,7 @@ class DetailTicketConsumer(AsyncJsonWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
         await self.accept()
@@ -62,7 +62,7 @@ class DetailTicketConsumer(AsyncJsonWebsocketConsumer):
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
     async def receive(self, text_data):
@@ -70,7 +70,7 @@ class DetailTicketConsumer(AsyncJsonWebsocketConsumer):
 
         # Send message to room group
         await self.channel_layer.group_send(
-            self.room_group_name, message
+            self.room_group_name, message,
         )
 
     async def ticket_message(self, event):

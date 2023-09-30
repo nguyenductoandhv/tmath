@@ -1,7 +1,7 @@
 try:
     from snowpenguin.django.recaptcha2.fields import ReCaptchaField
     from snowpenguin.django.recaptcha2.widgets import ReCaptchaWidget
-except importError:
+except ImportError:
     ReCaptchaField = None
     ReCaptchaWidget = None
 else:

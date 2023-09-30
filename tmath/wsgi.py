@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tmath.settings')
 
 try:
     import MySQLdb  # noqa: F401, imported for side effect
-except importError:
+except ImportError:
     import pymysql
 
     pymysql.install_as_MySQLdb()

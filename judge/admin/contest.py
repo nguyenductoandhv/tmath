@@ -125,14 +125,14 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
         (_('Settings'), {
             'fields': ('is_visible', 'is_public_contest', 'use_clarifications', 'hide_problem_tags',
                        'hide_problem_authors', 'run_pretests_only', 'locked_after', 'scoreboard_visibility',
-                       'points_precision', 'add_solution', 'limit_solution')
+                       'points_precision', 'add_solution', 'limit_solution'),
         }),
         (_('Scheduling'), {'fields': ('start_time', 'end_time', 'time_limit', 'pre_time')}),
         (_('Details'), {
-            'fields': ('is_full_markup', 'description', 'og_image', 'logo_override_image', 'tags', 'summary')
+            'fields': ('is_full_markup', 'description', 'og_image', 'logo_override_image', 'tags', 'summary'),
         }),
         (_('Format'), {
-            'fields': ('format_name', 'format_config', 'is_limit_language', 'limit_language', 'problem_label_script')
+            'fields': ('format_name', 'format_config', 'is_limit_language', 'limit_language', 'problem_label_script'),
         }),
         (_('Rating'), {'fields': ('is_rated', 'rate_all', 'rating_floor', 'rating_ceiling', 'rate_exclude')}),
         (_('Access'), {'fields': ('access_code', 'is_private', 'private_contestants', 'is_organization_private',
@@ -152,7 +152,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
         'organizations',
         'banned_users',
         'view_contest_scoreboard',
-        'tags'
+        'tags',
     ]
     actions_on_top = True
     actions_on_bottom = True
@@ -379,7 +379,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
     def show_word(self, obj):
         styles = 'white-space:nowrap; background-color: blue; padding: 0.5rem; font-weight:600; border-radius: 6px;'
         return format_html('<a href="{0}" style="{2}">{1}</a>',
-                           reverse('admin:export_word', kwargs={'id': obj.id, }), _('Export word'), styles)
+                           reverse('admin:export_word', kwargs={'id': obj.id}), _('Export word'), styles)
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -409,7 +409,7 @@ class ProblemInlineFormset(forms.BaseInlineFormSet):
             if qs.exists():
                 raise forms.ValidationError('Problem %(problem)s appeared in %(contest)s sample contest!' % {
                     'problem': problem,
-                    'contest': qs.first().contest.key
+                    'contest': qs.first().contest.key,
                 })
 
     def save(self, commit: bool = True):
@@ -427,7 +427,7 @@ class ProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = SampleContestProblem
     verbose_name = _('Problem')
     verbose_name_plural = 'Problems'
-    fields = ('order', 'problem', 'points', 'partial', 'is_pretested', 'max_submissions', 'output_prefix_override',)
+    fields = ('order', 'problem', 'points', 'partial', 'is_pretested', 'max_submissions', 'output_prefix_override')
     autocomplete_fields = ['problem']
     formset = ProblemInlineFormset
     form = ProblemInlineForm
@@ -458,7 +458,7 @@ class ContestLevelFilter(admin.SimpleListFilter):
 @admin.register(SampleContest)
 class SampleContestAdmin(VersionAdmin):
     fieldsets = (
-        (None, {'fields': ('key', 'name', )}),
+        (None, {'fields': ('key', 'name')}),
         (_('Settings'), {'fields': ('is_visible', 'use_clarifications', 'hide_problem_tags', 'hide_problem_authors',
                                     'run_pretests_only', 'scoreboard_visibility',
                                     'points_precision', 'level')}),
@@ -469,7 +469,7 @@ class SampleContestAdmin(VersionAdmin):
     list_display = ('key', 'name', 'get_number_problems', 'level', 'clone_button', 'pdf_button')
     list_filter = (ContestLevelFilter, )
     autocomplete_fields = [
-        'tags'
+        'tags',
     ]
     search_fields = ('key', 'name')
     inlines = [ProblemInline]
@@ -512,7 +512,7 @@ class SampleContestAdmin(VersionAdmin):
             is_full_markup=samplecontest.is_full_markup,
             format_name=samplecontest.format_name,
             format_config=samplecontest.format_config,
-            points_precision=samplecontest.points_precision
+            points_precision=samplecontest.points_precision,
         )
         contest.authors.set(profile)
         contest.save()
@@ -524,7 +524,7 @@ class SampleContestAdmin(VersionAdmin):
                 max_submissions=problem.max_submissions,
                 is_pretested=problem.is_pretested,
                 partial=problem.partial,
-                order=problem.order
+                order=problem.order,
             )
 
         return HttpResponseRedirect(reverse('admin:judge_contest_change', args=(contest.id,)))

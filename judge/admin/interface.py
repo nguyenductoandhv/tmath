@@ -79,7 +79,7 @@ class BlogPostAdmin(VersionAdmin):
     list_display_links = ('id', 'title')
     ordering = ('-publish_on',)
     form = BlogPostForm
-    autocomplete_fields = ['authors',]
+    autocomplete_fields = ['authors']
     date_hierarchy = 'publish_on'
 
     def has_change_permission(self, request, obj=None):
@@ -97,7 +97,7 @@ class CourseAdmin(VersionAdmin):
     fieldsets = (
         (None, {
             "fields": (
-                'language', 'title', 'is_publish', 'about', 'link'
+                'language', 'title', 'is_publish', 'about', 'link',
             ),
         }),
     )

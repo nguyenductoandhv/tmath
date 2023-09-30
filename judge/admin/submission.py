@@ -59,7 +59,7 @@ class SubmissionResultFilter(admin.SimpleListFilter):
 
 class SubmissionTestCaseInline(admin.TabularInline):
     fields = ('case', 'batch', 'status', 'time', 'memory', 'points', 'total')
-    readonly_fields = ('case', 'batch', 'total', 'status', 'time', 'memory',)
+    readonly_fields = ('case', 'batch', 'total', 'status', 'time', 'memory')
     model = SubmissionTestCase
     can_delete = False
     max_num = 0

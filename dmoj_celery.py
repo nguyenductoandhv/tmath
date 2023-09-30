@@ -2,7 +2,7 @@ import os
 
 try:
     import MySQLdb  # noqa: F401, imported for side effect
-except importError:
+except ImportError:
     import dmoj_install_pymysql  # noqa: F401, imported for side effect
 
 # set the default Django settings module for the 'celery' program.

@@ -22,7 +22,7 @@ class LanguageForm(ModelForm):
 class LanguageAdmin(VersionAdmin):
     fields = ('key', 'name', 'short_name', 'common_name', 'file_only', 'file_size_limit',
               'ace', 'pygments', 'info', 'extension', 'description',
-              'template',)
+              'template')
     list_display = ('key', 'name', 'common_name', 'info')
     form = LanguageForm
     search_fields = ['key', 'short_name', 'name']
@@ -64,7 +64,7 @@ class JudgeAdminForm(ModelForm):
 class JudgeAdmin(VersionAdmin):
     change_form_template = 'admin/judge/judge/change_form.html'
     form = JudgeAdminForm
-    readonly_fields = ('created', 'online', 'start_time', 'ping', 'load', 'last_ip', 'runtimes',)
+    readonly_fields = ('created', 'online', 'start_time', 'ping', 'load', 'last_ip', 'runtimes')
     fieldsets = (
         (None, {'fields': ('name', 'auth_key', 'is_blocked')}),
         (_('Description'), {'fields': ('description',)}),

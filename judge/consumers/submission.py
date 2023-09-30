@@ -22,8 +22,8 @@ class SubmissionConsumer(JsonWebsocketConsumer):
         # Send message to room group
         async_to_sync(
             self.channel_layer.group_send(
-                self.group_name, message
-            )
+                self.group_name, message,
+            ),
         )
 
     def done_submission(self, event):
@@ -48,8 +48,8 @@ class DetailSubmission(JsonWebsocketConsumer):
         async_to_sync(
             self.channel_layer.group_add(
                 self.room_group_name,
-                self.channel_name
-            )
+                self.channel_name,
+            ),
         )
 
         self.accept()
@@ -59,8 +59,8 @@ class DetailSubmission(JsonWebsocketConsumer):
         async_to_sync(
             self.channel_layer.group_discard(
                 self.room_group_name,
-                self.channel_name
-            )
+                self.channel_name,
+            ),
         )
 
     def receive(self, text_data):
@@ -69,8 +69,8 @@ class DetailSubmission(JsonWebsocketConsumer):
         # Send message to room group
         async_to_sync(
             self.channel_layer.group_send(
-                self.room_group_name, message
-            )
+                self.room_group_name, message,
+            ),
         )
 
     def compile_message(self, event):
@@ -97,7 +97,7 @@ class DetailSubmission(JsonWebsocketConsumer):
     def test_case(self, event):
         self.send_json({
             "type": "test-case",
-            "message": event['message']
+            "message": event['message'],
         })
 
     def grading_begin(self, event):
@@ -113,7 +113,7 @@ class DetailSubmission(JsonWebsocketConsumer):
 
     def processing(self, event):
         self.send_json({
-            "type": "processing"
+            "type": "processing",
         })
 
 
@@ -147,7 +147,7 @@ class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
         await self.accept()
@@ -156,7 +156,7 @@ class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
         # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
-            self.channel_name
+            self.channel_name,
         )
 
     async def receive(self, text_data):
@@ -164,7 +164,7 @@ class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
 
         # Send message to room group
         await self.channel_layer.group_send(
-            self.room_group_name, message
+            self.room_group_name, message,
         )
 
     async def compile_message(self, event):
@@ -191,7 +191,7 @@ class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
     async def test_case(self, event):
         await self.send_json({
             "type": "test-case",
-            "message": event['message']
+            "message": event['message'],
         })
 
     async def grading_begin(self, event):
@@ -207,5 +207,5 @@ class AsyncDetailSubmission(AsyncJsonWebsocketConsumer):
 
     async def processing(self, event):
         await self.send_json({
-            "type": "processing"
+            "type": "processing",
         })

@@ -195,9 +195,9 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         'group',
         'license',
     ]
-    list_display = ['code', 'name', 'show_authors', 'classes', 'is_public', 'show_public', ]
+    list_display = ['code', 'name', 'show_authors', 'classes', 'is_public', 'show_public']
     ordering = ['-pk']
-    search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name',)
+    search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name')
     inlines = [
         LanguageLimitInline,
         ProblemClarificationInline,
@@ -341,12 +341,12 @@ class PublicSolutionAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             "fields": (
-                'author', 'problem', 'created'
+                'author', 'problem', 'created',
             ),
         }),
         ('Assessment', {
             "fields": (
-                'approved', 'point', 'score'
+                'approved', 'point', 'score',
             ),
         }),
         ('Solution', {

@@ -31,7 +31,7 @@ class CompressorWidgetMixin(object):
 
     try:
         import compressor
-    except importError:
+    except ImportError:
         pass
     else:
         if getattr(settings, 'COMPRESS_ENABLED', not settings.DEBUG):

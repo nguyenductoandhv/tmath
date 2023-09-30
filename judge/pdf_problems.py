@@ -22,7 +22,7 @@ if settings.USE_SELENIUM:
         from selenium.webdriver.support import expected_conditions as EC
         from selenium.webdriver.support.ui import WebDriverWait
         HAS_SELENIUM = True
-    except importError:
+    except ImportError:
         logger.warning('Failed to import Selenium', exc_info=True)
 
 HAS_PHANTOMJS = os.access(settings.PHANTOMJS, os.X_OK)

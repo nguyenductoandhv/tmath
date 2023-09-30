@@ -19,7 +19,7 @@ try:
     import pygments.formatters.html
     import pygments.lexers
     import pygments.util
-except importError:
+except ImportError:
     def highlight_code(code, language, cssclass=None):
         return _make_pre_code(code)
 else:

@@ -30,7 +30,7 @@ UPDATE_RATE_LIMIT = 5
 UPDATE_RATE_TIME = 0.5
 SubmissionData = namedtuple(
     'SubmissionData',
-    'time memory short_circuit pretests_only contest_no attempt_no user_id file_only file_size_limit'
+    'time memory short_circuit pretests_only contest_no attempt_no user_id file_only file_size_limit',
 )
 
 channel_layer = get_channel_layer()
@@ -267,7 +267,7 @@ class JudgeHandler(ZlibPacketHandler):
                 'attempt-no': data.attempt_no,
                 'user': data.user_id,
                 'file-only': data.file_only,
-                'file-size-limit': data.file_size_limit
+                'file-size-limit': data.file_size_limit,
             },
         })
 
@@ -289,8 +289,8 @@ class JudgeHandler(ZlibPacketHandler):
                 'async_sub_%s' % Submission.get_id_secret(id),
                 {
                     'type': 'processing',
-                    'message': 'Processing'
-                }
+                    'message': 'Processing',
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(id), {'type': 'processing'})
             self._post_update_submission(id, 'processing')
@@ -372,8 +372,8 @@ class JudgeHandler(ZlibPacketHandler):
                 'async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
                 {
                     'type': 'grading.begin',
-                    'message': 'Grading has begun'
-                }
+                    'message': 'Grading has begun',
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']), {'type': 'grading-begin'})
             self._post_update_submission(packet['submission-id'], 'grading-begin')
@@ -466,7 +466,7 @@ class JudgeHandler(ZlibPacketHandler):
                     'points': float(points),
                     'total': float(problem.points),
                     'result': submission.result,
-                }
+                },
             },
         )
 
@@ -485,7 +485,7 @@ class JudgeHandler(ZlibPacketHandler):
                 'contest_%d' % participation.contest_id,
                 {
                     'type': 'update',
-                }
+                },
             )
         self._post_update_submission(submission.id, 'grading-end', done=True)
 
@@ -501,8 +501,8 @@ class JudgeHandler(ZlibPacketHandler):
                     'type': 'compile.error',
                     'message': {
                         'log': packet['log'],
-                    }
-                }
+                    },
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']), {
             #     'type': 'compile-error',
@@ -525,8 +525,8 @@ class JudgeHandler(ZlibPacketHandler):
                 'async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
                 {
                     'type': 'compile.message',
-                    'message': ''
-                }
+                    'message': '',
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
             #            {'type': 'compile-message'})
@@ -550,8 +550,8 @@ class JudgeHandler(ZlibPacketHandler):
                 'async_sub_%s' % Submission.get_id_secret(id),
                 {
                     'type': 'internal.error',
-                    'message': ''
-                }
+                    'message': '',
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(id), {'type': 'internal-error'})
             self._post_update_submission(id, 'internal-error', done=True)
@@ -572,8 +572,8 @@ class JudgeHandler(ZlibPacketHandler):
                 'async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
                 {
                     'type': 'aborted.submission',
-                    'message': 'Aborted'
-                }
+                    'message': 'Aborted',
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(packet['submission-id']),
             #            {'type': 'aborted-submission'})
@@ -670,8 +670,8 @@ class JudgeHandler(ZlibPacketHandler):
                     'type': 'test.case',
                     'message': {
                         'id': max_position,
-                    }
-                }
+                    },
+                },
             )
             # event.post('async_sub_%s' % Submission.get_id_secret(id), {
             #     'type': 'test-case',
@@ -744,7 +744,7 @@ class JudgeHandler(ZlibPacketHandler):
                 'problem': data['problem_id'],
                 'status': data['status'],
                 'language': data['language__key'],
-            }
+            },
         })
         # event.post('submissions', {
         #     'type': 'done-submission' if done else 'update-submission',
