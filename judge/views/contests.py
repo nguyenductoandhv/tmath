@@ -435,7 +435,7 @@ class ContestJoin(LoginRequiredMixin, ContestMixin, BaseDetailView):
         })
 
 
-class ContestLeave(LoginRequiredMixin, ContestMixin, View):
+class ContestLeave(LoginRequiredMixin, ContestMixin, DetailView):
     def post(self, request, *args, **kwargs):
         contest = self.get_object()
 
