@@ -11,6 +11,7 @@ from operator import attrgetter, itemgetter
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
 from django.core.cache import cache
@@ -32,6 +33,7 @@ from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.detail import (BaseDetailView, DetailView,
                                          SingleObjectMixin)
@@ -57,7 +59,7 @@ from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
                                SingleObjectFormView, TitleMixin,
                                add_file_response, generic_message)
 
-__all__ = ['ContestList', 'ContestDetail', 'ContestRanking', 'ContestJoin', 'ContestLeave', 'ContestCalendar',
+__all__ = ['ContestList', 'ContestDetail', 'ContestRanking', 'ContestJoin', 'contestLeave', 'ContestCalendar',
            'ContestClone', 'ContestStats', 'ContestMossView', 'ContestMossDelete', 'contest_ranking_ajax',
            'ContestParticipationList', 'ContestParticipationDisqualify', 'get_contest_ranking_list',
            'base_contest_ranking_list']
@@ -434,6 +436,17 @@ class ContestJoin(LoginRequiredMixin, ContestMixin, BaseDetailView):
             'title': _('Enter access code for "%s"') % contest.name,
         })
 
+
+@login_required
+@require_POST
+def contestLeave(request, contest):
+    profile = request.profile
+    if profile.current_contest is None or profile.current_contest.contest.key != contest:
+        return generic_message(request, _('No such contest'),
+                               _('You are not in contest "%s".') % contest, 404)
+
+    profile.remove_contest()
+    return HttpResponseRedirect(reverse('contest_view', args=(contest,)))
 
 class ContestLeave(LoginRequiredMixin, ContestMixin, DetailView):
     def post(self, request, *args, **kwargs):
