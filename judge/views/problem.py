@@ -981,7 +981,7 @@ class PublicSolutionListView(TitleMixin, DiggPaginatorMixin, ListView):
 
     def dispatch(self, request, *args, **kwargs):
         code = self.kwargs.get('problem', None)
-        self.problem: Problem = Problem.objects.get(code=code)
+        self.problem: Problem = get_object_or_404(Problem, code=code)
         return super().dispatch(request, *args, **kwargs)
 
     def _get_queryset(self):
