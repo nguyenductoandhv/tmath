@@ -448,6 +448,7 @@ def contestLeave(request, contest):
     profile.remove_contest()
     return HttpResponseRedirect(reverse('contest_view', args=(contest,)))
 
+
 class ContestLeave(LoginRequiredMixin, ContestMixin, DetailView):
     def post(self, request, *args, **kwargs):
         contest = self.get_object()
