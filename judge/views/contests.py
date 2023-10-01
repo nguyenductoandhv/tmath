@@ -32,9 +32,9 @@ from django.utils.safestring import mark_safe
 from django.utils.timezone import make_aware
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.views.generic.detail import (BaseDetailView, DetailView,
-                                         SingleObjectMixin, View)
+                                         SingleObjectMixin)
 from reversion import revisions
 
 # from judge import event_poster as event
@@ -435,7 +435,7 @@ class ContestJoin(LoginRequiredMixin, ContestMixin, BaseDetailView):
         })
 
 
-class ContestLeave(LoginRequiredMixin, ContestMixin, BaseDetailView):
+class ContestLeave(LoginRequiredMixin, ContestMixin, View):
     def post(self, request, *args, **kwargs):
         contest = self.get_object()
 
