@@ -75,23 +75,25 @@ class ContestSubmissionInline(admin.StackedInline):
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         submission = kwargs.pop('obj', None)
+        label = None
         if submission:
-            # label = None
             if db_field.name == 'participation':
                 kwargs['queryset'] = ContestParticipation.objects.filter(user=submission.user,
                                                                          contest__problems=submission.problem) \
                     .only('id', 'contest__name')
 
-                def label(obj):
+                def _label(obj):
                     return obj.contest.name
+                label = _label
             elif db_field.name == 'problem':
                 kwargs['queryset'] = ContestProblem.objects.filter(problem=submission.problem) \
                     .only('id', 'problem__name', 'contest__name')
 
-                def label(obj):
+                def _label(obj):
                     return pgettext('contest problem', '%(problem)s in %(contest)s') % {
                         'problem': obj.problem.name, 'contest': obj.contest.name,
                     }
+                label = _label
         field = super(ContestSubmissionInline, self).formfield_for_dbfield(db_field, **kwargs)
         if label is not None:
             field.label_from_instance = label
