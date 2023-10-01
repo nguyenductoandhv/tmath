@@ -399,6 +399,11 @@ MARKDOWN_USER_LARGE_STYLE = {
     'nofollow': True,
     'use_camo': True,
     'math': True,
+    'bleach': {
+        'tags': BLEACH_USER_SAFE_TAGS,
+        'attributes': BLEACH_USER_SAFE_ATTRS,
+        'styles': False,
+    },
 }
 
 MARKDOWN_STYLES = {
