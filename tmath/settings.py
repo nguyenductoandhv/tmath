@@ -375,7 +375,7 @@ MARKDOWN_STAFF_EDITABLE_STYLE = {
     'bleach': {
         'tags': BLEACH_USER_SAFE_TAGS,
         'attributes': BLEACH_USER_SAFE_ATTRS,
-        'all_styles': True,
+        'styles': True,
         'mathml': True,
     },
 }
@@ -402,7 +402,7 @@ MARKDOWN_USER_LARGE_STYLE = {
     'bleach': {
         'tags': BLEACH_USER_SAFE_TAGS,
         'attributes': BLEACH_USER_SAFE_ATTRS,
-        'all_styles': False,
+        'styles': False,
     },
 }
 

@@ -25,8 +25,10 @@ def get_cleaner(name, params):
     if name in cleaner_cache:
         return cleaner_cache[name]
 
-    if params.pop('all_styles', False):
+    if params.get('styles') is True:
         params['styles'] = all_styles
+    else:
+        params['styles'] = []
 
     if params.pop('mathml', False):
         params['tags'] = params.get('tags', []) + mathml_tags
