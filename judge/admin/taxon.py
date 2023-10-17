@@ -9,7 +9,7 @@ class ProblemGroupAdmin(admin.ModelAdmin):
 class ProblemTypeAdmin(admin.ModelAdmin):
     fields = ('name', 'full_name', 'priority')
     search_fields = ['name']
-    list_display = ['priority', '__str__']
+    list_display = ['priority', 'name', '__str__']
 
     def get_actions(self, request):
         actions = super().get_actions(request)

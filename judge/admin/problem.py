@@ -195,8 +195,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         'group',
         'license',
     ]
-    list_display = ['code', 'name', 'show_authors', 'classes', 'is_public', 'show_public']
-    ordering = ['-pk']
+    list_display = ['code', 'name', 'show_authors', 'display_types', 'classes', 'is_public', 'show_public']
+    ordering = ['code']
     search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name')
     inlines = [
         LanguageLimitInline,
@@ -217,6 +217,10 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
     )
     form = ProblemForm
     date_hierarchy = 'date'
+
+    def display_types(self, obj):
+        return ", ".join([type.name for type in obj.types.all()])
+    display_types.short_description = _('Types')
 
     def get_actions(self, request):
         actions = super(ProblemAdmin, self).get_actions(request)

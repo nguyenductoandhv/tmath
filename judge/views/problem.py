@@ -87,6 +87,10 @@ class ProblemMixin(object):
                                _('Could not find a problem with the code "%s".') % code, status=404)
 
     def get(self, request, *args, **kwargs):
+        if request.in_contest:
+            if not request.user.is_superuser:
+                return self.no_such_problem()
+
         try:
             return super(ProblemMixin, self).get(request, *args, **kwargs)
         except Http404:

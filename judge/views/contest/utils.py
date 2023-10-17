@@ -69,7 +69,10 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                 ext = file.split('.')[-1]
                 if temp[0] not in data:
                     data[temp[0]] = {}
-                order = ContestProblem.get_order(temp[1].split('.')[0])
+                basename = temp[1].upper().split('.')[0]
+                if len(basename) != 1:
+                    continue
+                order = ContestProblem.get_order(temp[1].upper().split('.')[0])
                 data[temp[0]][order] = (source, LANGS[ext])
         return data
 
@@ -92,8 +95,8 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
 
         with transaction.atomic():
             # Clear all old data
-            # Submission.objects.filter(contest_object=self.contest).delete()
-            # self.contest.users.all().delete()
+            Submission.objects.filter(contest_object=self.contest).delete()
+            self.contest.users.all().delete()
 
             # Create new participations
             participations = ContestParticipation.objects.bulk_create([
