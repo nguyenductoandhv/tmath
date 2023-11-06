@@ -120,7 +120,7 @@ def paged_list_view(view, name, template=None):
 urlpatterns = [
     # path('', blog.IndexView.as_view()),
     path('grappelli/', include('grappelli.urls')),
-    path('typo/', include('typeracer.urls')),
+    # path('typo/', include('typeracer.urls')),
     path('docs/', include('grappelli.urls_docs')),
     path('', blog.PostList.as_view(template_name='home.html', title=_('Home')), kwargs={'page': 1}, name='home'),
     path('500/', exception),
@@ -134,7 +134,7 @@ urlpatterns = [
     path('problems/', problem.ProblemList.as_view(), name='problem_list'),
     path('problems/random/', problem.RandomProblem.as_view(), name='problem_random'),
     path('problems/new/', problem.ProblemNew.as_view(), name='problem_new'),
-    path('problems/sb3/', problem.getScratch, name='scratch'),
+    path('problems/upload/', problem.ProblemUploadView.as_view(), name='problem_upload'),
 
     path('problem/<slug:problem>', include([
         path('/update', problem.ProblemEdit.as_view(), name='problem_edit'),
