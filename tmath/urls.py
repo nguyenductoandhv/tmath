@@ -134,7 +134,7 @@ urlpatterns = [
     path('problems/', problem.ProblemList.as_view(), name='problem_list'),
     path('problems/random/', problem.RandomProblem.as_view(), name='problem_random'),
     path('problems/new/', problem.ProblemNew.as_view(), name='problem_new'),
-    path('problems/upload/', problem.ProblemUploadView.as_view(), name='problem_upload'),
+    # path('problems/upload/', problem.ProblemUploadView.as_view(), name='problem_upload'),
 
     path('problem/<slug:problem>', include([
         path('/update', problem.ProblemEdit.as_view(), name='problem_edit'),
