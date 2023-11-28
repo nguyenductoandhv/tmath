@@ -8,7 +8,6 @@ from urllib.parse import quote as urlquote
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import Resolver404, resolve, reverse
 from django.utils.encoding import force_bytes
@@ -19,14 +18,24 @@ from typeracer.models import TypoRoom
 logger = logging.getLogger('judge.request')
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 class LogRequestsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         user = "AnonymousUser" if request.user.is_anonymous else request.user.username
+        ip = get_client_ip(request)
         # Log the user access URL
-        info = f"User {user} accessed {request.path} - {request.method}"
+        info = f"User {user} in IP:{ip} accessed {request.path} - {request.method}"
         logger.info(info)
 
         response = self.get_response(request)
