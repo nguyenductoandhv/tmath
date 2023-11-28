@@ -1,6 +1,7 @@
 import json
 import mimetypes
 import os
+from pathlib import Path
 from itertools import chain
 from zipfile import BadZipfile, ZipFile
 
@@ -13,6 +14,7 @@ from django.forms import (BaseModelFormSet, CharField, ChoiceField, ModelForm,
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
@@ -21,7 +23,7 @@ from django.views.generic import DetailView
 from judge.highlight_code import highlight_code
 from judge.models import (Log, Problem, ProblemData, ProblemTestCase,
                           Submission, problem_data_storage)
-from judge.models.problem_data import IO_METHODS
+from judge.models.problem_data import IO_METHODS, LogDownloadTestCase
 from judge.utils.problem_data import ProblemDataCompiler
 from judge.utils.unicode import utf8text
 from judge.utils.views import TitleMixin, add_file_response
@@ -231,9 +233,62 @@ class ProblemDataView(TitleMixin, ProblemManagerMixin):
 
 
 @login_required
-def problem_data_file(request, problem, path):
+def problem_testcase_file(request, problem, path, id):
     object = get_object_or_404(Problem, code=problem)
     if not object.is_editable_by(request.user):
+        raise Http404()
+
+    # Filter all LogDownloadTestCase objects by request.user in this day
+    # If the number of objects is greater than 10, raise Http404
+    if not request.user.profile.can_download_all_testcases:
+        number_testcase_downloaded = LogDownloadTestCase.objects.filter(user=request.user.profile, 
+                                                                        created__date__gte=timezone.now().date()).count()
+        if number_testcase_downloaded >= settings.LIMIT_TESTCASE_DOWNLOAD:
+            raise Http404()
+        
+    problem_dir = problem_data_storage.path(problem)
+    if os.path.commonpath((problem_data_storage.path(os.path.join(problem, path)), problem_dir)) != problem_dir:
+        raise Http404()
+    
+    test_case = get_object_or_404(ProblemTestCase, dataset=object, order=id)
+    # Get data file
+    zip_path = Path(problem_data_storage.path(problem)) / path
+    input_file = test_case.input_file
+    output_file = test_case.output_file
+    with ZipFile(zip_path) as zf:
+        if input_file:
+            input_file = zf.open(input_file).read()
+        if output_file:
+            output_file = zf.open(output_file).read()
+    
+    # Zip two files
+    response = HttpResponse()
+    response['Content-Type'] = 'application/zip'
+    response['Content-Disposition'] = f'attachment; filename=testcase-{id}.zip'
+    with ZipFile(response, 'w') as zf:
+        if input_file:
+            zf.writestr('input.txt', input_file)
+        if output_file:
+            zf.writestr('output.txt', output_file)
+    
+    # Create LogDownloadTestCase object
+    LogDownloadTestCase.objects.create(user=request.user.profile, order=id, problem=object)
+
+    Log.objects.create(
+        user=request.user.profile,
+        title='Download testcase',
+        message=f'Downloaded testcase {id} of problem "{object.name}"',
+        object_id=object.pk,
+        object_title=object.code,
+    )
+
+    return response
+
+
+@login_required
+def problem_data_file(request, problem, path):
+    object = get_object_or_404(Problem, code=problem)
+    if not request.profile.super_admin and not request.profile.can_download_all_testcases:
         raise Http404()
 
     problem_dir = problem_data_storage.path(problem)

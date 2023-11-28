@@ -75,6 +75,7 @@ DMOJ_STATS_LANGUAGE_THRESHOLD = 10
 DMOJ_SUBMISSIONS_REJUDGE_LIMIT = 10
 # Maximum number of submissions a single user can queue without the `spam_submission` permission
 DMOJ_SUBMISSION_LIMIT = 2
+LIMIT_TESTCASE_DOWNLOAD = 3
 # Whether to allow users to view source code: 'all' | 'all-solved' | 'only-own'
 DMOJ_SUBMISSION_SOURCE_VISIBILITY = 'all-solved'
 DMOJ_BLOG_NEW_PROBLEM_COUNT = 7

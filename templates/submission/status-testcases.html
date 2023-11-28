@@ -103,7 +103,7 @@
                     </div>
                     <div class="w-52">
                         <span title="{{ case.long_status }}" class="case-{{ case.status }}">
-                            {%- if case.status == 'SC' %}&mdash;{% else %}{{ case.status }}{% endif -%}
+                            {%- if case.status == 'SC' %}&mdash;{% else %}{{ case.long_status }}{% endif -%}
                         </span>
                         {%- if case.feedback %}&nbsp;({{ case.feedback }}){% endif -%}
                     </div>

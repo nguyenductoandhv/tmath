@@ -19,7 +19,7 @@ from judge.models.problem import (LanguageLimit, License, Problem,
                                   TranslatedProblemQuerySet)
 from judge.models.problem_data import (CHECKERS, ProblemData, ProblemTestCase,
                                        PublicSolution, problem_data_storage,
-                                       problem_directory_file)
+                                       problem_directory_file, LogDownloadTestCase)
 from judge.models.profile import (LoggedInUser, Organization,
                                   OrganizationRequest, Profile, SchoolYear,
                                   WebAuthnCredential)

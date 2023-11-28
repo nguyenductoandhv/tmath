@@ -203,6 +203,7 @@ class Profile(models.Model):
     verified = models.BooleanField(_("verified"), default=False)
     expiration_date = models.DateTimeField(null=True, blank=True)
     super_admin = models.BooleanField(_("super admin"), default=False)
+    can_download_all_testcases = models.BooleanField(_("can download all testcases"), default=False)
 
     @cached_property
     def organization(self):

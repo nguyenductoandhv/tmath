@@ -147,3 +147,16 @@ class SolutionVote(models.Model):
         unique_together = ['voter', 'solution']
         verbose_name = _('solution vote')
         verbose_name_plural = _('solution votes')
+
+
+class LogDownloadTestCase(models.Model):
+    user = models.ForeignKey("judge.Profile", verbose_name=_("user"), on_delete=models.CASCADE)
+    problem = models.ForeignKey("judge.Problem", verbose_name=_("problem"), on_delete=models.CASCADE)
+    order = models.IntegerField(verbose_name=_('case position'))
+    created = models.DateTimeField(_("date created"), auto_now_add=True)
+
+    def __str__(self) -> str:
+        return " %s Downloaded testcase %s of %s" % (self.user.username, self.order, self.problem)
+
+    class Meta:
+        ordering = ('-created',)

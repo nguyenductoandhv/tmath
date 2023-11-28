@@ -378,3 +378,10 @@ class PublicSolutionAdmin(admin.ModelAdmin):
                                             count) % count)
 
     approve_all_solution.short_description = _('Mark solutions as approve')
+
+
+class LogDownloadTestCaseAdmin(admin.ModelAdmin):
+    list_display = ['id', 'problem', 'user', 'created']
+    # list_filter = ['problem', 'user']
+    search_fields = ['problem__code', 'problem__name', 'user__user__username', 'user__name']
+    readonly_fields = ['problem', 'user', 'created', 'order']

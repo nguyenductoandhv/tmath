@@ -29,7 +29,8 @@ from judge.views.contest.submission import (ContestProblemSubmissions,
                                             UserContestProblemSubmissions)
 from judge.views.contest.utils import ContestDataView
 from judge.views.problem_data import (ProblemDataView, ProblemSubmissionDiff,
-                                      problem_data_file, problem_init_view)
+                                      problem_data_file, problem_init_view,
+                                      problem_testcase_file)
 from judge.views.register import ActivationView, RegistrationView
 from judge.views.select2 import (  # , UserSearchSematicView
     AssigneeSelect2View, CommentSelect2View, ContestSelect2View,
@@ -160,6 +161,7 @@ urlpatterns = [
         path('/test_data/init', problem_init_view, name='problem_data_init'),
         path('/test_data/diff', ProblemSubmissionDiff.as_view(), name='problem_submission_diff'),
         path('/data/<str:path>', problem_data_file, name='problem_data_file'),
+        path('/data/<str:path>/<int:id>', problem_testcase_file, name='problem_testcase_file'),
 
         path('/tickets', ticket.ProblemTicketListView.as_view(), name='problem_ticket_list'),
         path('/tickets/new', ticket.NewProblemTicketView.as_view(), name='new_problem_ticket'),

@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Prefetch
@@ -84,7 +84,7 @@ class ContestProblemDetailView(LoginRequiredMixin, ContestMixin, TitleMixin, Sol
         return context
 
 
-class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleObjectFormView):
+class ContestProblemSubmit(AccessMixin, ContestMixin, TitleMixin, SingleObjectFormView):
     template_name = 'contest/problem/submit.html'
     form_class = ProblemSubmitForm
 
@@ -260,6 +260,8 @@ class ContestProblemSubmit(LoginRequiredMixin, ContestMixin, TitleMixin, SingleO
         return super().get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
         try:
             self.object: Contest = self.get_object()
         except Http404:

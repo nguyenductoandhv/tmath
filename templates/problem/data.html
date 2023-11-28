@@ -3,9 +3,7 @@
 {% block js_media %}
     <script type="text/javascript">
         window.valid_files = {{valid_files_json}};
-
-        $(function () {
-        });
+        window.full_path = "{{ data_form.zipfile.value()|safe }}";
     </script>
     <script type="text/javascript" src="{{ static('libs/featherlight/featherlight.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -159,6 +157,7 @@
 
                 var $opts = $tr.find('input').slice(2, 6);
                 var $files = $tr.find('select').slice(1, 3);
+                var $download = $tr.find('div.down-testcase');
                 var $checker = $files.end().last();
                 $tr.find('select[id$=type]').change(function () {
                     var $this = $(this), val = $this.val(), disabled;
@@ -168,11 +167,13 @@
                             disabled = val == 'S';
                             $opts.toggle(val == 'S');
                             $files.siblings('.select2').hide();
+                            $download.hide();
                             $checker.toggle(val == 'S');
                             break;
                         default:
                             $opts.toggle(val == 'C');
                             $files.siblings('.select2').toggle(val == 'C');
+                            $download.show();
                             $checker.toggle(val == 'C');
                             var $prevs = $tr.prevAll('tr[data-type=S], tr[data-type=E]');
                             disabled = $prevs.length && $prevs.get(0).getAttribute('data-type') == 'S';
@@ -548,6 +549,7 @@
                     <td class="border">{{ _('Output file') }}</td>
                     <td class="w-1/12 border">{{ _('Points') }}</td>
                     <td class="w-1/12 border">{{ _('Pretest?') }}</td>
+                    <td class="w-1/12 border">{{ _('Download') }}</td>
                     <td class="hidden border checker">{{ _('Checker')}}</td>
                     <td class="w-1/6 border">
                         <div class="flex items-center justify-center gap-3">
@@ -594,6 +596,16 @@
                         <td class="checker">
                             {{ form.checker.errors }}{{ form.checker }}{{ form.checker_args.errors }}{{ form.checker_args }}
                         </td>
+                        <td>
+                            <div class="down-testcase">
+                                {% if not(form.prefix and '__prefix__' in form.prefix) %}
+                                {% if (form.empty_permitted or form['type'].value() != 'C' or
+                                          form['input_file'].value() in valid_files) %}
+                                    <a href="javascript:void(0)" class="download-testcase hover:cursor-pointer hover:text-blue-600 text-blue-500" data-order="{{ form.order.value() }}">Download</a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
                         {% if cases_formset.can_delete %}
                             <td>{{ form.DELETE }}</td>
                         {% endif %}
@@ -605,5 +617,22 @@
             <input type="submit" value="{{ _('Submit!') }}" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:text-blue-600">
             <a id="add-case-row" class="font-semibold text-blue-500" href="javascript:void(0)"><i class="fa-duotone fa-plus"></i> {{ _('Add new case') }}</a>
         </div>
+        <script>
+            function download_testcase() {
+                if (window.full_path == '') {
+                    alert("{{ _('Please upload the test data first!') }}");
+                    return;
+                }
+                // Remove the first string "problem" in the path
+                var problem = window.full_path.split('/')[0];
+                var data = window.full_path.split('/')[1];
+                var order = $(this).attr('data-order');
+
+                var url = '/problem/' + problem + '/data/' + data + '/' + order;
+                window.open(url, '_blank');
+            }
+            // many download buttons
+            $('.download-testcase').on('click', download_testcase);
+        </script>
     </form>
 {% endblock %}

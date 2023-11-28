@@ -71,6 +71,7 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
                 'ace_theme',
                 'math_engine',
                 'mute',
+                'can_download_all_testcases',
             ),
         }),
         (_('Information'), {
@@ -141,6 +142,8 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
             fields += ('is_totp_enabled',)
         if obj and obj.verified:
             fields += ('name',)
+        if not request.profile.super_admin:
+            fields += ('can_download_all_testcases',)
         return fields
 
     def show_public(self, obj):
