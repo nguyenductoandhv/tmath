@@ -184,6 +184,7 @@ class SubmissionStatus(SubmissionDetailBase):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class SubmissionTestCaseQuery(SubmissionStatus):
     template_name = 'submission/status-testcases.html'
 
@@ -488,6 +489,7 @@ class UserProblemSubmissions(ConditionalUserTabMixin, UserMixin, ProblemSubmissi
         return context
 
 
+@never_cache
 def single_submission(request):
     request.no_profile_update = True
     if 'id' not in request.GET or not request.GET['id'].isdigit():
