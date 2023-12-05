@@ -241,15 +241,16 @@ def problem_testcase_file(request, problem, path, id):
     # Filter all LogDownloadTestCase objects by request.user in this day
     # If the number of objects is greater than 10, raise Http404
     if not request.user.profile.can_download_all_testcases:
-        number_testcase_downloaded = LogDownloadTestCase.objects.filter(user=request.user.profile, 
-                                                                        created__date__gte=timezone.now().date()).count()
+        number_testcase_downloaded = LogDownloadTestCase.objects.filter(
+            user=request.user.profile,
+            created__date__gte=timezone.now().date()).count()
         if number_testcase_downloaded >= settings.LIMIT_TESTCASE_DOWNLOAD:
             raise Http404()
-        
+
     problem_dir = problem_data_storage.path(problem)
     if os.path.commonpath((problem_data_storage.path(os.path.join(problem, path)), problem_dir)) != problem_dir:
         raise Http404()
-    
+
     test_case = get_object_or_404(ProblemTestCase, dataset=object, order=id)
     # Get data file
     zip_path = Path(problem_data_storage.path(problem)) / path
@@ -260,7 +261,7 @@ def problem_testcase_file(request, problem, path, id):
             input_file = zf.open(input_file).read()
         if output_file:
             output_file = zf.open(output_file).read()
-    
+
     # Zip two files
     response = HttpResponse()
     response['Content-Type'] = 'application/zip'
@@ -270,7 +271,7 @@ def problem_testcase_file(request, problem, path, id):
             zf.writestr('input.txt', input_file)
         if output_file:
             zf.writestr('output.txt', output_file)
-    
+
     # Create LogDownloadTestCase object
     LogDownloadTestCase.objects.create(user=request.user.profile, order=id, problem=object)
 

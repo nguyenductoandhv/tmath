@@ -12,7 +12,8 @@ from judge.admin.interface import (BlogPostAdmin, CourseAdmin, FlatPageAdmin,
                                    NavigationBarAdmin)
 from judge.admin.organization import (OrganizationAdmin,
                                       OrganizationRequestAdmin)
-from judge.admin.problem import ProblemAdmin, PublicSolutionAdmin,LogDownloadTestCaseAdmin
+from judge.admin.problem import (LogDownloadTestCaseAdmin, ProblemAdmin,
+                                 PublicSolutionAdmin)
 from judge.admin.profile import ProfileAdmin, UserAdmin
 from judge.admin.runtime import JudgeAdmin, LanguageAdmin
 from judge.admin.submission import SubmissionAdmin
@@ -27,7 +28,7 @@ from judge.models import (BlogPost, Comment, CommentLock, Contest,
                           OrganizationRequest, Problem, ProblemClass,
                           ProblemGroup, ProblemType, Profile, SchoolYear,
                           Submission, Ticket)
-from judge.models.problem_data import PublicSolution, LogDownloadTestCase
+from judge.models.problem_data import LogDownloadTestCase, PublicSolution
 
 admin.site.register(BlogPost, BlogPostAdmin)
 admin.site.register(Comment, CommentAdmin)

@@ -13,8 +13,6 @@ from django.urls import Resolver404, resolve, reverse
 from django.utils.encoding import force_bytes
 from requests.exceptions import HTTPError
 
-from typeracer.models import TypoRoom
-
 logger = logging.getLogger('judge.request')
 
 
@@ -83,7 +81,6 @@ class DMOJLoginMiddleware(object):
         if request.user.is_authenticated:
             request.profile = request.user.profile
             logout_path = reverse('auth_logout')
-            login_2fa_path = reverse('login_2fa')
             # webauthn_path = reverse('webauthn_assert')
             change_password_path = reverse('password_change')
             change_password_done_path = reverse('password_change_done')
@@ -94,7 +91,7 @@ class DMOJLoginMiddleware(object):
             #     return HttpResponseRedirect(login_2fa_path + '?next=' + urlquote(request.get_full_path()))
             if (request.session.get('password_pwned', False) and
                     request.path not in (change_password_path, change_password_done_path,
-                                         login_2fa_path, logout_path) and
+                                         logout_path) and
                     not request.path.startswith(settings.STATIC_URL)):
                 return HttpResponseRedirect(change_password_path + '?next=' + urlquote(request.get_full_path()))
         else:
