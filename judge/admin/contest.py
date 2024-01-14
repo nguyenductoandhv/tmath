@@ -51,6 +51,20 @@ class ContestTagAdmin(admin.ModelAdmin):
     }
 
 
+class ContestProblemInlineFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+        orders = []
+        for form in self.forms:
+            if form.cleaned_data:
+                order = form.cleaned_data['order']
+                if order in orders:
+                    raise forms.ValidationError('Please rearrange the problems so that they have unique order values.')
+                orders.append(order)
+
+
 class ContestProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     model = ContestProblem
     verbose_name = _('Problem')
@@ -62,6 +76,7 @@ class ContestProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     autocomplete_fields = [
         'problem',
     ]
+    formset = ContestProblemInlineFormSet
     # form = ContestProblemInlineForm
 
     def rejudge_column(self, obj):
