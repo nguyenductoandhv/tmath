@@ -65,14 +65,14 @@
         </ul>
         <ul class="flex items-center space-x-6">
             <li>
-                <a href="javascript:void(0)" onclick="submit_language('vi')" class="">
+                <div onclick="submit_language('vi')" class="hover:cursor-pointer">
                     <img loading="lazy" src="{{ static('icons/vn_flag.svg') }}" alt="vn" class="object-cover w-6 h-4">
-                </a>
+                </div>
             </li>
             <li>
-                <a href="javascript:void(0)" onclick="submit_language('en')" class="">
+                <div onclick="submit_language('en')" class="hover:cursor-pointer">
                     <img loading="lazy" src="{{ static('icons/us_flag.svg') }}" alt="vn" class="object-cover w-6 h-4">
-                </a>
+                </div>
             </li>
             {% if request.user.is_authenticated %}
             <li class="relative group">

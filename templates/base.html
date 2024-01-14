@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <link rel="preload" href="{{ static('full_style.css') }}?v=13317" as="style">
+    <link rel="preload" href="{{ static('full_style.css') }}?v=13318" as="style">
     <link rel="preload" href="{{ static('libs/jquery-3.6.0.min.js') }}" as="script">
     <title>{% block title %}{{ title }} - {{ SITE_LONG_NAME }}{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     {% if misc_config.meta_keywords %}
         <meta name="keywords" content="{{ misc_config.meta_keywords }}">
     {% endif %}
-    {% if meta_description %}
-        <meta name="description" content="{{ meta_description }}">
-    {% endif %}
+    <meta name="description" content="{{ meta_description|default('Khám phá và nâng cao kỹ năng lập trình thi đấu tại trang web của chúng tôi. Cung cấp khóa học chất lượng, thách thức lập trình đa dạng và cơ hội tham gia cộng đồng đầy năng lượng. Đặt mình vào những cuộc thi lập trình sôi động, chia sẻ kiến thức và kết nối với mentor có kinh nghiệm. Hãy bắt đầu hành trình lập trình của bạn với chúng tôi ngay hôm nay!') }}">
     <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicons-->
     <link rel="apple-touch-icon" sizes="57x57" href="{{ static('icons/apple-touch-icon-57x57.png') }}">
@@ -142,7 +140,7 @@
         </style>
     {% endif %}
     {% block media %}{% endblock %}
-    <link rel="stylesheet" href="{{ static('full_style.css') }}?v=13317">
+    <link rel="stylesheet" href="{{ static('full_style.css') }}?v=13318">
     {% if not INLINE_JQUERY %}
         <script src="{{ JQUERY_JS }}"></script>
     {% endif %}
