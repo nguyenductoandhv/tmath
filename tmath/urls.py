@@ -195,9 +195,9 @@ urlpatterns = [
 
     path('users/', include([
         path('', user.users, name='user_list'),
-        path('<slug:page>', lambda request, page:
+        path('<int:page>', lambda request, page:
              HttpResponsePermanentRedirect('%s?page=%s' % (reverse('user_list'), page))),
-        path('find', user.user_ranking_redirect, name='user_ranking_redirect'),
+        path('find/', user.user_ranking_redirect, name='user_ranking_redirect'),
     ])),
 
     path('user', user.UserAboutPage.as_view(), name='user_page'),

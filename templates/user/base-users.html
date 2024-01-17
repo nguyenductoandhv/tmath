@@ -40,10 +40,10 @@
             $(window).on('hashchange', function () {
                 var hash = window.location.hash;
                 if (hash.startsWith('#!')) {
-                    var $user = $('#user-' + hash.substring(2)).addClass('highlight');
+                    var $user = $('#user-' + hash.substring(2)).addClass('!bg-yellow-200');
                     if ($user) {
-                        $(document).scrollTop($user.position().top - 50);
-                        if ($last !== null) $last.removeClass('highlight');
+                        $(document).scrollTop($user.position().top + 300);
+                        if ($last !== null) $last.removeClass('!bg-yellow-200');
                         $last = $user;
                     }
                 }
