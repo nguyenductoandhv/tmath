@@ -1,8 +1,8 @@
 import json
 import mimetypes
 import os
-from pathlib import Path
 from itertools import chain
+from pathlib import Path
 from zipfile import BadZipfile, ZipFile
 
 from django.conf import settings
@@ -15,9 +15,11 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
+from django.views.decorators.cache import never_cache
 from django.views.generic import DetailView
 
 from judge.highlight_code import highlight_code
@@ -167,6 +169,7 @@ class ProblemSubmissionDiff(TitleMixin, ProblemMixin, DetailView):
         return context
 
 
+@method_decorator(never_cache, name='dispatch')
 class ProblemDataView(TitleMixin, ProblemManagerMixin):
     template_name = 'problem/data.html'
 
