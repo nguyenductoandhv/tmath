@@ -1,12 +1,19 @@
+from collections.abc import Mapping
+from typing import Any
+
 from django.contrib import admin
+from django.core.files.base import File
+from django.db import transaction
+from django.db.models.base import Model
 from django.forms import ModelForm
+from django.forms.utils import ErrorList
 from django.urls import reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from reversion.admin import VersionAdmin
 
-from judge.models import Organization
+from judge.models import Contest, Organization
 from judge.widgets import AdminMartorWidget
 
 
@@ -16,6 +23,28 @@ class OrganizationForm(ModelForm):
             'about': AdminMartorWidget(attrs={'data-markdownfy-url': reverse_lazy('organization_preview')}),
         }
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.__original_rate = self.instance.rate
+
+    def save(self, commit: bool = True):
+        instance = super().save(commit=False)
+        
+        new_rate = self.cleaned_data.get('rate')
+        
+        print(self.__original_rate, new_rate)
+        
+        if self.__original_rate != new_rate:
+            with transaction.atomic():
+                contests = Contest.objects.filter(organizations=instance)
+                for contest in contests:
+                    if contest.is_rated:
+                        contest.rating_ceiling = min(contest.rating_ceiling, new_rate)
+                        contest.save()
+        if commit:
+            instance.save()
+
+        return instance
 
 class OrganizationAdmin(VersionAdmin):
     readonly_fields = ('creation_date',)
