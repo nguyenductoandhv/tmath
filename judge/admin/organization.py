@@ -1,12 +1,6 @@
-from collections.abc import Mapping
-from typing import Any
-
 from django.contrib import admin
-from django.core.files.base import File
 from django.db import transaction
-from django.db.models.base import Model
 from django.forms import ModelForm
-from django.forms.utils import ErrorList
 from django.urls import reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import gettext
