@@ -159,6 +159,7 @@ def group_test_cases(cases):
     return result, status, max_execution_time
 
 
+@method_decorator(never_cache, name='dispatch')
 class SubmissionStatus(SubmissionDetailBase):
     template_name = 'submission/status.html'
 
