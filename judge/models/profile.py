@@ -82,7 +82,7 @@ class Organization(models.Model):
                             help_text=_('Organization name shown in URL'))
     short_name = models.CharField(max_length=20, verbose_name=_('short name'),
                                   help_text=_('Displayed beside user name during contests'))
-    about = models.TextField(verbose_name=_('organization description'))
+    about = models.TextField(verbose_name=_('organization description'), db_collation='utf8mb4_unicode_ci')
     admins = models.ManyToManyField('Profile', verbose_name=_('administrators'), related_name='admin_of',
                                     help_text=_('Those who can edit this organization'))
     creation_date = models.DateTimeField(verbose_name=_('creation date'), auto_now_add=True)
@@ -143,7 +143,8 @@ def get_default_time():
 class Profile(models.Model):
     user = models.OneToOneField(User, verbose_name=_('user associated'), on_delete=models.CASCADE)
     name = models.CharField(max_length=255, null=True)
-    about = models.TextField(verbose_name=_('self-description'), null=True, blank=True)
+    about = models.TextField(verbose_name=_('self-description'), null=True, blank=True,
+                             db_collation='utf8mb4_unicode_ci')
     timezone = models.CharField(max_length=50, verbose_name=_('location'), choices=TIMEZONE,
                                 default=settings.DEFAULT_USER_TIME_ZONE)
     language = models.ForeignKey('Language', verbose_name=_('preferred language'), on_delete=models.SET_DEFAULT,
