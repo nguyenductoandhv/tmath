@@ -23,11 +23,8 @@ class OrganizationForm(ModelForm):
 
     def save(self, commit: bool = True):
         instance = super().save(commit=False)
-        
         new_rate = self.cleaned_data.get('rate')
-        
-        print(self.__original_rate, new_rate)
-        
+
         if self.__original_rate != new_rate:
             with transaction.atomic():
                 contests = Contest.objects.filter(organizations=instance)
@@ -39,6 +36,7 @@ class OrganizationForm(ModelForm):
             instance.save()
 
         return instance
+
 
 class OrganizationAdmin(VersionAdmin):
     readonly_fields = ('creation_date',)
