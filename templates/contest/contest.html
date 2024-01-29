@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block body %}
-    <div id="banner" class="text-center">
+    <div id="banner" class="text-center dark:text-sky-500">
         <a href="https://www.timeanddate.com/worldclock/fixedtime.html?msg={{ contest.name|urlquote('') }}&amp;iso=
                 {{- contest.start_time|utc|date('Y-m-d\TH:i:s') }}" class="text-3xl font-semibold date">
             {%- if contest.is_in_contest(request.user) and not request.participation.live -%}
@@ -70,14 +70,14 @@
             {% endif %}
         </div>
         {% if contest.is_rated and contest.rating_ceiling %}
-        <div id="rate-contest" class="p-5 text-center text-red-500 text-lg"> 
+        <div id="rate-contest" class="p-5 text-lg text-center text-red-500"> 
             {% trans trimmed ceiling=contest.rating_ceiling|floatformat(0) %}
                 <h4>The contest will be rated for participants with rating lower than {{ ceiling }}</h4>
             {% endtrans %}
         </div>
         {% endif %}
         {% if contest.is_limit_language %}
-        <div class="p-5 text-center text-red-500 font-bold text-lg">
+        <div class="p-5 text-lg font-bold text-center text-red-500">
             This contest only accepts the <span class="text-black">{{ contest.limit_language.name }}</span> programming language.
         </div>
         {% endif %}
@@ -92,7 +92,7 @@
     {% if contest.ended or (contest.started and contest.is_public_contest) or request.user.is_superuser or is_editor or is_tester %}
         <hr>
         <div>
-            <div class="flex items-center my-3 space-x-4 text-3xl">
+            <div class="flex items-center my-3 space-x-4 text-3xl dark:text-white">
                 <i class="fa-duotone fa-question-circle"></i>
                 <span class="font-bold">{{ _('Problems') }}</span>
             </div>
@@ -101,39 +101,23 @@
                 <tr class="[&>*]:text-center [&>*]:p-2 divide-x">
                     <th>{{ _('Problem') }}</th>
                     <th class="w-32">{{ _('Points') }}</th>
-                    <th class="w-32">{{ _('AC Rate') }}</th>
                     <th class="w-32">{{ _('Users') }}</th>
-                    {% if contest_has_public_editorials %}
-                        <th class="w-32">{{ _('Editorials') }}</th>
-                    {% endif %}
                 </tr>
                 </thead>
                 <tbody class="divide-y ">
                 {% for problem in contest_problems %}
                     <tr class="[&>*]:p-2 divide-x [&>*]:text-center">
                         <td>
-                            {% if problem.is_public or request.user.is_superuser %}
-                                <a class="font-bold text-blue-500 hover:text-blue-600" href="{{ url('problem_detail', problem.code) }}">{{ problem.i18n_name or problem.name }}</a>
+                            {% if request.user.is_superuser %}
+                                <a class="font-bold text-blue-500 hover:text-blue-600" href="{{ url('problem_detail', problem.problem.code) }}">{{ problem.problem.name }}</a>
                             {% else %}
-                                {{ problem.i18n_name or problem.name }}
+                                <a class="font-bold text-blue-500 hover:text-blue-600" href="{{ url('contest_problem_detail', contest.key, problem.order) }}">{{ problem.temporary_name }}</a>
                             {% endif %}
                         </td>
-                        <td>{{ problem.points|floatformat }}{% if problem.partial %}p{% endif %}</td>
-                        <td>{{ problem.ac_rate|floatformat(1) }}%</td>
-                        <td>
-                            {% if problem.is_public or request.user.is_superuser %}
-                                <a class="font-bold text-blue-500 hover:text-blue-600" href="{{ url('ranked_submissions', problem.code) }}">{{ problem.user_count }}</a>
-                            {% else %}
-                                {{ problem.user_count }}
-                            {% endif %}
+                        <td class="dark:text-white">{{ problem.points|floatformat }}</td>
+                        <td class="dark:text-white">
+                            {{ problem.problem.user_count }}
                         </td>
-                        {% if contest_has_public_editorials %}
-                            <td>
-                                {% if problem.is_public and problem.has_public_editorial %}
-                                    <a class="font-bold text-red-500 hover:text-red-600" href="{{ url('problem_editorial', problem.code) }}">{{ _('Editorial') }}</a>
-                                {% endif %}
-                            </td>
-                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -142,7 +126,7 @@
     {% endif %}
 
     <hr class="py-1">
-    <span class="flex flex-row-reverse gap-4 text-4xl">
+    <span class="flex flex-row-reverse gap-4 text-4xl dark:text-white">
         {{ post_to_twitter(request, SITE_NAME + ':', contest, '<i class="fa-brands fa-square-twitter"></i>') }}
         {{ post_to_facebook(request, contest, '<i class="fa-brands fa-square-facebook"></i>') }}
     </span>
