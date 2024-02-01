@@ -569,6 +569,30 @@ class SampleContest(models.Model):
 
 
 class ContestParticipation(models.Model):
+    """
+    Represents a user's participation in a contest.
+
+    Attributes:
+        contest (Contest): The associated contest.
+        user (Profile): The user participating in the contest.
+        real_start (datetime): The start time of the participation.
+        score (float): The score achieved by the user.
+        cumtime (int): The cumulative time taken by the user.
+        is_disqualified (bool): Whether the participation is disqualified.
+        tiebreaker (float): The tie-breaking field for ranking.
+        virtual (int): The virtual participation ID.
+        format_data (JSONField): Contest format specific data.
+
+    Methods:
+        recompute_results(): Recomputes the results of the participation.
+        set_disqualified(disqualified): Sets the disqualified status of the participation.
+        live: Property indicating if the participation is live.
+        spectate: Property indicating if the participation is for spectating.
+        start: Property representing the start time of the participation.
+        end_time: Property representing the end time of the participation.
+        ended: Property indicating if the participation has ended.
+        time_remaining: Property representing the remaining time of the participation.
+    """
     LIVE = 0
     SPECTATE = -1
 
@@ -585,6 +609,13 @@ class ContestParticipation(models.Model):
     format_data = JSONField(verbose_name=_('contest format specific data'), null=True, blank=True)
 
     def recompute_results(self):
+        """
+        Recomputes the results of the participation.
+
+        If the participation is disqualified, the score is set to -9999.
+
+        This method should be called whenever there is a change in the participation that affects the results.
+        """
         with transaction.atomic():
             self.contest.format.update_participation(self)
             if self.is_disqualified:
@@ -593,6 +624,17 @@ class ContestParticipation(models.Model):
     recompute_results.alters_data = True
 
     def set_disqualified(self, disqualified):
+        """
+        Sets the disqualified status of the participation.
+
+        Args:
+            disqualified (bool): Whether the participation is disqualified.
+
+        This method updates the disqualified status of the participation and triggers a recompute of the results.
+        If the contest is rated and has ratings, it also triggers a rating update.
+        If the participation is disqualified, the user is removed from the current contest and added to the banned users list.
+        If the participation is no longer disqualified, the user is removed from the banned users list.
+        """
         self.is_disqualified = disqualified
         self.recompute_results()
         if self.contest.is_rated and self.contest.ratings.exists():
@@ -607,19 +649,43 @@ class ContestParticipation(models.Model):
 
     @property
     def live(self):
+        """
+        Property indicating if the participation is live.
+
+        Returns:
+            bool: True if the participation is live, False otherwise.
+        """
         return self.virtual == self.LIVE
 
     @property
     def spectate(self):
+        """
+        Property indicating if the participation is for spectating.
+
+        Returns:
+            bool: True if the participation is for spectating, False otherwise.
+        """
         return self.virtual == self.SPECTATE
 
     @cached_property
     def start(self):
+        """
+        Property representing the start time of the participation.
+
+        Returns:
+            datetime: The start time of the participation.
+        """
         contest = self.contest
         return contest.start_time if contest.time_limit is None and (self.live or self.spectate) else self.real_start
 
     @cached_property
     def end_time(self):
+        """
+        Property representing the end time of the participation.
+
+        Returns:
+            datetime: The end time of the participation.
+        """
         contest = self.contest
         if self.spectate:
             return contest.end_time
@@ -633,15 +699,33 @@ class ContestParticipation(models.Model):
 
     @cached_property
     def _now(self):
+        """
+        Property representing the current time.
+
+        Returns:
+            datetime: The current time.
+        """
         # This ensures that all methods talk about the same now.
         return timezone.now()
 
     @property
     def ended(self):
+        """
+        Property indicating if the participation has ended.
+
+        Returns:
+            bool: True if the participation has ended, False otherwise.
+        """
         return self.end_time is not None and self.end_time < self._now
 
     @property
     def time_remaining(self):
+        """
+        Property representing the remaining time of the participation.
+
+        Returns:
+            timedelta: The remaining time of the participation.
+        """
         end = self.end_time
         if end is not None and end >= self._now:
             return end - self._now
@@ -685,6 +769,21 @@ class SampleContestProblem(models.Model):
 
 
 class ContestProblem(models.Model):
+    """
+    Represents a problem in a contest.
+
+    Attributes:
+        problem (Problem): The problem associated with the contest problem.
+        contest (Contest): The contest associated with the contest problem.
+        points (int): The number of points assigned to the contest problem.
+        first_accept (ContestParticipation): The first user who accepted this problem, or None if no user has accepted it.
+        partial (bool): Indicates if partial scoring is enabled for the contest problem.
+        is_pretested (bool): Indicates if the contest problem has pretests.
+        order (int): The order of the contest problem within the contest.
+        output_prefix_override (int): The length of the output prefix override, or 0 if not overridden.
+        max_submissions (int): The maximum number of submissions allowed for this problem, or None if there is no limit.
+        limit_point (int): The limit point for the contest problem.
+    """
     problem = models.ForeignKey(Problem, verbose_name=_('problem'), related_name='contests', on_delete=CASCADE)
     contest = models.ForeignKey(Contest, verbose_name=_('contest'), related_name='contest_problems', on_delete=CASCADE)
     points = models.IntegerField(verbose_name=_('points'))
@@ -701,12 +800,16 @@ class ContestProblem(models.Model):
                                           validators=[MinValueOrNoneValidator(1, _('Why include a problem you '
                                                                                    'can\'t submit to?'))])
     limit_point = models.IntegerField(verbose_name=_('limit point'), default=0)
+    # user_count = models.IntegerField(default=0)
 
     @classmethod
     def get_order(cls, order: str | int):
         if isinstance(order, str):
             return ord(order) - ord('A')
         return order
+
+    def is_enough_point(self, participation):
+        return self.limit_point == 0 or participation.score >= self.limit_point
 
     def update_first_accept(self):
         if self.first_accept is not None:
@@ -720,6 +823,10 @@ class ContestProblem(models.Model):
         self.first_accept = submission.participation if submission is not None else None
         self.save()
     update_first_accept.alters_data = True
+
+    # def update_user_count(self):
+    #     self.user_count = self.contest.users.filter(virtual=ContestParticipation.LIVE).count()
+    #     self.save(update_fields=['user_count'])
 
     @cached_property
     def temporary_name(self):

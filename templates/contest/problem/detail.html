@@ -22,6 +22,8 @@
 {% endblock %}
 
 {% block info_float %}
+    {% if request.participation and request.participation.contest == contest %}
+    {% if problem.is_enough_point(request.participation) %}
     {% if submission_limit %}
         {% if submissions_left > 0 %}
             <a href="{{ url('contest_problem_submit', contest.key, problem.order) }}" class="w-full py-3 font-bold text-center text-white bg-blue-500 rounded-2xl hover:text-white hover:bg-blue-600">
@@ -39,18 +41,24 @@
             <div class="mt-2 font-bold text-center text-red-500">{{ _('0 submissions left') }}</div>
         {% endif %}
     {% else %}
-        <a href="{{ url('contest_problem_submit', contest.key, problem.order) }}" class="w-full text-2xl shadow-lg btn-default transition-all ease-in-out duration-500 hover:bg-[100%_0%] py-2 font-bold text-center text-white rounded-2xl">
+        <a href="{{ url('contest_problem_submit', contest.key, problem.order) }}" class="w-full text-2xl mb-2 shadow-lg btn-default transition-all ease-in-out duration-500 hover:bg-[100%_0%] py-2 font-bold text-center text-white rounded-2xl">
             {{ _('Submit solution') }}
         </a>
     {% endif %}
-
+    {% else %}
+        <div class="w-full py-3 mb-2 text-lg font-semibold text-center text-white bg-blue-500 cursor-not-allowed whitespace-nowrap rounded-2xl line-clamp-1">
+            {{ _('Need at least') }} {{ problem.limit_point }} {{ _('points') }}
+        </div>
+    {% endif %}
     <hr class="pb-2">
+    {% endif %}
+
     <div class="grid grid-cols-2 font-bold auto-rows-fr gap-2 w-full [&>*]:rounded-xl [&>*]:py-3 [&>*]:hover:text-white [&>*]:text-white [&>*]:px-4 my-2">
         {% if request.user.is_authenticated and has_submissions %}
             <a class="col-span-2 bg-green-500 hover:bg-green-600 whitespace-nowrap" href="{{ url('user_contest_problem_submissions', contest.key, problem.order, request.user.username) }}">{{ _('My submissions') }}</a>
         {% endif %}
         <a class="bg-green-500 hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="{{ url('contest_problem_submissions', contest.key, problem.order) }}">{{ _('Submissions') }}</a>
-        <a class="bg-green-500 hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="#">{{ _('Leaderboard') }}</a>
+        <a class="bg-green-500 cursor-not-allowed hover:bg-green-600 line-clamp-1 whitespace-nowrap" href="#">{{ _('Leaderboard') }}</a>
     </div>
     <div class="grid grid-cols-2 gap-2 font-bold auto-rows-fr w-full my-2 divide-y [&>*]:rounded-xl [&>*]:py-3 [&>*]:hover:text-white [&>*]:text-white [&>*]:px-4">
     
