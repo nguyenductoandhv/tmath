@@ -1,11 +1,12 @@
 import random
-from functools import partial
 
 from django.conf import settings
 from django.contrib.auth.context_processors import PermWrapper
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
+from django.urls import reverse
 from django.utils.functional import SimpleLazyObject, new_method_proxy
+from django.utils.translation import gettext_lazy as _
 
 from judge.models import MiscConfig, NavigationBar, Profile
 # from judge import event_poster as event
@@ -58,16 +59,23 @@ def get_profile(request):
 #             'EVENT_LAST_MSG': event.last()}
 
 
-def __nav_tab(path):
-    result = list(NavigationBar.objects.extra(where=['%s REGEXP BINARY regex'], params=[path])[:1])
-    return result[0].get_ancestors(include_self=True).values_list('key', flat=True) if result else []
+def __nav_tab():
+    return [
+        ('problem', reverse('problem_list'), _('Problems')),
+        ('submission', reverse('all_submissions'), _('Submissions')),
+        ('user', reverse('user_list'), _('Users')),
+        ('contest', reverse('contest_list'), _('Contests')),
+        ('about', '', _('About')),
+    ]
+    # result = list(NavigationBar.objects.extra(where=['%s REGEXP BINARY regex'], params=[path])[:1])
+    # return result[0].get_ancestors(include_self=True).values_list('key', flat=True) if result else []
 
 
 def general_info(request):
     path = request.get_full_path()
     version = random.randint(1, 1000000000)
     return {
-        'nav_tab': FixedSimpleLazyObject(partial(__nav_tab, request.path)),
+        'nav_tab': __nav_tab(),
         'nav_bar': NavigationBar.objects.all(),
         'LOGIN_RETURN_PATH': '' if path.startswith('/accounts/') else path,
         'perms': PermWrapper(request.user),

@@ -1,5 +1,5 @@
-<div class="grid w-full grid-cols-1 gap-2 bg-white">
-    <div class="flex items-center p-3 text-lg text-white bg-black rounded-t-md">
+<div class="grid w-full grid-cols-1">
+    <div class="block-title rounded-t-md">
         <div class="flex-1 font-bold">
             {{ _('Problem search') }}
         </div>
@@ -7,9 +7,9 @@
             <i class="fa-duotone fa-search"></i>
         </div>
     </div>
-    <div class="p-2 shadow-md rounded-b-md">
-        <form action="" method="get" class="" id="filter-form">
-            <input class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="search" type="text" name="search" value="{{ search_query or '' }}"
+    <div class="p-2 transition-colors duration-500 bg-white shadow-md rounded-b-md dark:text-white dark:bg-dark-content">
+        <form action="" method="get" class="mt-2" id="filter-form">
+            <input class="block w-full border-gray-300 rounded-md shadow-sm dark:bg-slate-600/75 dark:placeholder:text-white focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="search" type="text" name="search" value="{{ search_query or '' }}"
                     placeholder="{{ _('Search problems...') }}">
             {% if has_fts %}
             <div class="ui checkbox">
@@ -29,8 +29,8 @@
             {% endif %}
             <div class="block my-2">
                 <label for="category">
-                    <span class="text-lg font-bold text-gray-700">{{ _('Category') }}</span>
-                    <select class="w-full mt-1 rounded-lg shadow-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="category" name="category" onchange="this.form.submit()">
+                    <span class="text-lg font-bold text-gray-700 dark:text-white">{{ _('Category') }}</span>
+                    <select class="w-full mt-1 rounded-lg shadow-md focus:border-indigo-300 dark:bg-slate-600/75 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="category" name="category" onchange="this.form.submit()">
                         {% for group in categories %}
                         <option value=""></option>
                         <option value="{{ group.id }}" {% if category and group.id == category %} selected {% endif %}>
@@ -40,15 +40,15 @@
                     </select>
                 </label>
             </div>
-            <fieldset class="p-2 my-2 bg-gray-100 border-2 rounded-lg">
+            <fieldset class="p-2 my-2 bg-gray-100 border-2 rounded-lg dark:bg-slate-700/75">
                 <legend class="px-2 font-bold">{{ _('Groups') }}</legend>
                 <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-1">
                     {% for type in problem_types %}
                     <div class="block">
                         <label for="id_type_{{ loop.index }}" class="inline-flex items-center">
-                            <input class="text-indigo-600 border-gray-300 rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" 
+                            <input class="text-indigo-600 border-gray-300 rounded shadow-sm peer focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50" 
                                    type="checkbox" id="id_type_{{ loop.index }}" onchange="this.form.submit()" name="type" value="{{ type.id }}" {% if type.id in selected_types %}checked=checked{% endif %}>
-                            <span class="ml-2 line-clamp-1 {% if type.id in selected_types %} font-semibold text-indigo-500 {% endif %}" title="{{ type.full_name }}">{{ type.full_name }}</span>
+                            <span class="ml-2 peer-checked:font-semibold peer-checked:text-indigo-500 line-clamp-1" title="{{ type.full_name }}">{{ type.full_name }}</span>
                         </label>
                     </div>
                     {% endfor %}

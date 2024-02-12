@@ -7,7 +7,7 @@
 *~
 *.swp
 node_modules
-./static
+static
 drafts
 tmath/local_settings.py
 resources/style.css
@@ -26,3 +26,4 @@ resources/mathjax
 *.log
 *.log.*
 *.txt
+*.sql

@@ -144,9 +144,9 @@
             </div>
         {% endif %}
         <div id="content-left" class="flex-1 overflow-x-auto lg:pr-10 ">
-            <table class="w-full bg-white border border-collapse border-black">
+            <table class="w-full border border-collapse border-black dark:border-white">
                 <thead>
-                <tr class="[&>*]:text-center [&>*]:bg-black [&>*]:text-white [&>*]:py-3 divide-x divide-white">
+                <tr class="text-center bg-black dark:bg-slate-600/75 text-white [&>*]:py-3 divide-x divide-white">
                     {% if request.in_contest %}
                         {% if request.user.is_authenticated %}
                             <th class="w-10"><i class="fa fa-check"></i></th>
@@ -182,7 +182,7 @@
                     {% endif %}
                 </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-300">
+                <tbody class="divide-y dark:text-white dark:bg-dark-content divide-slate-300">
                 {% for problem in problems %}
                     <tr class="divide-x divide-slate-300">
                         {% if request.user.is_authenticated %}
@@ -218,14 +218,14 @@
                         {% endif %}
                         {% if not request.in_contest %}
                         <td class="p-2 font-bold uppercase">
-                            <a href="{{ url('problem_detail', problem.code) }}">{{ problem.code }}</a>
+                            <a href="{{ url('problem_detail', problem.code) }}" class="dark:hover:text-sky-500">{{ problem.code }}</a>
                         </td>
                         {% endif %}
                         <td class="p-2 font-bold">
                             {% if problem.link %}
-                            <a href="{{ problem.link }}">{{ problem.name }}</a>
+                            <a href="{{ problem.link }}" class="dark:hover:text-sky-500">{{ problem.name }}</a>
                             {% else %}
-                            <a href="{{ url('problem_detail', problem.code) }}">{{ problem.name }}</a>
+                            <a href="{{ url('problem_detail', problem.code) }}" class="dark:hover:text-sky-500">{{ problem.name }}</a>
                             {% endif %}
                         </td>
                         {% if not request.in_contest %}
@@ -240,7 +240,7 @@
                             <td class="text-center">{{ problem.ac_rate|floatformat(1) }}%</td>
                         {% endif %}
                         <td class="text-center">
-                            <a class="text-indigo-600" href="{{ url('ranked_submissions', problem.code) }}">
+                            <a class="text-indigo-600 dark:text-sky-400" href="{{ url('ranked_submissions', problem.code) }}">
                                 {% if not request.in_contest or not hide_contest_scoreboard %}
                                     {{ problem.user_count }}
                                 {% else %}

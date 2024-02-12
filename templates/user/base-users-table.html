@@ -1,6 +1,6 @@
 <thead>
-<tr class="[&>*]:p-3 [&>*]:whitespace-nowrap [&>*]:text-left [&>*]:text-lg [&>*]:align-middle [&>*]:text-black">
-    <th class="w-20 whitespace-nowrap">{{ rank_header or _("Rank") }}</th>
+<tr class="[&>*]:p-3 [&>*]:whitespace-nowrap [&>*]:dark:text-slate-300 [&>*]:text-left [&>*]:text-lg [&>*]:align-middle [&>*]:text-black">
+    <th class="w-20 !text-center whitespace-nowrap">{{ rank_header or _("Rank") }}</th>
     {% block after_rank_head %}{% endblock %}
     <th class="whitespace-nowrap !pl-16">{{ _('Username') }}</th>
     {% block before_point_head %}{% endblock %}
@@ -16,8 +16,8 @@
 
 <tbody>
 {% for rank, user in users %}
-    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>td:nth-last-child(1)]:rounded-r-md [&>td:nth-child(1)]:rounded-l-md shadow-md rounded-md bg-white {% block row_extra scoped %}{% endblock %}">
-        <td class="text-center">{{ rank }}</td>
+    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>*]:bg-white border-gray-100 [&>*]:dark:hover:bg-slate-700 dark:text-slate-200 border-b-[5px] [&>td:last-child]:rounded-r-xl dark:border-dark-all shadow-md [&>*]:dark:bg-dark-content {% block row_extra scoped %}{% endblock %}">
+        <td class="text-center rounded-l-xl">{{ rank }}</td>
         {% block after_rank scoped %}{% endblock %}
         <td>
             <div class="flex items-center space-x-2">
@@ -33,7 +33,7 @@
         </td>
         {% block before_point scoped %}{% endblock %}
         {% block point scoped %}
-            <td class="text-lg font-semibold text-center" title="{{ user.performance_points|floatformat(2) }}">
+            <td class="text-lg font-semibold" title="{{ user.performance_points|floatformat(2) }}">
                 {{ user.performance_points|floatformat(0) }}
             </td>
         {% endblock %}

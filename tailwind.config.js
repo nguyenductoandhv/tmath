@@ -13,6 +13,12 @@ module.exports = {
       maxWidth: {
         '8xl': '1440px'
       },
+      colors: {
+        'darkblue': '#00008B',
+        'dark-all': 'rgba(45, 47, 50, 1)',
+        'dark-content': 'rgba(26, 28, 32, 1)',
+        'dark-text': '#86889A',
+      },
       typography: (theme) => ({
         DEFAULT: {
           css: {
@@ -80,4 +86,5 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography')
   ],
+  darkMode: 'class',
 }
