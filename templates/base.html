@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <link rel="preload" href="{{ static('full_style.css') }}?v=13318" as="style">
+    <link rel="preload" href="{{ static('full_style.css') }}?v={{ version }}" as="style">
     <link rel="preload" href="{{ static('libs/jquery-3.6.0.min.js') }}" as="script">
     <title>{% block title %}{{ title }} - {{ SITE_LONG_NAME }}{% endblock %}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -140,7 +140,7 @@
         </style>
     {% endif %}
     {% block media %}{% endblock %}
-    <link rel="stylesheet" href="{{ static('full_style.css') }}?v=13318">
+    <link rel="stylesheet" href="{{ static('full_style.css') }}?v={{ version }}">
     {% if not INLINE_JQUERY %}
         <script src="{{ JQUERY_JS }}"></script>
     {% endif %}
@@ -341,13 +341,13 @@
         </style>
     </noscript>
 </head>
-<body class="min-w-full bg-gray-100 tmath">
+<body class="min-w-full transition-colors duration-500 bg-gray-100 min-h-[100vh] dark:bg-dark-all tmath flex flex-col">
 <svg width="0" height="0" style="display: block">
     <defs>
         <clipPath id="rating-clip"><circle cx="8" cy="8" r="7"/></clipPath>
     </defs>
 </svg>
-<div class="absolute top-0 left-0 flex flex-col items-center justify-center w-full min-h-screen preloader">
+<!-- <div class="absolute top-0 left-0 flex flex-col items-center justify-center w-full min-h-screen preloader">
     <svg class="ip" viewBox="0 0 256 128" width="256px" height="128px" xmlns="http://www.w3.org/2000/svg">
 		<g>
             <path d="M 50,100 A 1,1 0 0 1 50,0"/>
@@ -362,20 +362,19 @@
             </linearGradient>
           </defs>
 	</svg>
-</div>
-<div class="w-full transition-opacity duration-300 ease-in-out opacity-0 main-content">
-    <div class="mx-auto max-w-8xl">
-        {% include 'navbar.html' %}
-        
-        <div id="page_container" class="flex flex-col !min-h-screen pt-6 ui fluid">
+</div> -->
+<div class="flex-1 w-full transition-opacity duration-300 ease-in-out main-content">
+    {% include 'navbar.html' %}
+    <div class="overflow-hidden">
+        <div id="page_container" class="px-4 py-4 mx-auto max-w-8xl sm:px-6 md:px-8">
             <noscript>
                 <div id="noscript">{{ _('This site works best with JavaScript enabled.') }}</div>
+                <br>
             </noscript>
-            <br>
-            <main class="flex flex-col flex-1 w-11/12 mx-auto mt-12 mb-auto">
+            <main class="flex flex-col mb-auto">
                 <div class="flex items-center">
                     {% block title_row %}
-                        <div class="flex-1 text-3xl font-bold text-black">
+                        <div class="flex-1 text-3xl font-bold text-black dark:text-white">
                             {% block content_title %}
                                 {% if content_title %}{{ content_title }}{% else %}{{ title }}{% endif %}
                             {% endblock %}
@@ -396,44 +395,44 @@
             {% block bodyend %}{% endblock %}
         </div>
     </div>
-    <div class="w-full py-10 bg-slate-700">
-        <div class="max-w-4xl mx-auto ">
-            <div class="flex items-center justify-center space-x-4">
-                <div class="flex items-baseline">
-                    <p style="height: 100%">
-                    <a style="color: #808080;" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>
-                    {% if i18n_config.footer %}
-                        {{ i18n_config.footer|safe }} |
-                    {% endif %}
-                    </p>
-                </div>
-                <form action="{{ url('set_language') }}" method="post" id="set_language">
-                    {% csrf_token %}
-                    <select name="language" id="language" onchange="this.form.submit()" class="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        {% for language in language_info_list(LANGUAGES) %}
-                        <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
-                            {{ language.name_local }} ({{ language.code }})
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <input name="next" type="hidden" value="{{ request.get_full_path() }}">
-                </form>
+</div>
+<div class="w-full py-10 bg-slate-700">
+    <div class="max-w-4xl mx-auto ">
+        <div class="flex items-center justify-center space-x-4">
+            <div class="flex items-baseline">
+                <p style="height: 100%">
+                <a style="color: #808080;" href="https://dmoj.ca">proudly powered by <b>DMOJ</b></a>
+                {% if i18n_config.footer %}
+                    {{ i18n_config.footer|safe }} |
+                {% endif %}
+                </p>
             </div>
+            <form action="{{ url('set_language') }}" method="post" id="set_language">
+                {% csrf_token %}
+                <select name="language" id="language" onchange="this.form.submit()" class="block w-full p-2 border-gray-300 rounded-md shadow-sm dark:bg-slate-600/75 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    {% for language in language_info_list(LANGUAGES) %}
+                    <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                        {{ language.name_local }} ({{ language.code }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <input name="next" type="hidden" value="{{ request.get_full_path() }}">
+            </form>
         </div>
     </div>
 </div>
 <script>
-    window.onload = function () {
-        var preloader = document.querySelector(".preloader");
-        var mainContent = document.querySelector(".main-content");
+    // window.onload = function () {
+    //     var preloader = document.querySelector(".preloader");
+    //     var mainContent = document.querySelector(".main-content");
         
-        setTimeout(function () {
-            // Ẩn preloader khi tải xong
-            preloader.style.display = "none";
-            // Hiển thị nội dung chính của trang
-            mainContent.classList.toggle('opacity-0');
-        }, 500);
-    };
+    //     setTimeout(function () {
+    //         // Ẩn preloader khi tải xong
+    //         preloader.style.display = "none";
+    //         // Hiển thị nội dung chính của trang
+    //         mainContent.classList.toggle('opacity-0');
+    //     }, 500);
+    // };
 </script>
 <script>
     const copyableCells = document.querySelectorAll('.prose table td');

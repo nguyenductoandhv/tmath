@@ -1,5 +1,5 @@
 {% set can_view, can_edit = submission_layout(submission, profile_id, request.user, completed_problem_ids, editable_problem_ids, tester_problem_ids) %}
-<td class=" w-28 {{ submission.result_background }}">
+<td class=" w-28 {{ submission.result_background }} dark:border">
     <div class="flex flex-col items-center justify-center h-full text-lg ">
         {%- if submission.is_graded -%}
         <div class="font-semibold text-white">
@@ -19,7 +19,7 @@
         </div>
     </div>
 </td>
-<td class="">
+<td class="dark:text-white dark:bg-slate-900/75">
     <div class="flex flex-col items-start flex-1 p-3 space-y-1 lg:items-center lg:flex-row">
         <div class="flex flex-col flex-1">
             {% if show_problem %}

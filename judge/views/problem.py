@@ -178,9 +178,10 @@ class ProblemRaw(ProblemMixin, TitleMixin, TemplateResponseMixin, SingleObjectMi
             ))
 
 
-class ProblemDetail(ProblemMixin, SolvedProblemMixin, CommentedDetailView):
+class ProblemDetail(ProblemMixin, SolvedProblemMixin, TitleMixin, CommentedDetailView):
     context_object_name = 'problem'
     template_name = 'problem/problem.html'
+    nav_tag = 'problem'
 
     def get_comment_page(self):
         return 'p:%s' % self.object.code
@@ -317,6 +318,7 @@ class ProblemPdfView(LoginRequiredMixin, ProblemMixin, SingleObjectMixin, View):
 class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView):
     model = Problem
     title = gettext_lazy('Problems')
+    nav_tag = 'problem'
     context_object_name = 'problems'
     template_name = 'problem/list.html'
     paginate_by = 50

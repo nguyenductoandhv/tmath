@@ -153,14 +153,21 @@ The judge can also grade in the languages listed below. These languages are less
 ```mysql
 CREATE DATABASE tmath DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
-GRANT ALL PRIVILEGES ON tmath.* to 'tmath'@'localhost' IDENTIFIED BY 'tmath123@';
+GRANT ALL PRIVILEGES ON dmoj.* to 'tmath'@'localhost' IDENTIFIED BY 'tmath123@';
 ```
 
 ### MySQL Server
 ```mysql
-CREATE DATABASE tmath DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
+CREATE DATABASE dmoj DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
 
 CREATE USER 'tmath'@'localhost' IDENTIFIED BY 'tmath123@';
 
 GRANT ALL PRIVILEGES ON dmoj.* to 'tmath'@'localhost';
 ```
+
+alias runsv="python3 manage.py runserver"
+alias mt="python3 manage.py migrate"
+alias mg="python3 manage.py makemigrations"
+alias shell="python3 manage.py shell"
+alias super="python3 manage.py createsuperuser"
+alias collect="python3 manage.py collectstatic"

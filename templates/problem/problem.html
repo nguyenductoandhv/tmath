@@ -1,47 +1,6 @@
-{% extends "common-content.html" %}
+{% extends "base.html" %}
 {% block content_media %}
     {% include "comments/media-css.html" %}
-    <style>
-        .title-state {
-            font-size: 2em;
-            float: left;
-            width: 1.1em;
-            display: block;
-            margin-top: 0.16em;
-        }
-
-        .info-float a {
-            vertical-align: middle;
-        }
-
-        .problem-clarification {
-            border-bottom: 1px solid #ccc;
-            margin-top: 1em;
-            margin-bottom: 1em;
-        }
-
-        .clarifications-area h2 {
-            margin-bottom: 20px;
-        }
-
-        .problem-clarification .body {
-            display: inline-block;
-            padding-left: 3em;
-        }
-
-        #content-right {
-            max-width: 13.5em;
-            min-width: 12.5em;
-        }
-
-        #problem-types, #allowed-langs, #available-judges {
-            padding-top: 1em;
-        }
-
-        .problem-info-entry {
-            padding-top: 0.5em;
-        }
-    </style>
 {% endblock %}
 
 {% block content_js_media %}
@@ -49,55 +8,14 @@
 {% endblock %}
 
 {% block title_row %}
-    <div class="flex w-full py-2">
-        <div class="flex flex-col flex-1 lg:space-x-4 lg:items-center lg:flex-row">
-            <div class="flex space-x-4">
-                {% if request.user.is_authenticated %}
-                    {% if problem.id in completed_problem_ids %}
-                        <a class="text-3xl" href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                            {% if problem.is_public or request.in_contest %}
-                                <i class="text-green-500 fa-duotone fa-check-circle"></i>
-                            {% else %}
-                                <i class="text-red-500 fa-duotone fa-lock"></i>
-                            {% endif %}
-                        </a>
-                    {% elif problem.id in attempted_problems %}
-                        <a class="text-3xl" href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                            {% if problem.is_public or request.in_contest %}
-                                <i class="text-yellow-500 fa-duotone fa-minus-circle"></i>
-                            {% else %}
-                                <i class="text-red-500 fa-duotone fa-lock"></i>
-                            {% endif %}
-                        </a>
-                    {% endif %}
-                {% endif %}
-                <div class="text-3xl font-bold text-black">{{ title }}</div>    
-            </div>
-            {% if problem.is_organization_private %}
-                <span class="inline-block mt-2">
-                    {% for org in problem.organizations.all() %}
-                        <a class="relative p-1 pl-6 rounded-md bg-slate-400" href="{{ org.get_absolute_url() }}">
-                            <span class="absolute flex items-center w-4 h-4 top-1 left-1">
-                                <i class="fa-duotone fa-lock"></i> 
-                            </span>
-                            {{ org.name }}
-                        </a>
-                    {% endfor %}
-                </span>
-            {% endif %}
-        </div>
-        {% if has_pdf_render %}
-        <a href="{{ url('problem_pdf', problem.code) }}" class="flex items-center space-x-3">
-            <i class="text-3xl text-red-500 fa-duotone fa-file-pdf"></i>
-            <span class="text-xl font-bold">
-                {{ _('View as PDF') }}
-            </span>
-        </a>
-        {% endif %}
-    </div>
+    {% set tab='detail' %}
+    {% include 'problem/detail-tabs.html' %}
 {% endblock %}
 
-{% block info_float %}
+{% block title_ruler %}
+{% endblock %}
+
+{% block abc %}
     {% if request.user.is_authenticated and request.in_contest and submission_limit %}
         {% if submissions_left > 0 %}
             <a href="{{ url('problem_submit', problem.code) }}" class="w-full py-3 font-bold text-center text-white bg-blue-500 rounded-2xl hover:text-white hover:bg-blue-600">
@@ -349,11 +267,153 @@
     </div>
 {% endblock %}
 
-{% block description %}
-<div class="p-4 prose text-black bg-white max-w-none prose-td:font-roboto rounded-xl">
-    {% cache 86400 'problem_html' problem.id MATH_ENGINE LANGUAGE_CODE %}
-        {{ description|markdown(problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
-    {% endcache %}
+{% block body %}
+<div class="flex flex-col gap-4 transition-colors duration-500">
+    <div class="grid grid-cols-2 gap-4 p-4 bg-white dark:bg-dark-content dark:text-white rounded-xl" id="problem_info">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
+                <div class="relative col-span-2 pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                        <i class="fa-duotone fa-check"></i>
+                    </span>
+                    <span class="font-bold">{{ _('Point') }}:</span> {{ problem.points }}
+                </div>
+                <div class="relative col-span-2 pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                        <i class="fa-duotone fa-clock"></i>
+                    </span>
+                    <span class="font-bold">{{ _('Time limit')}}:</span> {{ problem.time_limit }}s
+                </div>
+                <div class="relative col-span-2 pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                        <i class="fa-duotone fa-sd-card"></i>
+                    </span>
+                    <span class="font-bold">{{ _('Memory limit')}}:</span> {{ problem.memory_limit|kbsimpleformat }}
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="relative pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                        <i class="fa fa-keyboard fa-fw"></i>
+                    </span>
+                    <span class="font-bold">{{ _('Input')}}:</span>
+                    {% if problem.io_method.method == 'standard' %}
+                        stdin
+                    {% elif problem.io_method.method == 'file' %}
+                        <i>{{ problem.io_method.input }}</i>
+                    {% endif %}
+                </div>
+                <div class="relative pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                        <i class="fa fa-print fa-fw"></i>
+                    </span>
+                    <span class="font-bold">{{ _('Output')}}:</span> 
+                    {% if problem.io_method.method == 'standard' %}
+                        stdout
+                    {% elif problem.io_method.method == 'file' %}
+                        <i>{{ problem.io_method.output }}</i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col">
+                {% with authors=problem.authors.all() %}
+                {% if authors %}
+                <div class="relative flex pl-6">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1"><i class="fa-duotone fa-edit"></i></span>
+                    <div class="font-semibold">
+                        {% trans trimmed count=authors|length %}
+                            Author: 
+                        {% pluralize count %}
+                            Authors: 
+                        {% endtrans %}
+                        &nbsp;
+                    </div>
+                    <div>
+                        {{ link_users(authors) }}
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% with types=problem.types_list %}
+                <div class="relative flex flex-col pl-6 group">
+                    <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 transition-all top-1 group-hover:rotate-90">
+                        <i class="fa-duotone fa-play"></i>
+                    </span>
+                    <div class="font-semibold">
+                        {% trans trimmed count=problem.types_list|length %}
+                            Problem type
+                        {% pluralize count %}
+                            Problem types
+                        {% endtrans %}
+                    </div>
+                    <div class="hidden group-hover:block">
+                        {{ problem.types_list|join(", ") }}
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+            <div class="flex flex-col">
+                {% if show_languages %}
+                    <div class="relative flex flex-col pl-6">
+                        <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 rotate-90 top-1">
+                            <i class="fa-duotone fa-play"></i>
+                        </span>
+                        <div class="font-semibold">
+                            {{ _('Allowed languages') }}
+                        </div>
+                        <div class="">
+                            {% with usable=problem.usable_common_names, langs=problem.languages_list() %}
+                                {% for lang in langs %}
+                                    {%- if lang in usable -%}
+                                        {{ lang }}
+                                    {%- else -%}
+                                        <s title="{{ _('No %(lang)s judge online', lang=lang) }}">{{ lang }}</s>
+                                    {%- endif -%}
+                                    {% if not loop.last %}, {% endif -%}
+                                {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if problem.is_editable_by(request.user) %}
+                    <div class="relative flex pl-6">
+                        <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
+                            <i class="fa-duotone fa-database"></i>
+                        </span>
+                        <div class="font-semibold">
+                            {% trans trimmed count=available_judges|length %}
+                                Judge:
+                                {% pluralize count %}
+                                Judges:
+                            {% endtrans %}
+                            &nbsp;
+                        </div>
+                        <div>
+                            {% if available_judges %}
+                                {% if perms.judge.change_judge %}
+                                    {% for judge in available_judges %}
+                                        <a href="{{ url('admin:judge_judge_change', judge.id) }}" class="text-blue-500 hover:text-blue-600">{{ judge.name }}</a>
+                                        {%- if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ available_judges|join(", ") }}
+                                {% endif %}
+                            {% else %}
+                                <i>{{ _('none available') }}</i>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="p-4 transition-colors bg-white dark:bg-dark-content dark:prose-pre:bg-slate-600 dark:prose-pre:text-slate-300 prose-td:font-roboto custom-typography rounded-xl">
+        {% cache 86400 'problem_html' problem.id MATH_ENGINE LANGUAGE_CODE %}
+            {{ description|markdown(problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
+        {% endcache %}
+    </div>
 </div>
 
     {% with license=problem.license %}
@@ -402,6 +462,8 @@
 {% endblock %}
 
 {% block bodyend %}
-    {{ super() }}
     {% include "comments/math.html" %}
+    {% if REQUIRE_JAX %}
+        {% include "mathjax-load.html" %}
+    {% endif %}
 {% endblock %}
