@@ -126,126 +126,89 @@
 
     <div class="flex flex-col lg:flex-row-reverse">
         {% block before_table %}{% endblock %}
-        {% if not request.in_contest %}
-            <div class="mb-8 lg:w-1/4">
-                {% include "problem/search-form.html" %}
-                {% if hot_problems %}
-                    <div class="bg-white">
-                        <h3>{{ _('Hot problems') }} <i class="fa fa-fire"></i></h3>
-                        <div class="sidebox-content">
-                            <ul class="problem-list">{% for problem in hot_problems %}
-                                <li><a href="{{ url('problem_detail', problem.code) }}" class="hot-problem-link">
-                                    {{ problem.name }}
-                                </a></li>
-                            {% endfor %}</ul>
-                        </div>
+        <div class="mb-8 lg:w-1/4">
+            {% include "problem/search-form.html" %}
+            {% if hot_problems %}
+                <div class="bg-white">
+                    <h3>{{ _('Hot problems') }} <i class="fa fa-fire"></i></h3>
+                    <div class="sidebox-content">
+                        <ul class="problem-list">{% for problem in hot_problems %}
+                            <li><a href="{{ url('problem_detail', problem.code) }}" class="hot-problem-link">
+                                {{ problem.name }}
+                            </a></li>
+                        {% endfor %}</ul>
                     </div>
-                {% endif %}
-            </div>
-        {% endif %}
+                </div>
+            {% endif %}
+        </div>
         <div id="content-left" class="flex-1 overflow-x-auto lg:pr-10 ">
-            <table class="w-full border border-collapse border-black dark:border-white">
-                <thead>
-                <tr class="text-center bg-black dark:bg-slate-600/75 text-white [&>*]:py-3 divide-x divide-white">
-                    {% if request.in_contest %}
-                        {% if request.user.is_authenticated %}
-                            <th class="w-10"><i class="fa fa-check"></i></th>
-                        {% endif %}
-                        <th class="">{{ _('Problem') }}</th>
-                        <th class="w-20">{{ _('Points') }}</th>
-                        <th class="w-24">{{ _('Users') }}</th>
-                    {% else %}
-                        {% if request.user.is_authenticated %}
-                            <th class="w-10">
-                                <a href="{{ sort_links.solved }}"><i class="fa fa-check"></i>{{ sort_order.solved }}
-                                </a>
-                            </th>
-                        {% endif %}
-                        <th class="w-14">
-                            <a href="{{ sort_links.code }}">{{ _('Code') }}{{ sort_order.code }}</a>
-                        </th>
-                        <th class="problem">
-                            <a href="{{ sort_links.name }}">{{ _('Problem') }}{{ sort_order.name }}</a>
-                        </th>
-                        <th class="hidden w-40 lg:table-cell">
-                            <a href="{{ sort_links.group }}">{{ _('Category') }}{{ sort_order.group }}</a>
-                        </th>
-                        <th class="w-20">
-                            <a href="{{ sort_links.points }}">{{ _('Points') }}{{ sort_order.points }}</a>
-                        </th>
-                        <th class="w-20">
-                            <a href="{{ sort_links.ac_rate }}">{{ _('AC %%') }}{{ sort_order.ac_rate }}</a>
-                        </th>
-                        <th class="w-20 lg:w-32">
-                            <a href="{{ sort_links.user_count }}">{{ _('Users') }}{{ sort_order.user_count }}</a>
+            <table class="w-full">
+                <thead class="border-b border-black">
+                <tr class="text-left text-slate-700 dark:text-slate-400 [&>*]:py-4">
+                    {% if request.user.is_authenticated %}
+                        <th class="w-10 text-center">
+                            <a href="{{ sort_links.solved }}"><i class="fa fa-check"></i>{{ sort_order.solved }}
+                            </a>
                         </th>
                     {% endif %}
+                    <th class="px-3 w-14">
+                        <a href="{{ sort_links.code }}">{{ _('Code') }}{{ sort_order.code }}</a>
+                    </th>
+                    <th class="px-3 problem">
+                        <a href="{{ sort_links.name }}">{{ _('Problem') }}{{ sort_order.name }}</a>
+                    </th>
+                    <th class="hidden w-40 px-3 lg:table-cell">
+                        <a href="{{ sort_links.group }}">{{ _('Category') }}{{ sort_order.group }}</a>
+                    </th>
+                    <th class="w-20 px-3">
+                        <a href="{{ sort_links.points }}">{{ _('Points') }}{{ sort_order.points }}</a>
+                    </th>
+                    <th class="w-20 px-3">
+                        <a href="{{ sort_links.ac_rate }}">{{ _('AC %%') }}{{ sort_order.ac_rate }}</a>
+                    </th>
+                    <th class="w-20 px-3 lg:w-32">
+                        <a href="{{ sort_links.user_count }}">{{ _('Users') }}{{ sort_order.user_count }}</a>
+                    </th>
                 </tr>
                 </thead>
-                <tbody class="divide-y dark:text-white dark:bg-dark-content divide-slate-300">
+                <tbody class="dark:text-white dark:bg-dark-content">
                 {% for problem in problems %}
-                    <tr class="divide-x divide-slate-300">
+                    <tr class="even:bg-slate-200 dark:even:bg-gray-700">
                         {% if request.user.is_authenticated %}
                             {% if problem.id in completed_problem_ids %}
                                 <td solved="1" class="text-center">
                                     <a href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                                        {% if problem.is_public or request.in_contest %}
-                                            <i class="solved-problem-color fa fa-check-circle"></i>
-                                        {% else %}
-                                            <i class="solved-problem-color fa fa-lock"></i>
-                                        {% endif %}
+                                        <i class="solved-problem-color fa-duotone fa-check-circle"></i>
                                     </a>
                                 </td>
                             {% elif problem.id in attempted_problems %}
                                 <td solved="0" class="text-center">
                                     <a href="{{ url('user_submissions', problem.code, request.user.username) }}">
-                                        {% if problem.is_public or request.in_contest %}
-                                            <i class="attempted-problem-color fa fa-minus-circle"></i>
-                                        {% else %}
-                                            <i class="attempted-problem-color fa fa-lock"></i>
-                                        {% endif %}
+                                        <i class="attempted-problem-color fa-duotone fa-minus-circle"></i>
                                     </a>
                                 </td>
                             {% else %}
                                 <td solved="-1" class="text-center">
-                                    {% if problem.is_public or request.in_contest %}
-                                        <i class="unsolved-problem-color fa fa-minus-circle"></i>
-                                    {% else %}
-                                        <i class="unsolved-problem-color fa fa-lock"></i>
-                                    {% endif %}
+                                    <i class="unsolved-problem-color fa-duotone fa-minus-circle"></i>
                                 </td>
                             {% endif %}
                         {% endif %}
-                        {% if not request.in_contest %}
-                        <td class="p-2 font-bold uppercase">
+                        <td class="px-3 py-3 font-bold uppercase">
                             <a href="{{ url('problem_detail', problem.code) }}" class="dark:hover:text-sky-500">{{ problem.code }}</a>
                         </td>
-                        {% endif %}
-                        <td class="p-2 font-bold">
-                            {% if problem.link %}
-                            <a href="{{ problem.link }}" class="dark:hover:text-sky-500">{{ problem.name }}</a>
-                            {% else %}
-                            <a href="{{ url('problem_detail', problem.code) }}" class="dark:hover:text-sky-500">{{ problem.name }}</a>
-                            {% endif %}
+                        <td class="px-3 py-3 font-bold">
+                            <a href="{{ url('problem_detail', problem.code) }}" class="dark:hover:text-sky-500 line-clamp-1">{{ problem.name }}</a>
                         </td>
-                        {% if not request.in_contest %}
-                        <td class="hidden lg:table-cell">
+                        <td class="hidden px-3 py-3 lg:table-cell">
                             {% if problem.group %}
-                            <div class="p-1 line-clamp-1" title="{{ problem.group.full_name }}"> {{ problem.group.full_name }}</div> 
+                            <div class="line-clamp-1" title="{{ problem.group.full_name }}"> {{ problem.group.full_name }}</div> 
                             {% endif %}
                         </td>
-                        {% endif %}
-                        <td class="text-center">{{ problem.points|floatformat }}{% if problem.partial %}p{% endif %}</td>
-                        {% if not request.in_contest %}
-                            <td class="text-center">{{ problem.ac_rate|floatformat(1) }}%</td>
-                        {% endif %}
-                        <td class="text-center">
+                        <td class="px-3 py-3">{{ problem.points|floatformat }}{% if problem.partial %}p{% endif %}</td>
+                        <td class="px-3 py-3">{{ problem.ac_rate|floatformat(1) }}%</td>
+                        <td class="px-3 py-3">
                             <a class="text-indigo-600 dark:text-sky-400" href="{{ url('ranked_submissions', problem.code) }}">
-                                {% if not request.in_contest or not hide_contest_scoreboard %}
-                                    {{ problem.user_count }}
-                                {% else %}
-                                    ???
-                                {% endif %}
+                                {{ problem.user_count }}
                             </a>
                         </td>
                     </tr>
