@@ -67,7 +67,7 @@ class RankedSubmissions(ProblemSubmissions):
         return _('Best solutions for %s') % self.problem_name
 
     def get_content_title(self):
-        return format_html(_('Best solutions for <a href="{1}">{0}</a>'), self.problem_name,
+        return format_html(_('Best solutions for <a class="content_title" href="{1}">{0}</a>'), self.problem_name,
                            reverse('problem_detail', args=[self.problem.code]))
 
     def _get_result_data(self, queryset=None):
@@ -88,10 +88,11 @@ class ContestRankedSubmission(ForceContestMixin, RankedSubmissions):
 
     def get_content_title(self):
         if self.problem.is_accessible_by(self.request.user):
-            return format_html(_('Best solutions for <a href="{1}">{0}</a> in <a href="{3}">{2}</a>'),
+            return format_html(_('Best solutions for <a class="content_title" href="{1}">{0}</a>'
+                                 ' in <a class="content_title" href="{3}">{2}</a>'),
                                self.problem_name, reverse('problem_detail', args=[self.problem.code]),
                                self.contest.name, reverse('contest_view', args=[self.contest.key]))
-        return format_html(_('Best solutions for problem {0} in <a href="{2}">{1}</a>'),
+        return format_html(_('Best solutions for problem {0} in <a class="content_title" href="{2}">{1}</a>'),
                            self.get_problem_number(self.problem), self.contest.name,
                            reverse('contest_view', args=[self.contest.key]))
 
