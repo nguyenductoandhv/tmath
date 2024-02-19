@@ -237,7 +237,6 @@
 {% endblock %}
 
 {% block media %}
-<link rel="stylesheet" href="{{ static('semantic/components/form.min.css') }}">
     {{ form.media.css }}
     {% compress css %}
         <style media="screen">
@@ -359,6 +358,11 @@
     {% endcompress %}
 {% endblock %}
 
+{% block title_row %}
+    {% set tab='submit' %}
+    {% include 'problem/detail-tabs.html' %}
+{% endblock %}
+
 {% block body %}
     <br>
     {% if not no_judges %}
@@ -391,13 +395,13 @@
         {% endif %}
     {% endif %}
 
-    <form action="" method="post" class="ui form problem_submit" enctype="multipart/form-data">
+    <form action="" method="post" class="flex flex-col gap-2 problem_submit" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.non_field_errors() }}
-        <div class="two fields">
-            <div id="language-select" class="field">
+        <div class="flex items-center gap-4">
+            <div id="language-select" class="flex flex-col flex-1">
                 {{ form.language.errors }}
-                {{ form.language.label_tag() }}
+                <label class="font-semibold dark:text-white" for="id_language">{{ form.language.label }}</label>
                 <select id="id_language" name="language">
                     {% for lang in form.fields.language.queryset %}
                         <option value="{{ lang.id }}" data-id="{{ lang.id }}" data-name="{{ lang.name }}"
@@ -408,8 +412,8 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="field">
-                {{ form.judge.label_tag() }}
+            <div class="flex flex-col flex-1">
+                <label class="font-semibold dark:text-white" for="{{ form.judge.id_for_label }}">{{ form.judge.label }}</label>
                 {{ form.judge }}
             </div>
         </div>
@@ -431,11 +435,10 @@
         {% endif %}
 
         {% if no_judges %}
-            <span class="ui red text">{{ _('No judge is available for this problem.') }}</span>
+            <span class="font-semibold text-red-500">{{ _('No judge is available for this problem.') }}</span>
         {% else %}
         
-        <input type="submit" value="{{ _('Submit!') }}" class="w-full p-2 text-lg font-bold text-white bg-blue-500 rounded-md cursor-pointer hover:bg-blue-600"
-        {% if request.in_contest and submission_limit and not submissions_left %}disabled{% endif %}>
+        <input type="submit" value="{{ _('Submit!') }}" class="w-full p-2 text-lg font-bold text-white bg-blue-500 rounded-md cursor-pointer hover:bg-blue-600">
         {% endif %}
     </form>
 {% endblock %}
