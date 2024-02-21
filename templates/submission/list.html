@@ -323,7 +323,7 @@
                         <span class="font-bold text-gray-700">
                             {{ _('Language') }}
                         </span>
-                        <select class="w-full" id="language_code" name="language" multiple>
+                        <select class="w-full" id="language_code" name="language_code" multiple>
                             <option value=""></option>
                             {% for code, name in all_languages %}
                                 <option value="{{ code }}" {% if selected_languages and code in selected_languages %}selected{% endif %}>{{ name }}</option>
