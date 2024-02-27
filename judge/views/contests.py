@@ -18,7 +18,7 @@ from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import (Case, Count, F, FloatField, IntegerField, Max,
-                              Min, Q, Sum, Value, When)
+                              Min, Q, Value, When)
 from django.db.models.expressions import CombinedExpression
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -43,8 +43,7 @@ from reversion import revisions
 from judge.comments import CommentedDetailView
 from judge.forms import ContestCloneForm
 from judge.models import (Contest, ContestMoss, ContestParticipation,
-                          ContestProblem, ContestTag, Problem, Profile,
-                          Submission)
+                          ContestProblem, ContestTag, Profile, Submission)
 from judge.models.contest import SampleContest
 from judge.models.problem import ProblemTranslation
 from judge.models.profile import Organization

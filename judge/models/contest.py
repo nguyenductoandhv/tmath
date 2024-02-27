@@ -632,7 +632,8 @@ class ContestParticipation(models.Model):
 
         This method updates the disqualified status of the participation and triggers a recompute of the results.
         If the contest is rated and has ratings, it also triggers a rating update.
-        If the participation is disqualified, the user is removed from the current contest and added to the banned users list.
+        If the participation is disqualified, the user is removed from the current contest and
+        added to the banned users list.
         If the participation is no longer disqualified, the user is removed from the banned users list.
         """
         self.is_disqualified = disqualified
@@ -776,7 +777,8 @@ class ContestProblem(models.Model):
         problem (Problem): The problem associated with the contest problem.
         contest (Contest): The contest associated with the contest problem.
         points (int): The number of points assigned to the contest problem.
-        first_accept (ContestParticipation): The first user who accepted this problem, or None if no user has accepted it.
+        first_accept (ContestParticipation): The first user who accepted this problem, 
+        or None if no user has accepted it.
         partial (bool): Indicates if partial scoring is enabled for the contest problem.
         is_pretested (bool): Indicates if the contest problem has pretests.
         order (int): The order of the contest problem within the contest.
