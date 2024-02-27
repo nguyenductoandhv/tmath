@@ -777,7 +777,7 @@ class ContestProblem(models.Model):
         problem (Problem): The problem associated with the contest problem.
         contest (Contest): The contest associated with the contest problem.
         points (int): The number of points assigned to the contest problem.
-        first_accept (ContestParticipation): The first user who accepted this problem, 
+        first_accept (ContestParticipation): The first user who accepted this problem,
         or None if no user has accepted it.
         partial (bool): Indicates if partial scoring is enabled for the contest problem.
         is_pretested (bool): Indicates if the contest problem has pretests.
