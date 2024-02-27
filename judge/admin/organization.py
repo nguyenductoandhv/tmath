@@ -30,7 +30,10 @@ class OrganizationForm(ModelForm):
                 contests = Contest.objects.filter(organizations=instance)
                 for contest in contests:
                     if contest.is_rated:
-                        contest.rating_ceiling = min(contest.rating_ceiling, new_rate)
+                        if contest.organizations.count() == 1:
+                            contest.rating_ceiling = new_rate
+                        else:
+                            contest.rating_ceiling = min(contest.rating_ceiling, new_rate)
                         contest.save()
         if commit:
             instance.save()
