@@ -213,6 +213,8 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
                 readonly += ['is_visible']
         if not request.user.has_perm('judge.contest_problem_label'):
             readonly += ['problem_label_script']
+        if not request.profile.super_admin:
+            readonly += ['rating_ceiling']
         return readonly
 
     def save_model(self, request, obj, form, change):
