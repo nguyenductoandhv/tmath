@@ -128,7 +128,7 @@ class ContestForm(ModelForm):
                     rate = max(rate, org.rate)
                 cleaned_data['rating_ceiling'] = rate
         return cleaned_data
-    
+
     def save(self, commit=True):
         instance = super(ContestForm, self).save(commit=False)
         if 'rating_ceiling' in self.cleaned_data:
