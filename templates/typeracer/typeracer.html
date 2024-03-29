@@ -4,13 +4,15 @@
     <div class="font-semibold after:content-['cpm'] after:ml-1" id="speed">0</div>
   </div>
   <div class="grid grid-cols-12 gap-1 my-4" id="list">
-    {% for user in participations %}
+    {% for user in contestants %}
       {% set is_self = user.id == request.user.id %}
       {% include 'typeracer/racer.html' %}
     {% endfor %}
   </div>
+  {% if participant.action == '0' %}
   <div id="type_content" class="mb-4 text-2xl font-semibold rounded-md select-none">
   </div>
   
   <input type="text" name="" id="type" autofocus class="w-full p-2 mt-4 !text-xl font-semibold border rounded-md focus:ring-1 focus:ring-indigo-500">
+  {% endif %}
 </div>

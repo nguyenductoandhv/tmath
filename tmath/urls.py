@@ -121,7 +121,7 @@ def paged_list_view(view, name, template=None):
 urlpatterns = [
     # path('', blog.IndexView.as_view()),
     path('grappelli/', include('grappelli.urls')),
-    # path('typo/', include('typeracer.urls')),
+    path('typo/', include('typeracer.urls')),
     path('docs/', include('grappelli.urls_docs')),
     path('', blog.PostList.as_view(template_name='home.html', title=_('Home')), kwargs={'page': 1}, name='home'),
     path('500/', exception),
@@ -477,5 +477,5 @@ if 'newsletter' in settings.INSTALLED_APPS:
 if 'impersonate' in settings.INSTALLED_APPS:
     urlpatterns.append(path('impersonate/', include('impersonate.urls')))
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -111,16 +112,46 @@ class TypoProfile(models.Model):
 
 
 class TypoRoom(models.Model):
+    MODE = (
+        ('solo', _('Solo')),
+        ('multi', _('Multi')),
+    )
+
     name = models.CharField(_("name"), max_length=255, default='')
     contest = models.ForeignKey(TypoContest, related_name='room', null=True, blank=True, on_delete=models.SET_NULL)
-    access_code = models.CharField(_('access code'), max_length=100, blank=True, default='')
     is_random = models.BooleanField(_("is random contest"), default=True)
     max_user = models.IntegerField(_("max number user can participation"), default=-1)
     practice = models.BooleanField(_("practice room"), default=False)
+    is_private = models.BooleanField(_("is private"), default=False)
+    access_code = models.CharField(_('access code'), max_length=100, blank=True, default='')
+    mode = models.CharField(_('mode'), max_length=10, choices=MODE, default='multi')
 
     def __str__(self) -> str:
         return self.name
-
+    
+    def get_absolute_url(self):
+        return reverse("typeracer:room_detail", kwargs={"pk": self.pk})
+    
     @property
     def user_count(self):
         return TypoResult.objects.filter(contest=self.contest).count()
+
+
+class TypoRoomUser(models.Model):
+    ACTION = (
+        ('0', _('Participant')),
+        ('1', _('Spectator')),
+        ('2', _('Waiting')),
+    )
+
+    room = models.ForeignKey(TypoRoom, related_name='users', on_delete=models.CASCADE)
+    user = models.ForeignKey('judge.Profile', related_name='rooms', on_delete=models.CASCADE)
+    action = models.CharField(_('action'), max_length=1, choices=ACTION, default='2')
+
+    def __str__(self) -> str:
+        return "%s - %s" % (self.room, self.user)
+
+    class Meta:
+        unique_together = ('room', 'user')
+        verbose_name = _('room user')
+        verbose_name_plural = _('room users')
