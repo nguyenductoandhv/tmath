@@ -11,53 +11,73 @@
 {% endblock js_media %}
 
 {% block body %}
-<div class="grid grid-cols-4 gap-4 mt-10 auto-rows-fr">
-  {% for room in rooms %}
-    <div class="flex flex-col w-full h-40 border rounded-md">
-      <div class="flex-1 p-4 text-xl font-bold">
-        <div class="">
-          {{ room.name }}
-        </div>
-        <div class="text-base font-normal text-gray-700">
-          <span>Participations: </span> {{ room.user_count }}
-        </div>
-        {% if room.contest and not room.contest.is_opened %}
-        <div class="text-base time">
-          {{ _('Open in %(countdown)s.', countdown=room.contest.time_before_join|as_countdown) }}
-        </div>
-        {% elif room.contest %}
-        <div class="text-base">
-          Open
-        </div>
-        {% else %}
-        <div class="text-base">
-          No contest
-        </div>
-        {% endif %}
-      </div>
-      <div class="flex">
-        <a class="flex-1 py-2 font-semibold text-center text-white bg-indigo-500 rounded-bl-md" {% if room.contest and (room.user_count > 1 or request.user.is_superuser) %} href="{{ url('typeracer:typo_ranking', room.contest.id) }} {% endif %}">{{ _('View') }}</a>
-        {% if room.contest and room.contest.can_join %}
-        {% if current_room and current_room.id == room.id %}
-        <form class="flex-1 border-l border-white" action="{{ url('typeracer:join_room', room.id) }}" method="post">
-          {% csrf_token %}
-          <input type="submit" class="w-full py-2 font-semibold text-center text-white bg-indigo-500 cursor-pointer rounded-br-md hover:bg-indigo-600 hover:text-black" value="{{ _('Join') }}">
-        </form>
-        {% elif current_room %}
-        {% else %}
-        <form class="flex-1 border-l border-white" action="{{ url('typeracer:join_room', room.id) }}" method="post">
-          {% csrf_token %}
-          <input type="submit" class="w-full py-2 font-semibold text-center text-white bg-indigo-500 cursor-pointer rounded-br-md hover:bg-indigo-600 hover:text-black" value="{{ _('Join') }}">
-        </form>
-        {% endif %}
-        {% elif not room.contest %}
-        <form class="flex-1 border-l border-white" action="{{ url('typeracer:join_room', room.id) }}" method="post">
-          {% csrf_token %}
-          <input type="submit" class="w-full py-2 font-semibold text-center text-white bg-indigo-500 cursor-pointer ho rounded-br-md hover:bg-indigo-600 hover:text-black" value="{{ _('Create') }}">
-        </form>
-        {% endif %}
-      </div>
+<div class="flex gap-4">
+  <div class="flex-1 p-2 rounded-xl">
+    <div class="flex items-center justify-between">
+      <div class="text-xl font-semibold">Solo Rooms</div>
+      <a href="{{ url('typeracer:create_room') }}" class="flex items-center gap-1 px-3 py-2 btn-default">
+        Create
+        <div class="fa-doutone fa-lg fa-plus"></div>
+      </a>
     </div>
-  {% endfor %}
+    <table id="solo" class="w-full mt-4">
+      <thead class="text-white bg-black">
+        <tr class="">
+          <th class="px-3 py-3">ID</th>
+          <th class="px-3 py-3 text-left">Room Name</th>
+          <th class="w-20 px-3 py-3">Status</th>
+          <th class="w-10 px-3 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="dark:text-white dark:bg-dark-content">
+      </tbody>
+    </table>
+  </div>
+  <div class="flex-1 p-2 rounded-xl">
+    <div class="flex items-center justify-between">
+      <div class="text-xl font-semibold">Multiply Rooms</div>
+      <button class="flex items-center gap-1 px-3 py-2 btn-default ">
+        Create
+        <div class="fa-doutone fa-lg fa-plus"></div>
+      </button>
+    </div>
+    <table id="multi" class="w-full mt-4">
+      <thead class="text-white bg-black">
+        <tr class="">
+          <th class="px-3 py-3">ID</th>
+          <th class="px-3 py-3 text-left">Room Name</th>
+          <th class="w-20 px-3 py-3">Status</th>
+          <th class="w-10 px-3 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="dark:text-white dark:bg-dark-content">
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock body %}
+
+{% block bodyend %}
+<script>
+  window.onload = function () {
+    var solo = document.getElementById('solo');
+    var multi = document.getElementById('multi');
+    var soloBody = solo.getElementsByTagName('tbody')[0];
+    var multiBody = multi.getElementsByTagName('tbody')[0];
+    $.ajax({
+      url: '{{ url("typeracer:list_solo_room") }}',
+      type: 'GET',
+      success: function (data) {
+        soloBody.innerHTML = data;
+      }
+    })
+    $.ajax({
+      url: '{{ url("typeracer:list_multi_room") }}',
+      type: 'GET',
+      success: function (data) {
+        multiBody.innerHTML = data;
+      }
+    })
+  }
+</script>
+{% endblock bodyend %}

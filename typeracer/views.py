@@ -1,22 +1,32 @@
 from random import randint
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, ListView, TemplateView, View
+from django.views.decorators.cache import never_cache
+from django.views.generic import (CreateView, DetailView, ListView,
+                                  TemplateView, View)
 from django.views.generic.detail import SingleObjectMixin
 
 # from judge import event_poster as event
 from judge.models import Profile
 from judge.utils.views import TitleMixin, generic_message
-from typeracer.models import TypoContest, TypoData, TypoResult, TypoRoom
+from typeracer.forms import CreateRoomForm
+from typeracer.models import (TypoContest, TypoData, TypoResult, TypoRoom,
+                              TypoRoomUser)
 
 # Create your views here.
 
+channel_layer = get_channel_layer()
 
-def get_random_contest(limit=120):
+
+def get_random_contest(limit=12):
     data = TypoData.objects.all()
     i = randint(0, data.count() - 1)
     contest = TypoContest.objects.create(
@@ -60,22 +70,30 @@ def finishTypoContest(request):
         progress = request.POST.get('progress')
         speed = request.POST.get('speed')
         time = request.POST.get('time')
+        is_finish = request.POST.get('finish')
         contest_object = TypoContest.objects.get(pk=contest)
-        rank = TypoResult.objects.filter(contest=contest_object, is_finish=True).count()
+        # rank = TypoResult.objects.filter(contest=contest_object)
+        profile = Profile.objects.get(user__pk=user)
         result = TypoResult.objects.get(
-            user=Profile.objects.get(user__pk=user),
+            user=profile,
             contest=contest_object,
         )
         result.speed = int(speed)
         result.time = int(time) / 1000
         result.progress = int(progress)
-        result.order = rank + 1
-        result.is_finish = True
+        # result.order = rank + 1
+        result.is_finish = is_finish == 'true'
         result.save()
-        # event.post('typocontestresult_%s' % contest, {
-        #   'user': user,
-        #   'ranking': get_rank(rank),
-        # })
+        async_to_sync(channel_layer.group_send)(
+            'contest_%s' % contest,
+            {
+                'type': 'change.progress.participation',
+                'message': {
+                    'user': profile.pk,
+                    'progress': progress,
+                },
+            },
+        )
     return JsonResponse({
         'result': 'success',
         'status': 200,
@@ -129,25 +147,22 @@ class RoomMixin(object):
     context_object_name = 'room'
 
 
+@method_decorator(never_cache, name='dispatch')
 class RoomDetail(TitleMixin, RoomMixin, DetailView):
     template_name: str = 'typeracer/room.html'
 
     def get_title(self):
-        return self.object.name
+        return f'{self.object.pk} - {self.object.name}'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        participations = TypoResult.objects.filter(contest=self.object.contest)
-        context['participations'] = [user.user.user for user in participations]
+        participations = TypoRoomUser.objects.filter(room=self.object)
+        context['participants'] = list(participations.filter(action='0'))
+        context['spectators'] = list(participations.filter(action='1'))
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object.contest:
-            raise Http404()
-        result = TypoResult.objects.get(user=self.request.user.profile, contest=self.object.contest)
-        if result.is_finish:
-            return HttpResponseRedirect(reverse('typeracer:typo_ranking', args=(self.object.contest.id, )))
         return super().get(request, *args, **kwargs)
 
 
@@ -161,34 +176,166 @@ class Ranking(TitleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ranks'] = TypoResult.objects.filter(contest=self.object, is_finish=True) \
+        context['ranks'] = TypoResult.objects.filter(contest=self.object) \
                                              .order_by('-progress', '-speed', 'time')
         return context
+
+
+class CreateRoom(LoginRequiredMixin, TitleMixin, CreateView):
+    model = TypoRoom
+    template_name: str = 'typeracer/create_room.html'
+    title = _('Create Room')
+    form_class = CreateRoomForm
+
+    def get_success_url(self):
+        return reverse('typeracer:room_detail', args=(self.object.id, ))
 
 
 class JoinRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         profile: Profile = request.profile
-        if profile.typo_contest is not None:
-            return generic_message(request, 'Can\'t join room', 'You are in %s' % profile.typo_contest.room.name, 403)
-        contest = self.object.contest
+        rooms = profile.rooms.all()
+        if profile.rooms.all().count() > 0 and (self.object != rooms.first().room):
+            return generic_message(request, 'Can\'t join room', 'You are in %s' % profile.rooms.room.pk, 403)
+        if self.object == rooms.first().room:
+            return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
         room: TypoRoom = self.object
-        if contest is None or (contest.ended and room.is_random):
-            contest = get_random_contest(limit=15 if room.practice else 300)
-            room.contest = contest
-            room.save()
-        if not contest.can_join:
-            return generic_message(request, 'Can\'t join room', 'Contest is started', 403)
-        user_count = TypoResult.objects.filter(contest=contest)
-        if room.max_user > 0 and room.max_user == user_count:
-            return generic_message(request, 'Can\'t join room', 'Room is full', 403)
-        participation = TypoResult.objects.get_or_create(user=profile, contest=contest)
-        if participation[1]:
-            # event.post('typopartipation_%s' % contest.id, {
-            #   'user': participation[0].id,
-            # })
-            pass
-        elif participation[0].is_finish:
-            return HttpResponseRedirect(reverse('typeracer:typo_ranking', args=(contest.id, )))
+        if room.is_private and room.access_code != request.POST.get('access_code'):
+            return generic_message(request, 'Can\'t join room', 'Access code is wrong', 403)
+
+        # Create new Room user
+        participant = TypoRoomUser(room=room, user=profile)
+        participant.save()
         return HttpResponseRedirect(reverse('typeracer:room_detail', args=(room.id, )))
+
+
+@method_decorator(never_cache, name='dispatch')
+class SoloRoomList(ListView):
+    model = TypoRoom
+    context_object_name = 'rooms'
+    template_name: str = 'typeracer/rooms.html'
+
+    def get_queryset(self):
+        return TypoRoom.objects.filter(mode='solo')
+
+
+@method_decorator(never_cache, name='dispatch')
+class MultiRoomList(ListView):
+    model = TypoRoom
+    context_object_name = 'rooms'
+    template_name: str = 'typeracer/rooms.html'
+
+    def get_queryset(self):
+        # print(TypoRoom.objects.filter(mode='solo').count())
+        return TypoRoom.objects.filter(mode='multi')
+
+
+def participate(request, pk):
+    room = TypoRoom.objects.get(pk=pk)
+    profile = request.profile
+    if room != profile.rooms.all().first().room:
+        return JsonResponse({
+            'result': 'You are not in this room',
+            'status': 403,
+        })
+
+    user = profile.rooms.get(room=room)
+    user.action = '0'
+    user.save()
+
+    async_to_sync(channel_layer.group_send)(
+        'room_%s' % pk,
+        {
+            'type': 'change.user',
+            'message': 'participant'
+        },
+    )
+
+    return JsonResponse({
+        'result': 'Change to participant success',
+        'status': 200,
+    })
+
+
+def spectate(request, pk):
+    room = TypoRoom.objects.get(pk=pk)
+    profile = request.profile
+    if room != profile.rooms.all().first().room:
+        return JsonResponse({
+            'result': 'You are not in this room',
+            'status': 403,
+        })
+
+    user = profile.rooms.get(room=room)
+    user.action = '1'
+    user.save()
+
+    async_to_sync(channel_layer.group_send)(
+        'room_%s' % pk,
+        {
+            'type': 'change.user',
+            'message': 'spectator'
+        },
+    )
+
+    return JsonResponse({
+        'result': 'Change to spectator success',
+        'status': 200,
+    })
+
+
+@method_decorator(never_cache, name='dispatch')
+class RoomInfo(RoomMixin, DetailView):
+    template_name: str = 'typeracer/users.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        participations = TypoRoomUser.objects.filter(room=self.object)
+        context['participants'] = list(participations.filter(action='0'))
+        context['spectators'] = list(participations.filter(action='1'))
+        return context
+
+
+@method_decorator(never_cache, name='dispatch')
+class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
+    template_name: str = 'typeracer/contest.html'
+    title = _('Typo Contest')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['contest'] = self.object.contest
+        context['participant'] = self.user
+        context['contestants'] = TypoResult.objects.filter(contest=self.object.contest)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        profile = request.profile
+
+        self.user = get_object_or_404(TypoRoomUser, room=self.object, user=profile)
+        if self.user.action == '2':
+            return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
+        
+        if self.object.contest and self.object.contest._now > self.object.contest.time_end:
+            self.object.contest = None
+
+        if self.object.contest is None:
+            contest = get_random_contest()
+            self.object.contest = contest
+            self.object.save()
+    
+        users = TypoRoomUser.objects.filter(room=self.object, action='0')
+        for user in users:
+            TypoResult.objects.get_or_create(
+                user=user.user,
+                contest=self.object.contest,
+            )
+        async_to_sync(channel_layer.group_send)(
+            'room_%s' % self.object.pk,
+            {
+                'type': 'start.typo',
+                'message': 'Typo contest start',
+            },
+        )
+        return super().get(request, *args, **kwargs)
