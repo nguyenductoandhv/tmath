@@ -44,6 +44,7 @@ class ContestProblemListView(LoginRequiredMixin, ContestMixin, TitleMixin, Solve
             .annotate(user_count=Count('submission__participation', distinct=True)).order_by('order')
         context['completed_problem_ids'] = self.get_completed_problems()
         context['attempted_problems'] = self.get_attempted_problems()
+        context['tab'] = 'tasks'
         return context
 
 

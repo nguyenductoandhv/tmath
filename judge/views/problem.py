@@ -332,39 +332,38 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
                       allow_empty_first_page=True, **kwargs):
         paginator = DiggPaginator(queryset, per_page, body=6, padding=2, orphans=orphans,
                                   allow_empty_first_page=allow_empty_first_page, **kwargs)
-        if not self.in_contest:
-            # Get the number of pages and then add in this magic.
-            # noinspection PyStatementEffect
-            paginator.num_pages
+        # Get the number of pages and then add in this magic.
+        # noinspection PyStatementEffect
+        paginator.num_pages
 
-            queryset = queryset.add_i18n_name(self.request.LANGUAGE_CODE)
-            sort_key = self.order.lstrip('-')
-            if sort_key in self.sql_sort:
-                queryset = queryset.order_by(self.order, 'id')
-            elif sort_key == 'name':
-                queryset = queryset.order_by(self.order.replace('name', 'i18n_name'), 'id')
-            elif sort_key == 'group':
-                queryset = queryset.order_by(self.order + '__name', 'id')
-            elif sort_key == 'solved':
-                if self.request.user.is_authenticated:
-                    profile = self.request.profile
-                    solved = user_completed_ids(profile)
-                    attempted = user_attempted_ids(profile)
+        queryset = queryset.add_i18n_name(self.request.LANGUAGE_CODE)
+        sort_key = self.order.lstrip('-')
+        if sort_key in self.sql_sort:
+            queryset = queryset.order_by(self.order, 'id')
+        elif sort_key == 'name':
+            queryset = queryset.order_by(self.order.replace('name', 'i18n_name'), 'id')
+        elif sort_key == 'group':
+            queryset = queryset.order_by(self.order + '__name', 'id')
+        elif sort_key == 'solved':
+            if self.request.user.is_authenticated:
+                profile = self.request.profile
+                solved = user_completed_ids(profile)
+                attempted = user_attempted_ids(profile)
 
-                    def _solved_sort_order(problem):
-                        if problem.id in solved:
-                            return 1
-                        if problem.id in attempted:
-                            return 0
-                        return -1
+                def _solved_sort_order(problem):
+                    if problem.id in solved:
+                        return 1
+                    if problem.id in attempted:
+                        return 0
+                    return -1
 
-                    queryset = list(queryset)
-                    queryset.sort(key=_solved_sort_order, reverse=self.order.startswith('-'))
-            elif sort_key == 'type':
                 queryset = list(queryset)
-                queryset.sort(key=lambda problem: problem.types_list[0] if problem.types_list else '',
-                              reverse=self.order.startswith('-'))
-            paginator.object_list = queryset
+                queryset.sort(key=_solved_sort_order, reverse=self.order.startswith('-'))
+        elif sort_key == 'type':
+            queryset = list(queryset)
+            queryset.sort(key=lambda problem: problem.types_list[0] if problem.types_list else '',
+                            reverse=self.order.startswith('-'))
+        paginator.object_list = queryset
         return paginator
 
     @cached_property
@@ -372,27 +371,6 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         if not self.request.user.is_authenticated:
             return None
         return self.request.profile
-
-    def get_contest_queryset(self):
-        queryset = self.profile.current_contest.contest.contest_problems.select_related('problem__group') \
-            .defer('problem__description').order_by('problem__code') \
-            .annotate(user_count=Count('submission__participation', distinct=True)) \
-            .annotate(i18n_translation=FilteredRelation(
-                'problem__translations', condition=Q(problem__translations__language=self.request.LANGUAGE_CODE),
-            )).annotate(i18n_name=Coalesce(
-                F('i18n_translation__name'), F('problem__name'), output_field=CharField(),
-            )).order_by('order')
-
-        return [{
-            'link': p.get_absolute_url(),
-            'id': p.problem_id,
-            'code': p.problem.code,
-            'name': p.temporary_name,
-            'i18n_name': p.i18n_name,
-            'points': p.points,
-            'partial': p.partial,
-            'user_count': p.user_count,
-        } for p in queryset]
 
     def get_normal_queryset(self):
         filter = Q(is_public=True) | Q(public_description=True)
@@ -431,10 +409,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         return queryset.distinct()
 
     def get_queryset(self):
-        if self.in_contest:
-            return self.get_contest_queryset()
-        else:
-            return self.get_normal_queryset()
+        return self.get_normal_queryset()
 
     def get_context_data(self, **kwargs):
         context = super(ProblemList, self).get_context_data(**kwargs)
@@ -450,15 +425,9 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         context['attempted_problems'] = self.get_attempted_problems()
 
         context.update(self.get_sort_paginate_context())
-        if not self.in_contest:
-            context.update(self.get_sort_context())
-            context['hot_problems'] = hot_problems(timedelta(days=1), settings.DMOJ_PROBLEM_HOT_PROBLEM_COUNT)
-            # context['point_start'], context['point_end'], context['point_values'] = self.get_noui_slider_points()
-        else:
-            context['hot_problems'] = None
-            # context['point_start'], context['point_end'], context['point_values'] = 0, 0, {}
-            context['hide_contest_scoreboard'] = self.contest.scoreboard_visibility in \
-                (self.contest.SCOREBOARD_AFTER_CONTEST, self.contest.SCOREBOARD_AFTER_PARTICIPATION)
+        context.update(self.get_sort_context())
+        context['hot_problems'] = hot_problems(timedelta(days=1), settings.DMOJ_PROBLEM_HOT_PROBLEM_COUNT)
+        # context['point_start'], context['point_end'], context['point_values'] = self.get_noui_slider_points()
         return context
 
     # def get_noui_slider_points(self):

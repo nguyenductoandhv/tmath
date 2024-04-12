@@ -460,6 +460,18 @@ class Contest(models.Model):
             ).order_by('end_time'):
                 rate_contest(contest)
 
+    def can_view_tasks(self, user):
+        if self.is_public_contest:
+            return True
+        if not user.is_authenticated:
+            return False
+        if self.is_editable_by(user):
+            return True
+        profile = user.profile
+        if profile.current_contest is not None and profile.current_contest.contest == self:
+            return True
+        return False
+
     class Meta:
         permissions = (
             ('see_private_contest', _('See private contests')),

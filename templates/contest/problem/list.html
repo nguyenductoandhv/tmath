@@ -3,7 +3,7 @@
 {% block title_ruler %}{% endblock %}
 
 {% block title_row %}
-    {% set tab = 'problems' %}
+    {% set tab = 'tasks' %}
     {% if contest.is_joinable_by(request.user) %}
         {% set title = contest.full_name %}
     {% else %}
@@ -14,9 +14,9 @@
 
 {% block body %}
   <div>
-      <div class="flex items-center my-3 space-x-4 text-3xl">
+      <div class="flex items-center my-3 space-x-4 text-3xl dark:text-white">
           <i class="fa-duotone fa-question-circle"></i>
-          <span class="font-bold">{{ _('Problems') }}</span>
+          <span class="font-bold ">{{ _('Problems') }}</span>
       </div>
       <table class="table w-full border">
           <thead class="text-white bg-black">

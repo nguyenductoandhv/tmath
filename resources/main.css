@@ -112,23 +112,23 @@
 }
 
 .atcoder_format {
-  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white
+  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white dark:bg-zinc-300
 }
 
 .default_format {
-  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white
+  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white dark:bg-zinc-300
 }
 
 .ecoo_format {
-  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white
+  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white dark:bg-zinc-300
 }
 
 .icpc_format {
-  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white
+  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white dark:bg-zinc-300
 }
 
 .ioi_format {
-  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white
+  @apply border-l min-w-[5rem] w-24 py-1 text-center bg-white dark:bg-zinc-300
 }
 
 .solved-problem-color {
@@ -141,6 +141,10 @@
 
 .attempted-problem-color {
   @apply text-yellow-400
+}
+
+.partial-score { 
+  @apply text-yellow-400 font-bold dark:text-yellow-600
 }
 
 .top-pagination-bar {

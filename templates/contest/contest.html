@@ -89,7 +89,7 @@
         {% endcache %}
     </div>
 
-    {% if contest.ended or (contest.started and contest.is_public_contest) or request.user.is_superuser or is_editor or is_tester %}
+    {% if (contest.started and contest.is_public_contest) or request.user.is_superuser or is_editor or is_tester %}
         <hr>
         <div>
             <div class="flex items-center my-3 space-x-4 text-3xl dark:text-white">

@@ -2,6 +2,11 @@
 
 {% block tabs %}
     {{ make_tab('detail', 'fa-info-circle', url('contest_view', contest.key), _('Info')) }}
+
+    {% if contest.can_view_tasks(request.user) %}
+        {{ make_tab('tasks', 'fa-tasks', url('contest_problem_list', contest.key), _('Tasks')) }}
+    {% endif %}
+    
     {% if contest.ended or can_edit %}
         {{ make_tab('stats', 'fa-pie-chart', url('contest_stats', contest.key), _('Statistics')) }}
     {% endif %}

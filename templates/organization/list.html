@@ -20,7 +20,7 @@
 <div class="flex flex-col space-y-4">
   <form action="" method="get" class="flex items-end space-x-4">
     <label for="selected_year" class="flex-1 block text-xl">
-      <span class="font-semibold text-gray-700 whitespace-nowrap">{{ _('School year') }}</span>
+      <span class="font-semibold text-gray-700 whitespace-nowrap dark:text-white">{{ _('School year') }}</span>
       <select class="block w-full px-4 py-1.5 mt-1 border border-gray-500 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-400 focus:ring-opacity-50" name='selected_year' placehover="{{ _('Select school year') }}">
         <option value="">--------</option>
         {% for year in list_years %}
@@ -35,7 +35,7 @@
     </div>
   </form>
   {% if my_org %}
-  <div class="text-2xl font-bold">
+  <div class="text-2xl font-bold dark:text-white">
     {{ _('My organizations') }}
   </div>
   <table class="border">
@@ -48,7 +48,7 @@
     <tbody class="[&>tr>*]:p-2 divide-x divide-y divide-slate-300">
       {% for org in my_org %}
       <tr class="divide-x divide-slate-300">
-        <td><a class="font-semibold cursor-pointer" href="{{ org.get_absolute_url() }}">{{ org.name }}</a></td>
+        <td><a class="font-semibold cursor-pointer dark:text-white" href="{{ org.get_absolute_url() }}">{{ org.name }}</a></td>
         <td class="text-center">
           <a class="font-semibold cursor-pointer" href="{{ org.get_users_url() }}">{{ org.member_count }}</a>
         </td>
@@ -57,7 +57,7 @@
     </tbody>
   </table>
   {% endif %}
-  <div class="text-2xl font-bold">
+  <div class="text-2xl font-bold dark:text-white">
     {{ _('All organizations') }}
   </div>
   <table id="organization-table" class="border">
@@ -70,9 +70,9 @@
     <tbody class="[&>tr>*]:p-2 divide-x divide-y divide-slate-300">
       {% for org in organizations %}
       <tr class="divide-x divide-slate-300">
-        <td><a class="font-semibold cursor-pointer" href="{{ org.get_absolute_url() }}">{{ org.name }}</a></td>
+        <td><a class="font-semibold cursor-pointer dark:text-white" href="{{ org.get_absolute_url() }}">{{ org.name }}</a></td>
         <td class="text-center">
-          <a class="font-semibold cursor-pointer" href="{{ org.get_users_url() }}">{{ org.member_count }}</a>
+          <a class="font-semibold cursor-pointer dark:text-sky-500" href="{{ org.get_users_url() }}">{{ org.member_count }}</a>
         </td>
       </tr>
       {% endfor %}
