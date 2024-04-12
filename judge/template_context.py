@@ -35,7 +35,7 @@ def get_resource(request):
         'FONTAWESOME_CSS': settings.FONTAWESOME_CSS,
         # 'MATERIAL_ICONS': settings.MATERIAL_ICONS,
         'DMOJ_SCHEME': scheme,
-        'DMOJ_CANONICAL': settings.DMOJ_CANONICAL,
+        # 'DMOJ_CANONICAL': settings.DMOJ_CANONICAL,
         # 'CDN_SERVER' : settings.CDN_SERVER,
     }
 

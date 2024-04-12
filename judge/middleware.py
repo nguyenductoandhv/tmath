@@ -5,6 +5,7 @@ import re
 import struct
 from urllib.parse import quote as urlquote
 
+from django import http
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -23,6 +24,18 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+class BlockedIpMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+
+        if get_client_ip(request) in settings.BLOCKED_IPS:
+            return http.HttpResponseForbidden('<h1>Forbidden</h1>')
+
+        response = self.get_response(request)
+        return response
 
 
 class LogRequestsMiddleware:
