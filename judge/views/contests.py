@@ -105,6 +105,11 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
         query = super().get_queryset().prefetch_related('tags', 'organizations', 'authors', 'curators', 'testers')
         if self.selected_org:
             query = query.exclude(is_private=True).filter(organizations=self.selected_org)
+        if not self.request.user.is_superuser:
+            filter = Q(is_private=True)
+            if self.request.user.is_authenticated:
+                filter &= ~Q(private_contestants=self.request.profile)  # Exclude private contests
+            query = query.exclude(filter)
         return query
 
     def get_queryset(self):
