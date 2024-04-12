@@ -14,8 +14,7 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import CharField, Count, F, FilteredRelation, Prefetch, Q
-from django.db.models.functions import Coalesce
+from django.db.models import F, Prefetch, Q
 from django.db.utils import ProgrammingError
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          HttpResponseForbidden, HttpResponseRedirect)
@@ -362,7 +361,7 @@ class ProblemList(QueryStringSortMixin, TitleMixin, SolvedProblemMixin, ListView
         elif sort_key == 'type':
             queryset = list(queryset)
             queryset.sort(key=lambda problem: problem.types_list[0] if problem.types_list else '',
-                            reverse=self.order.startswith('-'))
+                          reverse=self.order.startswith('-'))
         paginator.object_list = queryset
         return paginator
 

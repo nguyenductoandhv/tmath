@@ -301,14 +301,14 @@ class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        
+
         if not request.user.is_superuser:
             raise Http404()
-        
+
         contest = get_random_contest()
         self.object.contest = contest
         self.object.save()
-    
+
         async_to_sync(channel_layer.group_send)(
             'room_%s' % self.object.pk,
             {
@@ -338,7 +338,7 @@ class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
         self.user = get_object_or_404(TypoRoomUser, room=self.object, user=profile)
         if self.user.action == '2':
             return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
-        
+
         TypoResult.objects.get_or_create(
             user=self.user.user,
             contest=self.object.contest,

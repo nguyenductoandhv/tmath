@@ -128,10 +128,10 @@ class TypoRoom(models.Model):
 
     def __str__(self) -> str:
         return self.name
-    
+
     def get_absolute_url(self):
         return reverse("typeracer:room_detail", kwargs={"pk": self.pk})
-    
+
     @property
     def user_count(self):
         return TypoResult.objects.filter(contest=self.contest).count()
