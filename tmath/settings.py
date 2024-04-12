@@ -219,6 +219,7 @@ MIDDLEWARE = (
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'judge.middleware.OneSessionPerUser',
+    'judge.middleware.BlockedIpMiddleware',
 )
 
 CACHE_MIDDLEWARE_SECONDS = 5

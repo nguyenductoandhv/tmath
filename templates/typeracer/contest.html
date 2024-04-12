@@ -8,8 +8,8 @@
 <script>
   var start = 0
   const content = document.querySelector('#type_content')
-  let summary
-  let arrayQuote
+  let summary = 0
+  let arrayQuote;
   const typeInput = document.querySelector('#type')
   typeInput.onpaste = e => e.preventDefault();
   const QUOTE_API_URL = '{{ url("typeracer:get_quote", room.id) }}'
@@ -26,6 +26,7 @@
     content.innerHTML = ''
     quote.split('').forEach(char => {
       const characterSpan = document.createElement('span')
+      characterSpan.setAttribute('title', char)
       const charText = document.createTextNode(char)
       characterSpan.appendChild(charText)
       content.appendChild(characterSpan)
@@ -36,45 +37,39 @@
     arrayQuote = content.querySelectorAll('span')
     summary = arrayQuote.length
     startTimer()
-    setSpeed()
   }
 
   var limit = {{ contest.limit }}
   var startTime1 = new Date('{{ contest.time_start }}')
 
-  window.onload = e => {
-    var startTime = new Date('{{ contest.time_start }}')
-    var endTime = new Date('{{ contest.time_end }}')
-    var start = Date.now()
-    var limitTime 
-    if (start < startTime) {
-      limitTime = {{ contest.limit }}
-    }
-    else {
-      limitTime = Math.floor({{ contest.limit }} - (start - startTime) / 1000)
-    }
-    timer.innerText = limitTime
-    var content = document.querySelector('#type_content')
-    var typeInput = document.querySelector('#type')
-    typeInput.disabled = true
-    if (startTime < Date.now()) {
-      renderNewQuote()
-    } else {
-      var time = Math.round((startTime - Date.now()) / 1000);
-      var countdownToStart = setInterval(function() {
-        if (time <= 0) {
-          renderNewQuote()
-          clearInterval(countdownToStart)
-        }
-        content.innerHTML = `The race will start in ${time} seconds`
-        time--
-      }, 1000)
-    }
+  var startTime = new Date('{{ contest.time_start }}')
+  var endTime = new Date('{{ contest.time_end }}')
+  var start1 = Date.now()
+  var limitTime 
+  if (start1 < startTime) {
+    limitTime = {{ contest.limit }}
+  }
+  else {
+    limitTime = Math.floor({{ contest.limit }} - (start1 - startTime) / 1000)
+  }
+  timer.innerText = limitTime
+  typeInput.disabled = true
+  if (startTime < Date.now()) {
+    renderNewQuote()
+  } else {
+    var time = Math.round((startTime - Date.now()) / 1000);
+    var countdownToStart = setInterval(function() {
+      if (time <= 0) {
+        renderNewQuote()
+        clearInterval(countdownToStart)
+      }
+      content.innerHTML = `The race will start in ${time} seconds`
+      time--
+    }, 1000)
   }
 
   const speed = document.querySelector('#speed')
   const car = document.querySelector('#car_' + {{ request.profile.id }})
-  let startTime
   let countDown
   let speedCount
   let carUpdate
@@ -100,7 +95,9 @@
       }
     })
     if (is_finish) {
-      window.location.href = '{{ url("typeracer:typo_ranking", contest.id) }}';
+      setTimeout(() => {
+        window.location.href = '{{ url("typeracer:typo_ranking", contest.id) }}';
+      }, 1000)
     }
   }
 
@@ -127,7 +124,7 @@
           speed.innerText = calSpeed()
           saveResult(speed.innerText, 100, new Date() - startTime1, true)
         } else {
-          const answer = arrayQuote[index + start].innerText
+          const answer = arrayQuote[index + start].title
           if (character === answer) {
             arrayQuote[index + start].classList.add('correct')
             if (answer == ' ') {

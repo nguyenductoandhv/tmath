@@ -3,7 +3,7 @@ from random import randint
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -198,7 +198,7 @@ class JoinRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
         rooms = profile.rooms.all()
         if profile.rooms.all().count() > 0 and (self.object != rooms.first().room):
             return generic_message(request, 'Can\'t join room', 'You are in %s' % profile.rooms.room.pk, 403)
-        if self.object == rooms.first().room:
+        if profile.rooms.all().count() > 0 and self.object == rooms.first().room:
             return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
         room: TypoRoom = self.object
         if room.is_private and room.access_code != request.POST.get('access_code'):
@@ -297,6 +297,28 @@ class RoomInfo(RoomMixin, DetailView):
         return context
 
 
+class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        
+        if not request.user.is_superuser:
+            raise Http404()
+        
+        contest = get_random_contest()
+        self.object.contest = contest
+        self.object.save()
+    
+        async_to_sync(channel_layer.group_send)(
+            'room_%s' % self.object.pk,
+            {
+                'type': 'start.typo',
+                'message': 'Typo contest start',
+            },
+        )
+        return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.pk, )))
+
+
 @method_decorator(never_cache, name='dispatch')
 class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
     template_name: str = 'typeracer/contest.html'
@@ -317,25 +339,22 @@ class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
         if self.user.action == '2':
             return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
         
-        if self.object.contest and self.object.contest._now > self.object.contest.time_end:
-            self.object.contest = None
-
-        if self.object.contest is None:
-            contest = get_random_contest()
-            self.object.contest = contest
-            self.object.save()
-    
-        users = TypoRoomUser.objects.filter(room=self.object, action='0')
-        for user in users:
-            TypoResult.objects.get_or_create(
-                user=user.user,
-                contest=self.object.contest,
-            )
-        async_to_sync(channel_layer.group_send)(
-            'room_%s' % self.object.pk,
-            {
-                'type': 'start.typo',
-                'message': 'Typo contest start',
-            },
+        TypoResult.objects.get_or_create(
+            user=self.user.user,
+            contest=self.object.contest,
         )
+
         return super().get(request, *args, **kwargs)
+
+
+class LeaveRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        profile: Profile = request.profile
+        room = TypoRoomUser.objects.filter(room=self.object, user=profile)
+        if room.count() == 0:
+            return generic_message(request, 'You isn\'t in this room')
+        # Create new Room user
+        participant = room.first()
+        participant.delete()
+        return HttpResponseRedirect(reverse('typeracer:list_room'))

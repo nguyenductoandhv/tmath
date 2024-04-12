@@ -22,8 +22,7 @@
 {% endblock %}
 
 {% block info_float %}
-    {% if request.participation and request.participation.contest == contest %}
-    {% if problem.is_enough_point(request.participation) %}
+    {% if problem.can_view(request) %}
     {% if submission_limit %}
         {% if submissions_left > 0 %}
             <a href="{{ url('contest_problem_submit', contest.key, problem.order) }}" class="w-full py-3 font-bold text-center text-white bg-blue-500 rounded-2xl hover:text-white hover:bg-blue-600">
@@ -51,7 +50,6 @@
         </div>
     {% endif %}
     <hr class="pb-2">
-    {% endif %}
 
     <div class="grid grid-cols-2 font-bold auto-rows-fr gap-2 w-full [&>*]:rounded-xl [&>*]:py-3 [&>*]:hover:text-white [&>*]:text-white [&>*]:px-4 my-2">
         {% if request.user.is_authenticated and has_submissions %}
@@ -219,11 +217,13 @@
 {% endblock %}
 
 {% block description %}
+{% if problem.can_view(request) %}
 <div class="p-4 prose text-black bg-white max-w-none prose-td:font-roboto rounded-xl">
     {% cache 86400 'problem_html' problem.problem.id MATH_ENGINE LANGUAGE_CODE %}
         {{ description|markdown(problem.problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
     {% endcache %}
 </div>
+{% endif %}
 {% endblock %}
 
 {% block comments %}

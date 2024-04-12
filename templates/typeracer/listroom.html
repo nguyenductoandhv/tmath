@@ -59,25 +59,23 @@
 
 {% block bodyend %}
 <script>
-  window.onload = function () {
-    var solo = document.getElementById('solo');
-    var multi = document.getElementById('multi');
-    var soloBody = solo.getElementsByTagName('tbody')[0];
-    var multiBody = multi.getElementsByTagName('tbody')[0];
-    $.ajax({
-      url: '{{ url("typeracer:list_solo_room") }}',
-      type: 'GET',
-      success: function (data) {
-        soloBody.innerHTML = data;
-      }
-    })
-    $.ajax({
-      url: '{{ url("typeracer:list_multi_room") }}',
-      type: 'GET',
-      success: function (data) {
-        multiBody.innerHTML = data;
-      }
-    })
-  }
+  var solo = document.getElementById('solo');
+  var multi = document.getElementById('multi');
+  var soloBody = solo.getElementsByTagName('tbody')[0];
+  var multiBody = multi.getElementsByTagName('tbody')[0];
+  $.ajax({
+    url: '{{ url("typeracer:list_solo_room") }}',
+    type: 'GET',
+    success: function (data) {
+      soloBody.innerHTML = data;
+    }
+  })
+  $.ajax({
+    url: '{{ url("typeracer:list_multi_room") }}',
+    type: 'GET',
+    success: function (data) {
+      multiBody.innerHTML = data;
+    }
+  })
 </script>
 {% endblock bodyend %}

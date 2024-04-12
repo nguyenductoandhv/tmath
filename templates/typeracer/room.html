@@ -3,13 +3,17 @@
 {% block body %}
 <div class="flex flex-col">
   <div class="flex gap-4 p-4">
-    <button id="participantButton" class="py-2 font-semibold text-white btn-default">Participants</button>
-    <button id="spectatorButton" class="py-2 font-semibold text-white btn-default">Spectators</button>
+    <button id="participantButton" class="py-2 flex-1 rounded-xl font-semibold text-white btn-default">Participants</button>
+    <button id="spectatorButton" class="py-2 flex-1 rounded-xl font-semibold text-white btn-default">Spectators</button>
+    <form action="{{ url('typeracer:leave_room', room.pk) }}" method="post" class="flex-1">
+      {% csrf_token %}
+      <button id="leaveButton" type="submit" class="py-2 w-full rounded-xl font-semibold text-white btn-default">Leave room</button>
+    </form>
   </div>
   <div class="flex gap-4 p-4" id="info">
   </div>
   {% if request.user.is_superuser %}
-  <a href="{{ url('typeracer:contest', room.pk) }}" class="py-2 font-semibold text-center text-white btn-default">Start</a>
+  <a href="{{ url('typeracer:create_contest', room.pk) }}" class="py-2 font-semibold text-center text-white btn-default">Start</a>
   {% endif %}
 </div>
 {% endblock %}

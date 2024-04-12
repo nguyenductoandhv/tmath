@@ -60,6 +60,11 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                 temp = file.split('/')
                 if len(temp) != 2:
                     continue
+                id = temp[0].split('_')[0]
+                try:
+                    id = int(id)
+                except ValueError:
+                    continue
                 try:
                     source = zip_ref.open(file).read().decode('utf-8')
                 except UnicodeDecodeError:
@@ -67,13 +72,13 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
                     print(file, file=stderr)
 
                 ext = file.split('.')[-1]
-                if temp[0] not in data:
-                    data[temp[0]] = {}
+                if id not in data:
+                    data[id] = {}
                 basename = temp[1].upper().split('.')[0]
                 if len(basename) != 1:
                     continue
                 order = ContestProblem.get_order(temp[1].upper().split('.')[0])
-                data[temp[0]][order] = (source, LANGS[ext])
+                data[id][order] = (source, LANGS[ext])
         return data
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -106,9 +111,9 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
             # Create new submissions
             for participation in participations:
                 for problem in problems:
-                    if problem.order not in data[str(participation.user.pk)]:
+                    if problem.order not in data[participation.user.pk]:
                         continue
-                    source, lang = data[str(participation.user.pk)][problem.order]
+                    source, lang = data[participation.user.pk][problem.order]
 
                     submission = Submission.objects.create(
                         user=participation.user,

@@ -1,9 +1,10 @@
 from django.urls import include, path
 
 from typeracer.views import (Contest, CreateRoom, JoinRoom, MultiRoomList,
-                             Racer, Ranking, RoomDetail, RoomInfo,
+                             Racer, Ranking, RoomDetail, RoomInfo, LeaveRoom,
                              SoloRoomList, TypoRoomList, finishTypoContest,
-                             getQuote, participate, spectate, updateProgress)
+                             getQuote, participate, spectate, updateProgress,
+                             CreateContest)
 
 app_name = 'typeracer'
 
@@ -15,11 +16,13 @@ urlpatterns = [
     path('room/<int:pk>', include([
         path('/', RoomDetail.as_view(), name='room_detail'),
         path('/join', JoinRoom.as_view(), name='join_room'),
+        path('/leave', LeaveRoom.as_view(), name='leave_room'),
         path('/getquote', getQuote, name="get_quote"),
         path('/participate', participate, name="participate"),
         path('/spectate', spectate, name="spectate"),
         path('/info', RoomInfo.as_view(), name="get_info"),
         path('/contest', Contest.as_view(), name="contest"),
+        path('/create,', CreateContest.as_view(), name="create_contest"),
         # url(r'^/ranking$', ),
     ])),
     path('contest/<int:pk>', include([

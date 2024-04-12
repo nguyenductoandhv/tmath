@@ -837,6 +837,19 @@ class ContestProblem(models.Model):
     def get_absolute_url(self):
         return reverse("contest_problem_detail", kwargs={"contest": self.contest.key, "problem": self.order})
 
+    def can_view(self, request):
+        if not request.user.is_authenticated:
+            return False
+        if request.user.is_superuser or self.contest.is_editable_by(request.user):
+            return True
+        if not request.participation or not request.participation.contest == self.contest:
+            return False
+        if request.participation.virtual > 1:
+            return True
+        if self.is_enough_point(request.participation):
+            return True
+        return False
+
     class Meta:
         unique_together = ('problem', 'contest')
         verbose_name = _('contest problem')

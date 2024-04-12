@@ -281,7 +281,7 @@ class ContestProblemSubmit(AccessMixin, ContestMixin, TitleMixin, SingleObjectFo
             return generic_message(request, _('Contest not ongoing'),
                                    _('You cannot submit now.'), status=403)
 
-        if self.contest_problem.limit_point > 0 and profile.current_contest.score < self.contest_problem.limit_point:
+        if not self.contest_problem.can_view(request):
             return generic_message(request,
                                    _('Can\'t submit to problem'),
                                    _(f'You need at least {self.contest_problem.limit_point} '
