@@ -59,13 +59,16 @@ def get_profile(request):
 #             'EVENT_LAST_MSG': event.last()}
 
 
-def __nav_tab():
+def __nav_tab(request):
+    problem_link = reverse('problem_list')
+    if request.user.is_authenticated and request.profile.current_contest:
+        problem_link = reverse('contest_problem_list', args=[request.profile.current_contest.contest.key])
     return [
-        ('problem', reverse('problem_list'), _('Problems')),
+        ('problem', problem_link, _('Problems')),
         ('submission', reverse('all_submissions'), _('Submissions')),
         ('user', reverse('user_list'), _('Users')),
         ('contest', reverse('contest_list'), _('Contests')),
-        ('about', '', _('About')),
+        ('about', '/about', _('About')),
     ]
     # result = list(NavigationBar.objects.extra(where=['%s REGEXP BINARY regex'], params=[path])[:1])
     # return result[0].get_ancestors(include_self=True).values_list('key', flat=True) if result else []
@@ -75,7 +78,7 @@ def general_info(request):
     path = request.get_full_path()
     version = random.randint(1, 1000000000)
     return {
-        'nav_tab': __nav_tab(),
+        'nav_tab': __nav_tab(request),
         'nav_bar': NavigationBar.objects.all(),
         'LOGIN_RETURN_PATH': '' if path.startswith('/accounts/') else path,
         'perms': PermWrapper(request.user),
