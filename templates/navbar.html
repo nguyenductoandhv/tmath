@@ -1,4 +1,4 @@
-<div id="sidebar" class="fixed left-0 z-50 text-white h-full overflow-hidden bg-black dark:bg-slate-600/50 max-w-0 transition-[max-width] top-16">
+<div id="sidebar" class="fixed left-0 z-50 text-white h-full overflow-hidden bg-black max-w-0 transition-[max-width] top-16">
     <ul class="items-stretch flex flex-col text-white [&>*]:p-2">
     {% for node in mptt_tree(nav_bar) recursive %}
         {% if not node.is_admin or request.user.is_staff or request.user.is_superuser %}
@@ -24,12 +24,12 @@
     {% endfor %}
     </ul>
 </div>
-<div class="sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white supports-backdrop-blur:bg-white/95 dark:bg-slate-600/75">
+<div class="sticky top-0 z-40 w-full backdrop-blur flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10 dark:border-slate-50/[0.06] bg-white supports-backdrop-blur:bg-white/95 dark:bg-black">
     <div class="mx-auto max-w-8xl">
         <div class="py-4 mx-4 border-b border-slate-900/10 lg:px-8 lg:border-0 dark:border-slate-300/10 lg:mx-0">
-            <div class="relative flex items-center justify-between lg:justify-normal">
+            <div class="relative flex items-center justify-between md:justify-normal">
                 <div class="flex items-center">
-                    <button id="open_sidebar" onclick="sidebar()" class="w-10 h-10 mr-4 text-3xl border rounded-lg dark:border-slate-400 lg:hidden">
+                    <button id="open_sidebar" onclick="sidebar()" class="w-10 h-10 mr-4 text-3xl border rounded-lg dark:border-slate-400 md:hidden">
                         <i class="fa-duotone fa-bars"></i>
                     </button>
                     <a class="flex items-center gap-2" href="{{ url('home') }}">
@@ -37,10 +37,10 @@
                         <div class="text-3xl font-semibold dark:text-white">TMATH</div>
                     </a>
                 </div>
-                <div class="relative items-center hidden ml-auto lg:flex">
-                    <div class="flex items-center justify-center gap-10 px-4 text-lg font-semibold rounded-lg text-slate-700 dark:text-slate-200">
+                <div class="relative items-center hidden ml-auto md:flex">
+                    <div class="flex items-center justify-center gap-10 px-4 text-xl font-semibold rounded-lg text-slate-700 dark:text-slate-200">
                         {% for tag, url, label in nav_tab %}
-                        <a class="{% if nav_tag and nav_tag == tag %}text-sky-500 dark:text-sky-400{% endif %} hover:text-sky-500 dark:hover:text-sky-400" href="{{ url }}">{{ label }}</a>
+                        <a class="{% if nav_tag and nav_tag == tag %}text-sky-500 dark:text-indigo-400{% endif %} hover:text-sky-500 dark:hover:text-indigo-400" href="{{ url }}">{{ label }}</a>
                         {% endfor %}
                     </div>
                 </div>
