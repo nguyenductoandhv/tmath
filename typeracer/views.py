@@ -248,7 +248,7 @@ def participate(request, pk):
         'room_%s' % pk,
         {
             'type': 'change.user',
-            'message': 'participant'
+            'message': 'participant',
         },
     )
 
@@ -275,7 +275,7 @@ def spectate(request, pk):
         'room_%s' % pk,
         {
             'type': 'change.user',
-            'message': 'spectator'
+            'message': 'spectator',
         },
     )
 

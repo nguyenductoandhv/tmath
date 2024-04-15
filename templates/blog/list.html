@@ -61,10 +61,10 @@
             </div>
             <div class="flex flex-col gap-6 mt-4">
                 {% for post in posts %}
-                    <div class="p-4 bg-white border rounded-lg dark:bg-dark-content">
+                    <div class="p-4 bg-white border rounded-lg dark:border-slate-600 dark:bg-black">
                         <div class="flex flex-col text-3xl font-bold">
-                            <a href="{{ url('blog_post', post.id, post.slug) }}" class="dark:text-sky-500">{{ post.title }}</a>
-                            <div class="inline-flex items-center gap-1 text-base dark:text-dark-text">
+                            <a href="{{ url('blog_post', post.id, post.slug) }}" class="dark:text-white">{{ post.title }}</a>
+                            <div class="inline-flex items-center gap-1 text-base dark:text-white">
                                 {%- if post.sticky %}<i class="star icon"></i>{% endif -%}
                                 {% with authors=post.authors.all() %}
                                 {%- if authors -%}
@@ -106,7 +106,7 @@
                             <i class="fa-duotone fa-circle-question"></i>
                         </div>
                     </div>
-                    <div class="border border-black rounded-b-md dark:bg-dark-content dark:text-dark-text dark:border-none">
+                    <div class="border border-black rounded-b-md dark:bg-dark-content dark:text-white">
                         {% if has_clarifications %}
                             <div class="ui relaxed divided list">
                                 {% for clarification in clarifications %}
@@ -141,7 +141,7 @@
                             <i class="fa-duotone fa-trophy"></i>
                         </div>
                     </div>
-                    <div class="px-2 overflow-y-auto border border-black rounded-b-md dark:bg-dark-content dark:text-dark-text dark:border-none sidebox-ongoing-contest max-h-96 scrollbar">
+                    <div class="px-2 overflow-y-auto border border-black rounded-b-md dark:bg-dark-content dark:text-white sidebox-ongoing-contest max-h-96 scrollbar">
                         {% for contest in current_contests %}
                             <div class="py-5 text-center border-b border-red-50">
                                 <div class="text-xl font-semibold">
@@ -172,7 +172,7 @@
                             <i class="fa-duotone fa-trophy"></i>
                         </div>
                     </div>
-                    <div class="px-2 overflow-y-auto border border-black rounded-b-md max-h-96 dark:bg-dark-content dark:text-dark-text dark:border-none scrollbar">
+                    <div class="px-2 overflow-y-auto border border-black rounded-b-md max-h-96 dark:bg-dark-content dark:text-white scrollbar">
                         {% for contest in future_contests %}
                             <div class="py-5 text-center border-b border-red-50">
                                 <div class="text-xl font-semibold">
@@ -202,8 +202,8 @@
                         <i class="fa-duotone fa-comments"></i>
                     </div>
                 </div>
-                <div class="p-2 border border-black dark:bg-dark-content dark:text-dark-text dark:border-none rounded-b-md">
-                    <div class="flex flex-col divide-y">
+                <div class="p-2 border border-black dark:bg-dark-content dark:text-white rounded-b-md dark:border-slate-600">
+                    <div class="flex flex-col divide-y dark:divide-slate-600">
                         {% for comment in comments %}
                             <div class="flex items-center gap-2">
                                 <img loading="lazy" class="w-10 h-10" src="{{ gravatar(comment.author.user, 80)}}" alt="{{ comment.author.user.username }}">
@@ -234,8 +234,8 @@
                         <i class="fa-duotone fa-puzzle-piece"></i>
                     </div>
                 </div>
-                <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-dark-text dark:border-none">
-                    <div class="flex flex-col divide-y">
+                <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-white dark:border-slate-600">
+                    <div class="flex flex-col divide-y dark:divide-slate-600">
                         {% for problem in new_problems %}
                             <a class="pt-2 mb-2 font-bold line-clamp-1 dark:hover:text-sky-500" href="{{ url('problem_detail', problem.code) }}" title="{{ problem.name }}">{{ problem.name }}</a>
                         {% endfor %}
@@ -257,7 +257,7 @@
                             <i class="fa-duotone fa-circle-question"></i>
                         </div>
                     </div>
-                    <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-dark-text dark:border-none">
+                    <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-white dark:border-slate-600">
                         <ul class="flex flex-col !pl-2">
                             {% for ticket in own_open_tickets %}
                                 <li>
@@ -285,7 +285,7 @@
                             <i class="fa-duotone fa-circle-exclamation"></i>
                         </div>
                     </div>
-                    <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-dark-text dark:border-none">
+                    <div class="p-2 border border-black rounded-b-md dark:bg-dark-content dark:text-white dark:border-slate-600">
                         <ul class="flex flex-col !pl-2">
                             {% for ticket in open_tickets %}
                                 <li>

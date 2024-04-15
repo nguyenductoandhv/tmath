@@ -16,7 +16,7 @@ module.exports = {
       colors: {
         'darkblue': '#00008B',
         'dark-all': 'rgba(45, 47, 50, 1)',
-        'dark-content': 'rgba(26, 28, 32, 1)',
+        'dark-content': 'rgba(35, 35, 37, 1)',
         'dark-text': '#86889A',
       },
       typography: (theme) => ({
