@@ -2521,6 +2521,10 @@ select {
   max-width: 20rem
 }
 
+.max-w-3xl {
+  max-width: 48rem
+}
+
 .flex-1 {
   -webkit-box-flex: 1;
           flex: 1 1 0%
@@ -3762,6 +3766,11 @@ select {
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity))
+}
+
+.text-slate-600 {
+  --tw-text-opacity: 1;
+  color: rgb(71 85 105 / var(--tw-text-opacity))
 }
 
 .underline {
@@ -6198,6 +6207,21 @@ details[open]>summary {
   background-color: rgb(161 161 170 / var(--tw-bg-opacity))
 }
 
+:is(.dark .dark\:bg-slate-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity))
+}
+
+:is(.dark .dark\:bg-stone-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(28 25 23 / var(--tw-bg-opacity))
+}
+
+:is(.dark .dark\:bg-zinc-800) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(39 39 42 / var(--tw-bg-opacity))
+}
+
 :is(.dark .dark\:fill-slate-500) {
   fill: #64748b
 }
@@ -6277,6 +6301,11 @@ details[open]>summary {
 :is(.dark .dark\:text-indigo-500) {
   --tw-text-opacity: 1;
   color: rgb(99 102 241 / var(--tw-text-opacity))
+}
+
+:is(.dark .dark\:text-indigo-600) {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity))
 }
 
 :is(.dark .dark\:ring-0) {

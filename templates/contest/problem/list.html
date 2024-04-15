@@ -18,9 +18,9 @@
           <i class="fa-duotone fa-question-circle"></i>
           <span class="font-bold ">{{ _('Problems') }}</span>
       </div>
-      <table class="table w-full border">
+      <table class="table w-full max-w-5xl mx-auto border dark:border-slate-600">
           <thead class="text-white bg-black">
-          <tr class="[&>*]:text-center [&>*]:p-2 [&>*]:px-4 divide-x whitespace-nowrap">
+          <tr class="[&>*]:text-center [&>*]:p-2 [&>*]:px-4 divide-x dark:divide-slate-600 whitespace-nowrap">
             {% if request.user.is_authenticated and request.in_contest %}
               <th class="w-20"></th>
             {% endif %}
@@ -35,9 +35,9 @@
               <th class=""></th>
           </tr>
           </thead>
-          <tbody class="divide-y ">
+          <tbody class="divide-y dark:divide-slate-600 dark:text-white">
             {% for problem in problems %}
-              <tr class="[&>*]:p-2 divide-x [&>*]:text-center">
+              <tr class="[&>*]:p-2 divide-x dark:divide-slate-600 [&>*]:text-center">
                 {% if request.user.is_authenticated and request.in_contest %}
                 {% if problem.problem.id in completed_problem_ids %}
                     <td solved="1" class="text-center">
