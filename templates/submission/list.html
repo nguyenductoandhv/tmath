@@ -300,16 +300,16 @@
 
     <div class="flex flex-col lg:space-x-reverse lg:space-x-8 lg:flex-row-reverse">
         <div class="flex flex-col mb-8 space-y-6 lg:basis-1/4">
-            <div class="flex flex-col bg-white border rounded-xl">
+            <div class="flex flex-col bg-white border dark:bg-black dark:border-slate-600 rounded-xl">
                 <div class="flex items-center p-4 -m-px text-white bg-black rounded-t-md">
                     <div class="flex-1 text-xl font-bold">{{ _('Filter submissions') }}</div>
                     <div class="">
                         <i class="search icon"></i>
                     </div>
                 </div>
-                <form name="form" class="p-2" action="" method="get">
+                <form name="form" class="p-2 -m-px" action="" method="get">
                     <label class="block mb-2" for="status">
-                        <span class="font-bold text-gray-700">
+                        <span class="font-bold text-gray-700 dark:text-white">
                             {{ _('Status') }}
                         </span>
                         <select class="w-full" id="status" name="status" multiple>
@@ -320,7 +320,7 @@
                         </select>
                     </label>
                     <label class="block mb-2" for="language_code">
-                        <span class="font-bold text-gray-700">
+                        <span class="font-bold text-gray-700 dark:text-white">
                             {{ _('Language') }}
                         </span>
                         <select class="w-full" id="language_code" name="language_code" multiple>
@@ -334,7 +334,7 @@
                 </form>
             </div>
 
-            <div class="flex flex-col bg-white border rounded-xl" id="statistics-table">
+            <div class="flex flex-col bg-white border dark:border-slate-600 dark:bg-black rounded-xl" id="statistics-table">
                 <div class="flex items-center p-4 -m-px text-white bg-black rounded-t-md">
                     <div class="flex-1 text-xl font-bold">{{ _('Statistics') }} </div>
                     <div class="">
