@@ -218,7 +218,7 @@
 
 {% block description %}
 {% if problem.can_view(request) %}
-<div class="p-4 prose text-black bg-white max-w-none prose-td:font-roboto rounded-xl">
+<div class="p-4 custom-typography prose-td:font-roboto rounded-xl">
     {% cache 86400 'problem_html' problem.problem.id MATH_ENGINE LANGUAGE_CODE %}
         {{ description|markdown(problem.problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
     {% endcache %}
