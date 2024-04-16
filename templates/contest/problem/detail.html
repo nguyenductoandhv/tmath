@@ -15,7 +15,7 @@
                         </a>
                     {% endif %}
                 {% endif %}
-                <div class="text-3xl font-bold text-black">{{ title }}</div>    
+                <div class="text-3xl font-bold text-black dark:text-white">{{ title }}</div>    
             </div>
         </div>
     </div>
@@ -72,8 +72,8 @@
 
     </div>
 
-    <div class="grid grid-cols-2 gap-4 my-2 lg:gap-2 lg:grid-cols-1 auto-rows-fr lg:auto-rows-auto">
-        <div class="grid grid-cols-3 gap-1 p-2 bg-white border-2 border-indigo-700 auto-rows-fr rounded-xl lg:my-4">
+    <div class="grid grid-cols-2 gap-4 my-2 lg:gap-2 lg:grid-cols-1 auto-rows-fr lg:auto-rows-auto dark:text-white">
+        <div class="grid grid-cols-3 gap-1 p-2 bg-white border-2 border-indigo-700 dark:bg-zinc-900 auto-rows-fr rounded-xl lg:my-4">
             <div class="relative col-span-2 pl-6">
                 <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
                     <i class="fa-duotone fa-check"></i>
@@ -125,7 +125,7 @@
             {% endif %}
         </div>
         {% if problem.problem.io_method.method != 'unknown' %}
-        <div class="grid grid-cols-2 gap-2 p-2 bg-white border-2 border-indigo-700 rounded-xl">
+        <div class="grid grid-cols-2 gap-2 p-2 bg-white border-2 border-indigo-700 dark:text-white dark:bg-zinc-900 rounded-xl">
             {% if problem.problem.io_method.method == 'standard' %}
             <div class="relative pl-6">
                 <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 top-1">
@@ -162,7 +162,7 @@
     </div>
 
     <hr class="pt-3">
-    <div class="flex flex-col mt-2">
+    <div class="flex flex-col mt-2 dark:text-white">
         {% if show_languages %}
             <div class="relative flex flex-col pl-6">
                 <span class="absolute left-0 flex flex-col items-center justify-center w-4 h-4 rotate-90 top-1">
@@ -218,7 +218,7 @@
 
 {% block description %}
 {% if problem.can_view(request) %}
-<div class="p-4 custom-typography prose-td:font-roboto rounded-xl">
+<div class="p-4 bg-white custom-typography prose-td:font-roboto rounded-xl dark:bg-zinc-900">
     {% cache 86400 'problem_html' problem.problem.id MATH_ENGINE LANGUAGE_CODE %}
         {{ description|markdown(problem.problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
     {% endcache %}
