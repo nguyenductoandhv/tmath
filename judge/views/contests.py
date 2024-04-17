@@ -83,8 +83,8 @@ class ContestListMixin(object):
         if not self.request.user.is_superuser:
             return queryset.filter(Q(is_private=False) |
                                    Q(is_private=True, private_contestants=self.request.user.profile))
-        return Contest.objects.all()
-        # return Contest.get_visible_contests(self.request.user)
+        # return Contest.objects.all()
+        return Contest.get_visible_contests(self.request.user)
 
 
 class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestListMixin, ListView):
