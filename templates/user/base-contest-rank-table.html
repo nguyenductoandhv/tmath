@@ -17,7 +17,7 @@
 
 <tbody>
 {% for rank, user in users %}
-    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>*]:dark:bg-black divide-x divide-slate-600 [&>td:nth-last-child(1)]:rounded-r-md [&>td:nth-child(1)]:rounded-l-md bg-white shadow-lg {% block row_extra scoped %}{% endblock %}">
+    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>*]:dark:bg-black divide-x dark:divide-slate-600 [&>td:nth-last-child(1)]:rounded-r-md [&>td:nth-child(1)]:rounded-l-md bg-white shadow-lg {% block row_extra scoped %}{% endblock %}">
         <td class="text-center border-r dark:text-white">{{ rank }}</td>
         {% block after_rank scoped %}{% endblock %}
         <td class="max-w-xs p-2 border-r username-column">
