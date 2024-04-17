@@ -77,12 +77,12 @@ def _find_contest(request, key, private_check=True):
 
 class ContestListMixin(object):
     def get_queryset(self):
-        queryset = Contest.objects.filter(is_visible=True)
-        if not self.request.user.is_authenticated:
-            return queryset.filter(is_private=False)
-        if not self.request.user.is_superuser:
-            return queryset.filter(Q(is_private=False) |
-                                   Q(is_private=True, private_contestants=self.request.user.profile))
+        # queryset = Contest.objects.filter(is_visible=True)
+        # if not self.request.user.is_authenticated:
+        #     return queryset.filter(is_private=False)
+        # if not self.request.user.is_superuser:
+        #     return queryset.filter(Q(is_private=False) |
+        #                            Q(is_private=True, private_contestants=self.request.user.profile))
         # return Contest.objects.all()
         return Contest.get_visible_contests(self.request.user)
 
@@ -102,14 +102,20 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
         return timezone.now()
 
     def _get_queryset(self):
-        query = super().get_queryset().prefetch_related('tags', 'organizations', 'authors', 'curators', 'testers')
+        query = super().get_queryset().prefetch_related(
+            'tags', 
+            'organizations', 
+            'authors', 
+            'curators', 
+            'testers',
+        )
         if self.selected_org:
             query = query.exclude(is_private=True).filter(organizations=self.selected_org)
-        if not self.request.user.is_superuser:
-            filter = Q(is_private=True)
-            if self.request.user.is_authenticated:
-                filter &= ~Q(private_contestants=self.request.profile)  # Exclude private contests
-            query = query.exclude(filter)
+        # if not self.request.user.is_superuser:
+        #     filter = Q(is_private=True)
+        #     if self.request.user.is_authenticated:
+        #         filter &= ~Q(private_contestants=self.request.profile)  # Exclude private contests
+        #     query = query.exclude(filter)
         return query
 
     def get_queryset(self):
