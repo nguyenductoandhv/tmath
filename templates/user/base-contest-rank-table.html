@@ -1,5 +1,6 @@
+<table id="users-table" class="w-full text-left border-separate border-spacing-y-4">
 <thead>
-    <tr class="[&>*]:bg-black [&>*]:text-white [&>*]:text-center [&>*]:p-1 divide-x divide-white">
+    <tr class="[&>*]:bg-black [&>*]:text-white [&>*]:text-center [&>*]:p-1 divide-x divide-white dark:divide-slate-600">
         <th class="min-w-[5rem] w-20 text-center">{{ rank_header or _("Rank") }}</th>
         {% block after_rank_head %}{% endblock %}
         <th class="w-44 username-column">{{ _('Username') }}</th>
@@ -14,10 +15,10 @@
     </tr>
 </thead>
 
-<tbody class="">
+<tbody>
 {% for rank, user in users %}
-    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>*]:dark:bg-zinc-300 [&>td:nth-last-child(1)]:rounded-r-md [&>td:nth-child(1)]:rounded-l-md bg-white  shadow-md {% block row_extra scoped %}{% endblock %}">
-        <td class="text-center border-r">{{ rank }}</td>
+    <tr id="user-{{ user.user.username }}" class="[&>*]:p-3 [&>*]:dark:bg-black divide-x divide-slate-600 [&>td:nth-last-child(1)]:rounded-r-md [&>td:nth-child(1)]:rounded-l-md bg-white shadow-lg {% block row_extra scoped %}{% endblock %}">
+        <td class="text-center border-r dark:text-white">{{ rank }}</td>
         {% block after_rank scoped %}{% endblock %}
         <td class="max-w-xs p-2 border-r username-column">
             {{ link_user(user.user, noname=True) }}
@@ -30,7 +31,7 @@
         </td>
         {% block before_point scoped %}{% endblock %}
         {% block point scoped %}
-            <td class="text-center" title="{{ user.performance_points|floatformat(2) }}">
+            <td class="text-center dark:text-white" title="{{ user.performance_points|floatformat(2) }}">
                 {{ user.performance_points|floatformat(0) }}
             </td>
         {% endblock %}
@@ -38,3 +39,4 @@
     </tr>
 {% endfor %}
 </tbody>
+</table>

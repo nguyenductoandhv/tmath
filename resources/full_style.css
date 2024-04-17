@@ -2839,6 +2839,12 @@ select {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse))
 }
 
+.space-x-0 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0px * var(--tw-space-x-reverse));
+  margin-left: calc(0px * calc(1 - var(--tw-space-x-reverse)))
+}
+
 .divide-x > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-x-reverse: 0;
   border-right-width: calc(1px * var(--tw-divide-x-reverse));
@@ -2849,6 +2855,18 @@ select {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse))
+}
+
+.divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-x-reverse: 0;
+  border-right-width: calc(2px * var(--tw-divide-x-reverse));
+  border-left-width: calc(2px * calc(1 - var(--tw-divide-x-reverse)))
+}
+
+.divide-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(2px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(2px * var(--tw-divide-y-reverse))
 }
 
 .divide-black > :not([hidden]) ~ :not([hidden]) {
@@ -2874,6 +2892,11 @@ select {
 .divide-white > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-divide-opacity))
+}
+
+.divide-slate-600 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(71 85 105 / var(--tw-divide-opacity))
 }
 
 .self-center {
@@ -4032,11 +4055,6 @@ select {
   padding-bottom: 0.25rem/* 4px */
 }
 
-:is(.dark .atcoder_format) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
-}
-
 .default_format {
   width: 6rem;
   min-width: 5rem;
@@ -4046,11 +4064,6 @@ select {
   text-align: center;
   padding-top: 0.25rem/* 4px */;
   padding-bottom: 0.25rem/* 4px */
-}
-
-:is(.dark .default_format) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
 }
 
 .ecoo_format {
@@ -4064,11 +4077,6 @@ select {
   padding-bottom: 0.25rem/* 4px */
 }
 
-:is(.dark .ecoo_format) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
-}
-
 .icpc_format {
   width: 6rem;
   min-width: 5rem;
@@ -4080,11 +4088,6 @@ select {
   padding-bottom: 0.25rem/* 4px */
 }
 
-:is(.dark .icpc_format) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
-}
-
 .ioi_format {
   width: 6rem;
   min-width: 5rem;
@@ -4094,11 +4097,6 @@ select {
   text-align: center;
   padding-top: 0.25rem/* 4px */;
   padding-bottom: 0.25rem/* 4px */
-}
-
-:is(.dark .ioi_format) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
 }
 
 .solved-problem-color {
@@ -6172,6 +6170,11 @@ details[open]>summary {
   background-color: rgb(99 102 241 / var(--tw-bg-opacity))
 }
 
+:is(.dark .dark\:bg-slate-500) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(100 116 139 / var(--tw-bg-opacity))
+}
+
 :is(.dark .dark\:bg-slate-600\/75) {
   background-color: rgb(71 85 105 / 0.75)
 }
@@ -6245,6 +6248,26 @@ details[open]>summary {
 :is(.dark .dark\:text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity))
+}
+
+:is(.dark .dark\:placeholder-slate-200)::-webkit-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-placeholder-opacity))
+}
+
+:is(.dark .dark\:placeholder-slate-200)::-moz-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-placeholder-opacity))
+}
+
+:is(.dark .dark\:placeholder-slate-200):-ms-input-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-placeholder-opacity))
+}
+
+:is(.dark .dark\:placeholder-slate-200)::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-placeholder-opacity))
 }
 
 :is(.dark .dark\:ring-0) {
@@ -6689,6 +6712,11 @@ details[open]>summary {
 :is(.dark .\[\&\>\*\]\:dark\:bg-zinc-300)>* {
   --tw-bg-opacity: 1;
   background-color: rgb(212 212 216 / var(--tw-bg-opacity))
+}
+
+:is(.dark .\[\&\>\*\]\:dark\:bg-black)>* {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity))
 }
 
 :is(.dark .\[\&\>\*\]\:dark\:text-slate-300)>* {

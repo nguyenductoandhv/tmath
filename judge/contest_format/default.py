@@ -66,7 +66,7 @@ class DefaultContestFormat(BaseContestFormat):
     def display_participation_result(self, participation):
         return format_html(
             u'''<td class="sticky right-0 default_format">
-                <a class="font-bold text-black" href="{url}">{points}<div class="solving-time">{cumtime}</div></a>
+                <a class="font-bold text-black dark:text-white" href="{url}">{points}<div class="solving-time">{cumtime}</div></a>
             </td>''',
             url=reverse('contest_all_user_submissions',
                         args=[self.contest.key, participation.user.user.username]),

@@ -263,6 +263,12 @@
                 $('.username-column').show();
                 $('#show-usernames-checkbox').prop('checked', true);
             }
+
+            if (localStorage.getItem('compact-row') == 'true') {
+                table.classList.add('border-spacing-y-1')
+                table.classList.remove('border-spacing-y-4')
+                $('#compact-checkbox').prop('checked', true);
+            }
         });
     </script>
     {% include "contest/media-js.html" %}
