@@ -112,16 +112,9 @@
             position: relative;
         }
 
-        .organization-column {
-            display: none;
-        }
-
         .organization-column a {
             color: gray !important;
             font-weight: 600;
-        }
-        .username-column {
-            display: none;
         }
     </style>
 
@@ -237,13 +230,17 @@
                 window.location.href = url.replace('__username__', $(this).val());
             });
 
+            function toggle(elements) {
+                elements.toggleClass('hidden');
+            };
+            
             $('#show-organizations-checkbox').click(function () {
-                $('.organization-column').toggle();
+                toggle($('.organization-column'));
                 localStorage.setItem('show-organizations', $('.organization-column').is(':visible') ? 'true' : 'false');
             });
 
             $('#show-usernames-checkbox').click(function () {
-                $('.username-column').toggle();
+                toggle($('.username-column'));
                 localStorage.setItem('show-usernames', $('.username-column').is(':visible') ? 'true' : 'false');
             });
             
@@ -255,12 +252,12 @@
             });
             
             if (localStorage.getItem('show-organizations') == 'true') {
-                $('.organization-column').show();
+                toggle($('.organization-column'));
                 $('#show-organizations-checkbox').prop('checked', true);
-            }
+            } 
 
             if (localStorage.getItem('show-usernames') == 'true') {
-                $('.username-column').show();
+                toggle($('.username-column'));
                 $('#show-usernames-checkbox').prop('checked', true);
             }
 

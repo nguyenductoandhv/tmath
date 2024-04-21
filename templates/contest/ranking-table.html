@@ -4,14 +4,14 @@
     {% if has_rating %}
         <th class="w-20 text-center rating-column">{{ _('Rating') }}</th>
     {% endif %}
-    <th class="w-40 text-center organization-column">{{ _('Organization') }}</th>
+    <th class="hidden w-40 text-center organization-column">{{ _('Organization') }}</th>
 {% endblock %}
 
 {% block after_rank %}
     {% if has_rating %}
         <td class="text-center rating-column">{% if user.participation_rating %}{{ rating_number(user.participation_rating) }}{% endif %}</td>
     {% endif %}
-    <td class="p-2 organization-column min-w-[8rem] border-r">
+    <td class="p-2 organization-column hidden min-w-[8rem] border-r">
         {% if user.organization %}
             <span class="organization"><a href="{{ user.organization.get_absolute_url() }}">
                 {{- user.organization.short_name -}}
