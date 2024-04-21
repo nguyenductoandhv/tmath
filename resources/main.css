@@ -457,6 +457,7 @@ details[open]>summary {
 
 .custom-typography {
   @apply prose prose-slate max-w-none dark:prose-invert dark:prose-a:text-indigo-400;
+  @apply prose-code:before:content-none prose-code:after:content-none;
 }
 
 /* Dark highlight */

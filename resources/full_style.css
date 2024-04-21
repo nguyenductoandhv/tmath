@@ -2839,12 +2839,6 @@ select {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse))
 }
 
-.space-x-0 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0px * var(--tw-space-x-reverse));
-  margin-left: calc(0px * calc(1 - var(--tw-space-x-reverse)))
-}
-
 .divide-x > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-x-reverse: 0;
   border-right-width: calc(1px * var(--tw-divide-x-reverse));
@@ -2855,18 +2849,6 @@ select {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse))
-}
-
-.divide-x-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-x-reverse: 0;
-  border-right-width: calc(2px * var(--tw-divide-x-reverse));
-  border-left-width: calc(2px * calc(1 - var(--tw-divide-x-reverse)))
-}
-
-.divide-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-y-reverse: 0;
-  border-top-width: calc(2px * calc(1 - var(--tw-divide-y-reverse)));
-  border-bottom-width: calc(2px * var(--tw-divide-y-reverse))
 }
 
 .divide-black > :not([hidden]) ~ :not([hidden]) {
@@ -2892,11 +2874,6 @@ select {
 .divide-white > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-divide-opacity))
-}
-
-.divide-slate-600 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-opacity: 1;
-  border-color: rgb(71 85 105 / var(--tw-divide-opacity))
 }
 
 .self-center {
@@ -5368,6 +5345,16 @@ details[open]>summary {
   color: rgb(129 140 248 / var(--tw-text-opacity))
 }
 
+.custom-typography :is(:where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)))::before {
+  --tw-content: none;
+  content: var(--tw-content)
+}
+
+.custom-typography :is(:where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)))::after {
+  --tw-content: none;
+  content: var(--tw-content)
+}
+
 /* Dark highlight */
 
 .dark code .hll {
@@ -6705,18 +6692,13 @@ details[open]>summary {
   color: rgb(255 255 255 / var(--tw-text-opacity))
 }
 
-:is(.dark .\[\&\>\*\]\:dark\:bg-dark-content)>* {
-  background-color: rgba(35, 35, 37, 1)
-}
-
-:is(.dark .\[\&\>\*\]\:dark\:bg-zinc-300)>* {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 216 / var(--tw-bg-opacity))
-}
-
 :is(.dark .\[\&\>\*\]\:dark\:bg-black)>* {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity))
+}
+
+:is(.dark .\[\&\>\*\]\:dark\:bg-dark-content)>* {
+  background-color: rgba(35, 35, 37, 1)
 }
 
 :is(.dark .\[\&\>\*\]\:dark\:text-slate-300)>* {
