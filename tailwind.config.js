@@ -26,17 +26,8 @@ module.exports = {
               backgroundColor: theme('colors.gray.300'),
               color: theme('colors.black'),
             },
-            'pre code': {
-              fontSize: '1.5rem',
-            },
             code: {
               backgroundColor: theme('colors.gray.200'),
-              '&::before': {
-                content: 'none !important'
-              },
-              '&::after': {
-                content: 'none !important'
-              },
               borderRadius: '.25rem',
               padding: '0 5px',
             },
