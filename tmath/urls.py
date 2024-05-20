@@ -37,6 +37,7 @@ from judge.views.select2 import (  # , UserSearchSematicView
     ContestUserSearchSelect2View, OrganizationSelect2View, ProblemSelect2View,
     TicketUserSelect2View, UserSearchSelect2View, UserSelect2View)
 from judge.views.widgets import martor_image_uploader
+from typeracer.views import getLog
 
 admin.autodiscover()
 
@@ -120,6 +121,7 @@ def paged_list_view(view, name, template=None):
 
 urlpatterns = [
     # path('', blog.IndexView.as_view()),
+    path('getlog/', getLog.as_view(), name='get_log'),
     path('grappelli/', include('grappelli.urls')),
     path('typo/', include('typeracer.urls')),
     path('docs/', include('grappelli.urls_docs')),
