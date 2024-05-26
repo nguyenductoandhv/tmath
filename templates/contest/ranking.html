@@ -165,6 +165,7 @@
 {% endblock %}
 
 {% block users_js_media %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% if can_edit %}
         <script type="text/javascript">
             $(function () {
@@ -275,8 +276,9 @@
 
 <div class="flex flex-row-reverse items-center">
 {% if request.user.is_superuser %}
-<div class="flex flex-col items-center justify-start">
+<div class="flex items-center justify-start gap-2">
     <a class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600" href="{{ url('export_csv', contest.key) }}">Export to CSV</a>
+    <button id="exportButton" class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600">Export as Image</button>
 </div>
 {% endif %}
     {% if tab == 'participation' %}
@@ -306,3 +308,19 @@
 {% block users_table %}
     {% include "contest/ranking-table.html" %}
 {% endblock %}
+
+{% block bodyend %}
+    {{ super() }}
+    <script>
+        document.getElementById('exportButton').addEventListener('click', function() {
+            html2canvas(document.getElementById('users-table'), {
+                onrendered: function(canvas) {
+                    var link = document.createElement('a');
+                    link.href = canvas.toDataURL();
+                    link.download = 'table.png';
+                    link.click();
+                }
+            });
+        });
+    </script>
+{% endblock bodyend %}
