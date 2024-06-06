@@ -4,7 +4,7 @@
     <img src="{{ gravatar(user.user, 135) }}" alt="{{ user.user.username }}" class="w-8 h-8 rounded-full">
     <div class="flex flex-col">
       <span class="font-bold">{{ user.user.name|default(user.user.username) }}</span>
-      <span class="text-sm">#{{ user.user.username }}</span>
+      <span class="text-sm">@{{ user.user.username }}</span>
     </div>
   </div>
   {% endfor %}
