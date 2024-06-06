@@ -348,10 +348,11 @@ class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
             return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
 
         contest = self.object.contest
-        TypoResult.objects.get_or_create(
-            user=self.user.user,
-            contest=contest,
-        )
+        if self.user.action == '1':
+            TypoResult.objects.get_or_create(
+                user=self.user.user,
+                contest=contest,
+            )
         profile.typo_contest = contest
         profile.save()
 
