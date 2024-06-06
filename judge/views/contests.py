@@ -1088,7 +1088,7 @@ def exportcsv(request, contest):
     index = 0
     for user in users:
         index += 1
-        row = [index, user.user.name, user.user.user.username, user.score]
+        row = [index, user.user.name, user.user.user.username, str(user.score).replace('.', ',')]
         writer.writerow(row)
 
     return response
