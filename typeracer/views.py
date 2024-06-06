@@ -94,6 +94,8 @@ def finishTypoContest(request):
                 },
             },
         )
+        if is_finish == 'true':
+            TypoRoomUser.objects.delete(profile=profile, room=contest_object.room)
     return JsonResponse({
         'result': 'success',
         'status': 200,
@@ -308,9 +310,10 @@ class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
         if not request.user.is_superuser:
             raise Http404()
 
-        contest = get_random_contest()
-        self.object.contest = contest
-        self.object.save()
+        if self.object.contest is None:
+            contest = get_random_contest()
+            self.object.contest = contest
+            self.object.save()
 
         async_to_sync(channel_layer.group_send)(
             'room_%s' % self.object.pk,
