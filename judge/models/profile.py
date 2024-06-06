@@ -50,20 +50,6 @@ class LoggedInUser(models.Model):
         return self.user.username
 
 
-# class CustomSession(Session):
-#     device_id = models.CharField(_("device ID"), max_length=255, null=True, blank=True)
-
-#     class Meta:
-#         db_table = 'custom_session'
-
-
-# class EncryptedNullCharField(EncryptedCharField):
-#     def get_prep_value(self, value):
-#         if not value:
-#             return None
-#         return super(EncryptedNullCharField, self).get_prep_value(value)
-
-
 class SchoolYear(models.Model):
     start = models.DateField(_("year start"))
     finish = models.DateField(_("year finish"))
@@ -289,10 +275,10 @@ class Profile(models.Model):
         contest = self.typo_contest
         if contest is not None:
             if contest.ended:
-                self.remove_contest()
+                self.remove_typo()
             result = TypoResult.objects.get(user=self, contest=contest)
             if result.is_finish:
-                self.remove_contest()
+                self.remove_typo()
 
     update_typo.alters_data = True
 

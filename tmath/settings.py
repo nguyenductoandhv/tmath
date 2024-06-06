@@ -213,7 +213,7 @@ MIDDLEWARE = (
     'impersonate.middleware.ImpersonateMiddleware',
     'judge.middleware.DMOJImpersonationMiddleware',
     'judge.middleware.ContestMiddleware',
-    # 'judge.middleware.TypoMiddleware',
+    'judge.middleware.TypoMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'judge.social_auth.SocialAuthExceptionMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',

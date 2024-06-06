@@ -28,10 +28,9 @@ channel_layer = get_channel_layer()
 
 
 def get_random_contest(limit=12):
-    data = TypoData.objects.all()
-    i = randint(0, data.count() - 1)
+    data = TypoData.objects.order_by('?').first()
     contest = TypoContest.objects.create(
-        data=data[i],
+        data=data,
         time_start=timezone.now() + timezone.timedelta(seconds=limit),
         time_join=timezone.now(),
         limit=300,
@@ -205,6 +204,9 @@ class JoinRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
         if room.is_private and room.access_code != request.POST.get('access_code'):
             return generic_message(request, 'Can\'t join room', 'Access code is wrong', 403)
 
+        if room.contest is None:
+            room.contest = get_random_contest(86400)
+            room.save()
         # Create new Room user
         participant = TypoRoomUser(room=room, user=profile)
         participant.save()
@@ -333,17 +335,20 @@ class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        profile = request.profile
+        self.object: TypoRoom = self.get_object()
+        profile: Profile = request.profile
 
         self.user = get_object_or_404(TypoRoomUser, room=self.object, user=profile)
         if self.user.action == '2':
             return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.id, )))
 
+        contest = self.object.contest
         TypoResult.objects.get_or_create(
             user=self.user.user,
-            contest=self.object.contest,
+            contest=contest,
         )
+        profile.typo_contest = contest
+        profile.save()
 
         return super().get(request, *args, **kwargs)
 

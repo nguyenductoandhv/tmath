@@ -9,10 +9,13 @@ from django import http
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import Resolver404, resolve, reverse
 from django.utils.encoding import force_bytes
 from requests.exceptions import HTTPError
+
+from judge.models import TypoRoom
 
 logger = logging.getLogger('judge.request')
 
@@ -140,23 +143,19 @@ class ContestMiddleware(object):
         return self.get_response(request)
 
 
-# class TypoMiddleware(object):
-#     def __init__(self, get_response):
-#         self.get_response = get_response
+class TypoMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-#     def __call__(self, request):
-#         with transaction.atomic():
-#             for room in TypoRoom.objects.all().exclude(contest=None):
-#                 if room.contest.ended and room.is_random:
-#                     room.contest = None
-#                     room.save()
-#         if request.user.is_authenticated:
-#             profile = request.user.profile
-#         else:
-#             profile = None
-#         if profile:
-#             profile.update_typo()
-#         return self.get_response(request)
+    def __call__(self, request):
+        with transaction.atomic():
+            for room in TypoRoom.objects.all().exclude(contest=None):
+                if room.contest.ended and room.is_random:
+                    room.contest = None
+                    room.save()
+        if request.user.is_authenticated:
+            request.user.profile.update_typo()
+        return self.get_response(request)
 
 
 class APIMiddleware(object):
