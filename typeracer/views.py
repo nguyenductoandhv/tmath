@@ -353,8 +353,8 @@ class Contest(LoginRequiredMixin, TitleMixin, RoomMixin, DetailView):
                 user=self.user.user,
                 contest=contest,
             )
-        profile.typo_contest = contest
-        profile.save()
+        # profile.typo_contest = contest
+        # profile.save()
 
         return super().get(request, *args, **kwargs)
 
