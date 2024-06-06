@@ -313,8 +313,9 @@ class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
         if self.object.contest is None:
             contest = get_random_contest()
             self.object.contest = contest
-            self.object.save()
 
+        self.object.contest.time_start = timezone.now() + timezone.timedelta(seconds=12)
+        self.object.save()
         async_to_sync(channel_layer.group_send)(
             'room_%s' % self.object.pk,
             {
