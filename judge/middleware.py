@@ -15,7 +15,7 @@ from django.urls import Resolver404, resolve, reverse
 from django.utils.encoding import force_bytes
 from requests.exceptions import HTTPError
 
-from judge.models import TypoRoom
+from typeracer.models import TypoRoom
 
 logger = logging.getLogger('judge.request')
 
