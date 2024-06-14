@@ -183,6 +183,14 @@ class ProblemSubmitForm(ModelForm):
         self.check_submission()
         return cleaned_data
 
+    def clean_source(self):
+        source: str = self.cleaned_data.get('source', '')
+        language = self.cleaned_data.get('language', None)
+        lang_obj = Language.objects.get(name=language)
+        if lang_obj.common_name == 'C++' and source.find('sync_with_stdio') == -1:
+            raise forms.ValidationError(_('Please add fast I/O to your code'))
+        return source
+
     def check_submission(self):
         source = self.cleaned_data.get('source', '')
         content = self.files.get('submission_file', None)
