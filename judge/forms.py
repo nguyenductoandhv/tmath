@@ -187,7 +187,7 @@ class ProblemSubmitForm(ModelForm):
         source: str = self.cleaned_data.get('source', '')
         language = self.cleaned_data.get('language', None)
         lang_obj = Language.objects.get(name=language)
-        if lang_obj.common_name == 'C++' and source.find('sync_with_stdio') == -1:
+        if self.fastio and lang_obj.common_name == 'C++' and source.find('sync_with_stdio') == -1:
             raise forms.ValidationError(_('Please add fast I/O to your code'))
         return source
 
@@ -214,11 +214,12 @@ class ProblemSubmitForm(ModelForm):
                 raise forms.ValidationError(_('File size is too big! Maximum file size is %s')
                                             % filesizeformat(max_file_size))
 
-    def __init__(self, *args, judge_choices=(), **kwargs):
+    def __init__(self, *args, judge_choices=(), fastio=False, **kwargs):
         super(ProblemSubmitForm, self).__init__(*args, **kwargs)
         self.fields['language'].empty_label = None
         self.fields['language'].label_from_instance = attrgetter('display_name')
         self.fields['language'].queryset = Language.objects.filter(judges__online=True).distinct()
+        self.fastio = fastio
 
         if judge_choices:
             self.fields['judge'].widget = Select2Widget(

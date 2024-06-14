@@ -177,6 +177,7 @@ class Contest(models.Model):
                                        on_delete=models.SET_NULL, null=True, blank=True)
 
     is_public_contest = models.BooleanField(_("Public contest"), default=False)
+    fastio = models.BooleanField(_("Fast IO"), default=False)
 
     @property
     def markdown_style(self):

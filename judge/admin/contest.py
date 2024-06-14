@@ -159,7 +159,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             'fields': ('is_full_markup', 'description', 'og_image', 'logo_override_image', 'tags', 'summary'),
         }),
         (_('Format'), {
-            'fields': ('format_name', 'format_config', 'is_limit_language', 'limit_language', 'problem_label_script'),
+            'fields': ('format_name', 'format_config', 'fastio', 'is_limit_language', 'limit_language', 'problem_label_script'),
         }),
         (_('Rating'), {'fields': ('is_rated', 'rate_all', 'rating_floor', 'rating_ceiling', 'rate_exclude')}),
         (_('Access'), {'fields': ('access_code', 'is_private', 'private_contestants', 'is_organization_private',

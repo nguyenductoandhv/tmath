@@ -142,6 +142,9 @@ class ContestProblemSubmit(AccessMixin, ContestMixin, TitleMixin, SingleObjectFo
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = Submission(user=self.request.profile, problem=self.problem)
 
+        if self.object.fastio:
+            kwargs['fastio'] = True
+
         if self.object.is_editable_by(self.request.user):
             kwargs['judge_choices'] = tuple(
                 Judge.objects.filter(online=True, problems=self.problem).values_list('name', 'name'),
