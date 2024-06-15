@@ -663,7 +663,7 @@ class CreateCSVUser(TitleMixin, FormView):
     def form_valid(self, form: CreateCSVUserForm) -> HttpResponse:
         org_id = form.cleaned_data['organization']
         csv_file = form.cleaned_data['csv_file']
-        decoded_file = csv_file.read().decode('utf-8')
+        decoded_file = csv_file.read().decode('utf-8-sig')
         csv_data = csv.DictReader(decoded_file.splitlines(), delimiter=',')
         data_list = list(csv_data)
         for row in data_list:
