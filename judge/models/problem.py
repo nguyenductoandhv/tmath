@@ -169,18 +169,18 @@ class Problem(models.Model):
                                 help_text=_('The class of problem, shown under Class in the problem list.'),
                                 null=True, blank=False)
 
-    time_limit = models.FloatField(verbose_name=_('time limit'),
+    time_limit = models.FloatField(verbose_name=_('time limit'), default=1.0,
                                    help_text=_('The time limit for this problem, in seconds. '
                                                'Fractional seconds (e.g. 1.5) are supported.'),
                                    validators=[MinValueValidator(settings.DMOJ_PROBLEM_MIN_TIME_LIMIT),
                                                MaxValueValidator(settings.DMOJ_PROBLEM_MAX_TIME_LIMIT)])
-    memory_limit = models.PositiveIntegerField(verbose_name=_('memory limit'),
+    memory_limit = models.PositiveIntegerField(verbose_name=_('memory limit'), default=256000,
                                                help_text=_('The memory limit for this problem, in kilobytes '
                                                            '(e.g. 64mb = 65536 kilobytes).'),
                                                validators=[MinValueValidator(settings.DMOJ_PROBLEM_MIN_MEMORY_LIMIT),
                                                            MaxValueValidator(settings.DMOJ_PROBLEM_MAX_MEMORY_LIMIT)])
     short_circuit = models.BooleanField(default=False)
-    points = models.FloatField(verbose_name=_('points'),
+    points = models.FloatField(verbose_name=_('points'), default=100,
                                help_text=_('Points awarded for problem completion. '
                                            "Points are displayed with a 'p' suffix if partial."),
                                validators=[MinValueValidator(settings.DMOJ_PROBLEM_MIN_PROBLEM_POINTS)])
@@ -206,7 +206,7 @@ class Problem(models.Model):
     ac_rate = models.FloatField(verbose_name=_('solve rate'), default=0)
     is_full_markup = models.BooleanField(verbose_name=_('allow full markdown access'), default=False)
     submission_source_visibility_mode = models.CharField(verbose_name=_('submission source visibility'), max_length=1,
-                                                         default=SubmissionSourceAccess.FOLLOW,
+                                                         default=SubmissionSourceAccess.ONLY_OWN,
                                                          choices=SUBMISSION_SOURCE_ACCESS)
     testcase_visibility_mode = models.CharField(verbose_name=_('Testcase visibility'), max_length=1,
                                                 default=ProblemTestcaseAccess.AUTHOR_ONLY,
