@@ -857,7 +857,7 @@ class ContestProblem(models.Model):
             return True
         if not request.participation or not request.participation.contest == self.contest:
             return False
-        if request.participation.virtual > 1:
+        if request.participation.virtual >= 1:
             return True
         if self.is_enough_point(request.participation):
             return True
