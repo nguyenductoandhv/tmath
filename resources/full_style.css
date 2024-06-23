@@ -464,14 +464,28 @@ body[class*="tmath"] .select2-container--default .select2-results__group {
 
 body[class*="tmath"] .ace-github .ace_keyword {
   font-weight: normal !important;
+  color: #fa8d3e;
 }
 
 body[class*="tmath"] .ace-github .ace_constant.ace_language {
   font-weight: normal !important;
+  color: rgb(169, 130, 207);
 }
 
 body[class*="tmath"] .ace-github .ace_paren {
   font-weight: normal !important;
+}
+
+body[class*="tmath"] .ace-github .ace_type {
+  color: #fa8d3e;
+}
+
+body[class*="tmath"] .ace-github .ace_function {
+  color: #f2ae49;
+}
+
+body[class*="tmath"] .ace-github .ace_string {
+  color: #86b300;
 }
 
 /* ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com */
