@@ -1,3 +1,11 @@
-body[class*="tmath"] .ace_editor {
+body[class*="tmath"] .ace-github .ace_keyword {
+  font-weight: normal !important;
+}
+
+body[class*="tmath"] .ace-github .ace_constant.ace_language {
+  font-weight: normal !important;
+}
+
+body[class*="tmath"] .ace-github .ace_paren {
   font-weight: normal !important;
 }
