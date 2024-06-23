@@ -474,6 +474,7 @@ body[class*="tmath"] .ace-github .ace_constant.ace_language {
 
 body[class*="tmath"] .ace-github .ace_paren {
   font-weight: normal !important;
+  color: rgb(118, 138, 253);
 }
 
 body[class*="tmath"] .ace-github .ace_type {
@@ -485,6 +486,10 @@ body[class*="tmath"] .ace-github .ace_function {
 }
 
 body[class*="tmath"] .ace-github .ace_string {
+  color: #86b300;
+}
+
+body[class*="tmath"] .ace-github .ace_constant .ace_other {
   color: #86b300;
 }
 
