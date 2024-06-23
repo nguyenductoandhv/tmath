@@ -497,6 +497,7 @@ def generate_scratch_codes(request):
 class UserList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ListView):
     model = Profile
     title = gettext_lazy('Leaderboard')
+    nav_tag = 'user'
     context_object_name = 'users'
     template_name = 'user/list.html'
     paginate_by = 100

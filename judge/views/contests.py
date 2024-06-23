@@ -92,6 +92,7 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
     paginate_by = 20
     template_name = 'contest/list.html'
     title = gettext_lazy('Contests')
+    nav_tag = 'contest'
     context_object_name = 'past_contests'
     all_sorts = frozenset(('name', 'user_count', 'start_time'))
     default_desc = frozenset(('name', 'user_count'))

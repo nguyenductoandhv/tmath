@@ -1,4 +1,5 @@
 @import './select2-custom.css';
+@import './ace-custom.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -526,3 +527,6 @@ details[open]>summary {
 .dark code .vi { color: #008080 } /* Name.Variable.Instance */
 .dark code .il { color: #009999 } /* Literal.Number.Integer.Long */
 .dark code .p { color: #FFFFFF } /* Bracket and Punctuation */
+
+/* Ace.js */
+
