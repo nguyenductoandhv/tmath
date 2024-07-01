@@ -27,7 +27,7 @@ user_logger = logging.getLogger('judge.user')
 
 
 def get_contest_submission_count(problem: ContestProblem, profile, virtual):
-    print(profile)
+    # print(profile)
     return profile.current_contest.submissions.exclude(submission__status__in=['IE']) \
                   .filter(problem=problem, participation__virtual=virtual).count()
 

@@ -132,7 +132,7 @@ class ContestForm(ModelForm):
     def save(self, commit=True):
         instance = super(ContestForm, self).save(commit=False)
         if 'rating_ceiling' in self.cleaned_data:
-            print(self.cleaned_data['rating_ceiling'])
+            # print(self.cleaned_data['rating_ceiling'])
             instance.rating_ceiling = self.cleaned_data['rating_ceiling']
         if commit:
             instance.save()
