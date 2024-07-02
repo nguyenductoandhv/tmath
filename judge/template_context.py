@@ -67,6 +67,7 @@ def __nav_tab(request):
         ('problem', problem_link, _('Problems')),
         ('submission', reverse('all_submissions'), _('Submissions')),
         ('user', reverse('user_list'), _('Users')),
+        ('organization', reverse('organization_list'), _('Organizations')),
         ('contest', reverse('contest_list'), _('Contests')),
         ('about', '/about', _('About')),
     ]
