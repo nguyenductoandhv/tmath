@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.http import Http404, HttpResponsePermanentRedirect
-from django.urls import path, reverse
+from django.urls import path, re_path, reverse
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
@@ -75,10 +75,10 @@ register_patterns = [
         html_email_template_name='registration/password_reset_email.html',
         email_template_name='registration/password_reset_email.txt',
     ), name='password_reset'),
-    path('password/reset/confirm/<uuid:uidb64>-<slug:token>/',
-         auth_views.PasswordResetConfirmView.as_view(
-             template_name='registration/password_reset_confirm.html'),
-         name='password_reset_confirm'),
+    re_path(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$',
+            auth_views.PasswordResetConfirmView.as_view(
+                template_name='registration/password_reset_confirm.html',
+            ), name='password_reset_confirm'),
     path('password/reset/complete/', auth_views.PasswordResetCompleteView.as_view(
          template_name='registration/password_reset_complete.html'),
          name='password_reset_complete'),
