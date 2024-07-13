@@ -814,7 +814,7 @@ class ContestProblem(models.Model):
                                           default=None, null=True, blank=True,
                                           validators=[MinValueOrNoneValidator(1, _('Why include a problem you '
                                                                                    'can\'t submit to?'))])
-    limit_point = models.IntegerField(verbose_name=_('limit point'), default=0)
+    limit_point = models.IntegerField(verbose_name=_('limit point'), default=0, null=True, blank=True)
     # user_count = models.IntegerField(default=0)
 
     @classmethod

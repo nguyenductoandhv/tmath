@@ -104,10 +104,10 @@ class ContestList(QueryStringSortMixin, DiggPaginatorMixin, TitleMixin, ContestL
 
     def _get_queryset(self):
         query = super().get_queryset().prefetch_related(
-            'tags', 
-            'organizations', 
-            'authors', 
-            'curators', 
+            'tags',
+            'organizations',
+            'authors',
+            'curators',
             'testers',
         )
         if self.selected_org:

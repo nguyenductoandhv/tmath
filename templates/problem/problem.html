@@ -317,7 +317,7 @@
                     {% if problem.io_method.method == 'standard' %}
                         stdin
                     {% elif problem.io_method.method == 'file' %}
-                        <i>{{ problem.io_method.input }}</i>
+                        <i class="font-semibold text-red-500">{{ problem.io_method.input }}</i>
                     {% endif %}
                 </div>
                 <div class="relative pl-6">
@@ -328,7 +328,7 @@
                     {% if problem.io_method.method == 'standard' %}
                         stdout
                     {% elif problem.io_method.method == 'file' %}
-                        <i>{{ problem.io_method.output }}</i>
+                        <i class="font-semibold text-red-500">{{ problem.io_method.output }}</i>
                     {% endif %}
                 </div>
             </div>

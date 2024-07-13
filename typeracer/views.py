@@ -1,10 +1,7 @@
-from random import randint
-
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import (FileResponse, Http404, HttpResponse,
-                         HttpResponseRedirect, JsonResponse)
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -370,27 +367,3 @@ class LeaveRoom(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
         participant = room.first()
         participant.delete()
         return HttpResponseRedirect(reverse('typeracer:list_room'))
-
-
-import os
-
-
-class getLog(View):
-    prefix = "/tmp"
-
-    def get(self, request, *args, **kwargs):
-       
-        # Define the path to the file
-        file_path = self.prefix + "/giamsat.stderr.log"
-        
-        # Check if the file exists
-        if not os.path.exists(file_path):
-            return HttpResponse("File not found.", status=404)
-        
-        # Open the file and create a FileResponse
-        try:
-            response = FileResponse(open(file_path, 'rb'), content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
-            return response
-        except Exception as e:
-            return HttpResponse(f"Error reading file: {str(e)}", status=500)

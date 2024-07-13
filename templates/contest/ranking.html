@@ -165,7 +165,6 @@
 {% endblock %}
 
 {% block users_js_media %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% if can_edit %}
         <script type="text/javascript">
             $(function () {
@@ -203,7 +202,7 @@
     {% endif %}
     <script type="text/javascript">
         $(function () {
-            var url = '{{ url('contest_participation', contest.key, '__username__') }}';
+            var url = "{{ url('contest_participation', contest.key, '__username__') }}";
             var placeholder = $('#search-contest').replaceWith($('<select>').attr({
                 id: 'search-contest'
             })).attr('placeholder');
@@ -211,7 +210,7 @@
             $('#search-contest').select2({
                 placeholder: placeholder,
                 ajax: {
-                    url: '{{ url('contest_user_search_select2_ajax', contest.key) }}'
+                    url: "{{ url('contest_user_search_select2_ajax', contest.key) }}"
                 },
                 minimumInputLength: 1,
                 templateResult: function (data) {
@@ -278,7 +277,6 @@
 {% if request.user.is_superuser %}
 <div class="flex items-center justify-start gap-2">
     <a class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600" href="{{ url('export_csv', contest.key) }}">Export to CSV</a>
-    <button id="exportButton" class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600">Export as Image</button>
 </div>
 {% endif %}
     {% if tab == 'participation' %}
@@ -308,19 +306,3 @@
 {% block users_table %}
     {% include "contest/ranking-table.html" %}
 {% endblock %}
-
-{% block bodyend %}
-    {{ super() }}
-    <script>
-        document.getElementById('exportButton').addEventListener('click', function() {
-            html2canvas(document.getElementById('users-table'), {
-                onrendered: function(canvas) {
-                    var link = document.createElement('a');
-                    link.href = canvas.toDataURL();
-                    link.download = 'table.png';
-                    link.click();
-                }
-            });
-        });
-    </script>
-{% endblock bodyend %}
