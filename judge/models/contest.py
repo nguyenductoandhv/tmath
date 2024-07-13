@@ -824,7 +824,7 @@ class ContestProblem(models.Model):
         return order
 
     def is_enough_point(self, participation):
-        return self.limit_point == 0 or participation.score >= self.limit_point
+        return (not self.limit_point) or participation.score >= self.limit_point
 
     def update_first_accept(self):
         if self.first_accept is not None:
