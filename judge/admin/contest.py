@@ -118,22 +118,21 @@ class ContestForm(ModelForm):
     def clean(self):
         cleaned_data = super(ContestForm, self).clean()
         cleaned_data['banned_users'].filter(current_contest__contest=self.instance).update(current_contest=None)
-        if 'is_rated' in cleaned_data:
-            if cleaned_data['is_rated'] and cleaned_data['is_organization_private']:
-                # print(cleaned_data['is_organization_private'])
-                rate = 0
-                if 'rating_ceiling' in cleaned_data:
-                    rate = min(2400, cleaned_data['rating_ceiling'])
-                for org in cleaned_data['organizations']:
-                    rate = max(rate, org.rate)
-                cleaned_data['rating_ceiling'] = rate
+        # if 'is_rated' in cleaned_data:
+        #     if cleaned_data['is_rated'] and cleaned_data['is_organization_private']:
+        #         # print(cleaned_data['is_organization_private'])
+        #         rate = 0
+        #         if 'rating_ceiling' in cleaned_data:
+        #             rate = min(2400, cleaned_data['rating_ceiling'])
+        #         for org in cleaned_data['organizations']:
+        #             rate = max(rate, org.rate)
+        #         cleaned_data['rating_ceiling'] = rate
         return cleaned_data
 
     def save(self, commit=True):
         instance = super(ContestForm, self).save(commit=False)
-        if 'rating_ceiling' in self.cleaned_data:
-            # print(self.cleaned_data['rating_ceiling'])
-            instance.rating_ceiling = self.cleaned_data['rating_ceiling']
+        # if 'rating_ceiling' in self.cleaned_data:
+        #     instance.rating_ceiling = self.cleaned_data['rating_ceiling']
         if commit:
             instance.save()
         return instance
