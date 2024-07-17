@@ -195,6 +195,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
+    'judge.middleware.BlockedIpMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'judge.middleware.ShortCircuitMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -219,7 +220,6 @@ MIDDLEWARE = (
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'judge.middleware.OneSessionPerUser',
-    'judge.middleware.BlockedIpMiddleware',
 )
 
 CACHE_MIDDLEWARE_SECONDS = 5
