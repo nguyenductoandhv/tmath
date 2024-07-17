@@ -196,6 +196,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE = (
     'judge.middleware.BlockedIpMiddleware',
+    'judge.middleware.ValidateURLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'judge.middleware.ShortCircuitMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
