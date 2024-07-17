@@ -187,8 +187,12 @@ class ProblemSubmitForm(ModelForm):
         source: str = self.cleaned_data.get('source', '')
         language = self.cleaned_data.get('language', None)
         lang_obj = Language.objects.get(name=language)
-        if self.fastio and lang_obj.common_name == 'C++' and source.find('sync_with_stdio') == -1:
+        if self.fastio and lang_obj.common_name == 'C++' and source.find('sync_with_stdio(') == -1:
             raise forms.ValidationError(_('Please add fast I/O to your code'))
+        if self.forbidden_words:
+            for word in self.forbidden_words:
+                if word in source:
+                    raise forms.ValidationError(_('Your code contains forbidden word: %(word)s') % {'word': word})
         return source
 
     def check_submission(self):

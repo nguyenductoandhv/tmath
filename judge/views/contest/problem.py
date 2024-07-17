@@ -145,6 +145,9 @@ class ContestProblemSubmit(AccessMixin, ContestMixin, TitleMixin, SingleObjectFo
         if self.object.fastio:
             kwargs['fastio'] = True
 
+        if self.object.forbidden_words:
+            kwargs['forbidden_words'] = list(self.object.forbidden_words.split())
+
         if self.object.is_editable_by(self.request.user):
             kwargs['judge_choices'] = tuple(
                 Judge.objects.filter(online=True, problems=self.problem).values_list('name', 'name'),
