@@ -191,7 +191,7 @@ class ProblemSubmitForm(ModelForm):
             raise forms.ValidationError(_('Please add fast I/O to your code'))
         if self.forbidden_words:
             for word in self.forbidden_words:
-                if word in source:
+                if source.find(word) != -1:
                     raise forms.ValidationError(_('Your code contains forbidden word: %(word)s') % {'word': word})
         return source
 
@@ -218,12 +218,13 @@ class ProblemSubmitForm(ModelForm):
                 raise forms.ValidationError(_('File size is too big! Maximum file size is %s')
                                             % filesizeformat(max_file_size))
 
-    def __init__(self, *args, judge_choices=(), fastio=False, **kwargs):
+    def __init__(self, *args, judge_choices=(), fastio=False, forbidden_words=[], **kwargs):
         super(ProblemSubmitForm, self).__init__(*args, **kwargs)
         self.fields['language'].empty_label = None
         self.fields['language'].label_from_instance = attrgetter('display_name')
         self.fields['language'].queryset = Language.objects.filter(judges__online=True).distinct()
         self.fastio = fastio
+        self.forbidden_words = forbidden_words
 
         if judge_choices:
             self.fields['judge'].widget = Select2Widget(
