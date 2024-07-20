@@ -180,6 +180,14 @@ class LeaveOrganization(OrganizationMembershipChange):
         if not profile.organizations.filter(id=org.id).exists():
             return generic_message(request, _('Leaving organization'), _('You are not in "%s".') % org.short_name)
         profile.organizations.remove(org)
+        if not org.is_open:
+            OrganizationRequest.objects.create(
+                organization=org,
+                user=profile,
+                state='L',
+                reason=_('Left by %s') % request.profile.user.username,
+                admin=request.profile,
+            )
         cache.delete(make_template_fragment_key('org_member_count', (org.id,)))
 
 
@@ -303,7 +311,7 @@ class OrganizationRequestView(OrganizationRequestBaseView):
 
 
 class OrganizationRequestLog(OrganizationRequestBaseView):
-    states = ('A', 'R')
+    states = ('A', 'R', 'L', 'K')
     tab = 'log'
     template_name = 'organization/requests/log.html'
 
@@ -371,4 +379,11 @@ class KickUserWidgetView(LoginRequiredMixin, OrganizationMixin, SingleObjectMixi
                                    organization.name, status=400)
 
         organization.members.remove(user)
+        OrganizationRequest.objects.create(
+            organization=organization,
+            user=user,
+            state='K',
+            reason=_('Kicked by %s') % request.profile.user.username,
+            admin=request.profile,
+        )
         return HttpResponseRedirect(organization.get_users_url())

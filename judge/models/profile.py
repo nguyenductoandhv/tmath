@@ -376,6 +376,8 @@ class OrganizationRequest(models.Model):
         ('P', 'Pending'),
         ('A', 'Approved'),
         ('R', 'Rejected'),
+        ('L', 'Leaved'),
+        ('K', 'Kicked'),
     ))
     reason = models.TextField(verbose_name=_('reason'))
 
