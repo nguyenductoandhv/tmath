@@ -196,7 +196,6 @@ INSTALLED_APPS = (
 
 MIDDLEWARE = (
     'judge.middleware.BlockedIpMiddleware',
-    'judge.middleware.ValidateURLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'judge.middleware.ShortCircuitMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
@@ -314,23 +313,23 @@ LOCALE_PATHS = [
 ]
 
 LANGUAGES = [
-    ('ca', _('Catalan')),
-    ('de', _('German')),
+    # ('ca', _('Catalan')),
+    # ('de', _('German')),
     ('en', _('English')),
-    ('es', _('Spanish')),
-    ('fr', _('French')),
-    ('hr', _('Croatian')),
-    ('hu', _('Hungarian')),
-    ('ja', _('Japanese')),
-    ('ko', _('Korean')),
-    ('pt', _('Brazilian Portuguese')),
-    ('ro', _('Romanian')),
-    ('ru', _('Russian')),
-    ('sr-latn', _('Serbian (Latin)')),
-    ('tr', _('Turkish')),
+    # ('es', _('Spanish')),
+    # ('fr', _('French')),
+    # ('hr', _('Croatian')),
+    # ('hu', _('Hungarian')),
+    # ('ja', _('Japanese')),
+    # ('ko', _('Korean')),
+    # ('pt', _('Brazilian Portuguese')),
+    # ('ro', _('Romanian')),
+    # ('ru', _('Russian')),
+    # ('sr-latn', _('Serbian (Latin)')),
+    # ('tr', _('Turkish')),
     ('vi', _('Vietnamese')),
-    ('zh-hans', _('Simplified Chinese')),
-    ('zh-hant', _('Traditional Chinese')),
+    # ('zh-hans', _('Simplified Chinese')),
+    # ('zh-hant', _('Traditional Chinese')),
 ]
 
 CHANNEL_LAYERS = {

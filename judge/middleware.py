@@ -19,19 +19,6 @@ from requests.exceptions import HTTPError
 
 logger = logging.getLogger('judge.request')
 
-class ValidateURLMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        try:
-            resolve(request.path)
-        except Resolver404:
-            return http.HttpResponseNotFound('<h1>Page not found</h1>')
-
-        response = self.get_response(request)
-        return response
-
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
