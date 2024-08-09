@@ -1085,7 +1085,10 @@ def exportcsv(request, contest):
     writer = csv.writer(response)
     first_row = ['rank', 'name', 'username', 'point']
     writer.writerow(first_row)
-    users = ContestParticipation.objects.filter(contest=contest_object).order_by('-score')
+    users = ContestParticipation.objects.filter(
+        contest=contest_object,
+        virtual=ContestParticipation.LIVE
+    ).order_by('-score')
     index = 0
     for user in users:
         index += 1
