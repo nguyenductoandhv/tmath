@@ -646,7 +646,7 @@ def make_contest_ranking_profile(contest, participation, contest_problems):
         try:
             return contest.format.display_user_problem(participation, contest_problem)
         except (KeyError, TypeError, ValueError):
-            return mark_safe('<td>???</td>')
+            return { 'has_data' : False } 
 
     user = participation.user
     return ContestRankingProfile(

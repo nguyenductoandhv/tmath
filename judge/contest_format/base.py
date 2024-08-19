@@ -93,7 +93,7 @@ class BaseContestFormat(six.with_metaclass(ABCMeta)):
         raise NotImplementedError()
 
     @classmethod
-    def best_solution_state(cls, points, total, first):
+    def best_solution_state(cls, points, total):
         if not points:
             return 'failed-score'
         if points == total:
