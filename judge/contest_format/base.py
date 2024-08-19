@@ -97,7 +97,5 @@ class BaseContestFormat(six.with_metaclass(ABCMeta)):
         if not points:
             return 'failed-score'
         if points == total:
-            if first:
-                return 'full-score first-accept'
             return 'full-score'
         return 'partial-score'

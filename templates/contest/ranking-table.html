@@ -54,7 +54,7 @@
 
 {% block before_point_head %}
     {% for problem in problems %}
-        <th class="w-20 text-center min-w-[5rem]"><a href="{{ url('contest_problem_submissions', contest.key, problem.order) }}">
+        <th data-problem="{{ problem.order }}" class="w-20 text-center min-w-[5rem]"><a href="{{ url('contest_problem_submissions', contest.key, problem.order) }}">
             {{- contest.get_label_for_problem(loop.index0) }}
             <div class="point-denominator">{{ problem.points }}</div>
         </a></th>
@@ -69,7 +69,15 @@
 
 {% block before_point %}
     {% for cell in user.problem_cells %}
-        {{ cell }}
+    <td class="default_format" {% if cell.has_data %}
+        data-problem="{{ cell.problem }}"
+        data-points="{{ cell.points }}"
+        data-penalty="{{ cell.penalty }}"
+        data-time="{{ cell.time }}"
+        data-state="{{ cell.state }}"
+        data-username="{{ cell.username }}"
+    {% endif %}
+    ></td>
     {% endfor %}
 {% endblock %}
 

@@ -793,7 +793,6 @@ class ContestProblem(models.Model):
         problem (Problem): The problem associated with the contest problem.
         contest (Contest): The contest associated with the contest problem.
         points (int): The number of points assigned to the contest problem.
-        first_accept (ContestParticipation): The first user who accepted this problem,
         or None if no user has accepted it.
         partial (bool): Indicates if partial scoring is enabled for the contest problem.
         is_pretested (bool): Indicates if the contest problem has pretests.
@@ -805,8 +804,6 @@ class ContestProblem(models.Model):
     problem = models.ForeignKey(Problem, verbose_name=_('problem'), related_name='contests', on_delete=CASCADE)
     contest = models.ForeignKey(Contest, verbose_name=_('contest'), related_name='contest_problems', on_delete=CASCADE)
     points = models.IntegerField(verbose_name=_('points'))
-    first_accept = models.ForeignKey(ContestParticipation, verbose_name=_('first user accept this problem'),
-                                     default=None, null=True, on_delete=models.SET_NULL)
     partial = models.BooleanField(default=True, verbose_name=_('partial'))
     is_pretested = models.BooleanField(default=False, verbose_name=_('is pretested'))
     order = models.PositiveIntegerField(db_index=True, verbose_name=_('order'))
@@ -828,19 +825,6 @@ class ContestProblem(models.Model):
 
     def is_enough_point(self, participation):
         return (not self.limit_point) or participation.score >= self.limit_point
-
-    def update_first_accept(self):
-        if self.first_accept is not None:
-            if self.first_accept.contest == self.contest:
-                return
-            self.first_accept = None
-        queryset = ContestSubmission.objects.filter(problem=self, points=self.points,
-                                                    submission__date__lte=self.contest.end_time,
-                                                    submission__date__gte=self.contest.start_time)
-        submission = queryset.order_by('id').first()
-        self.first_accept = submission.participation if submission is not None else None
-        self.save()
-    update_first_accept.alters_data = True
 
     # def update_user_count(self):
     #     self.user_count = self.contest.users.filter(virtual=ContestParticipation.LIVE).count()

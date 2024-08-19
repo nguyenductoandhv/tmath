@@ -682,9 +682,6 @@ def get_contest_ranking_list(request, contest, participation=None, ranking_list=
 
     contest_problems = ContestProblem.objects.filter(contest=contest)
 
-    for problem in contest_problems:
-        problem.update_first_accept()
-
     users = ranker(ranking_list(contest, problems), key=attrgetter('points', 'cumtime', 'tiebreaker'))
 
     if show_current_virtual:

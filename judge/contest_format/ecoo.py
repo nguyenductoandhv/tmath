@@ -109,8 +109,7 @@ class ECOOContestFormat(DefaultContestFormat):
                     <a href="{url}">{points}{bonus}<div class="solving-time">{time}</div></a>
                 </td>''',
                 state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                       self.best_solution_state(format_data['points'], contest_problem.points,
-                                                contest_problem.first_accept == participation)),
+                       self.best_solution_state(format_data['points'], contest_problem.points)),
                 url=reverse('user_contest_problem_submissions',
                             args=[self.contest.key, contest_problem.order, participation.user.user.username]),
                 points=floatformat(format_data['points']),

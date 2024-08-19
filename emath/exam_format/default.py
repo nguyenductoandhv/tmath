@@ -49,10 +49,7 @@ class DefaultExamFormat(BaseExamFormat):
         participation.save()
     
     def display_user_problem(self, participation, exam_problem):
-        # print('display_user_problem')
         format_data = (participation.format_data or {}).get(str(exam_problem.id))
-
-        # print('display_user_problem: %s', str(exam_problem.problem.id))
 
         if format_data:
             return format_html(

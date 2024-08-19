@@ -48,20 +48,21 @@ class DefaultContestFormat(BaseContestFormat):
     def display_user_problem(self, participation, contest_problem):
         format_data = (participation.format_data or {}).get(str(contest_problem.id))
         if format_data:
-            return format_html(
-                u'''<td class="{state} default_format">
-                    <a href="{url}">{points}<div class="solving-time">{time}</div></a>
-                </td>''',
-                state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                       self.best_solution_state(format_data['points'], contest_problem.points,
-                                                contest_problem.first_accept == participation)),
-                url=reverse('user_contest_problem_submissions',
-                            args=[self.contest.key, contest_problem.order, participation.user.user.username]),
-                points=floatformat(format_data['points']),
-                time=nice_repr(timedelta(seconds=format_data['time']), 'noday'),
-            )
+            return {
+                'has_data': True,
+                'problem': contest_problem.order,
+                'username': participation.user.user.username,
+                'penalty': -1,
+                'points': floatformat(format_data['points']),
+                'time': nice_repr(timedelta(seconds=format_data['time']), 'noday'),
+                'state': ('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
+                         self.best_solution_state(format_data['points'], contest_problem.points),
+            }
         else:
-            return mark_safe('<td class="default_format"></td>')
+            return {
+                'has_data': False,
+                'state': 'unsubmitted'
+            }
 
     def display_participation_result(self, participation):
         return format_html(

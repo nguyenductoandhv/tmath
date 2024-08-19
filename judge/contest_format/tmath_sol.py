@@ -101,27 +101,23 @@ class TmathContestFormat(DefaultContestFormat):
 
     def display_user_problem(self, participation, contest_problem):
         format_data = (participation.format_data or {}).get(str(contest_problem.id))
-        # print(format_data)
         if format_data:
-            penalty = format_html('<small style="color:red"> ({penalty})</small>',
-                                  penalty=floatformat(format_data['penalty'])) if format_data['penalty'] else ''
             point = contest_problem.points * (self.config['weight'] ** format_data['penalty'])
-            return format_html(
-                '''<td class="{state} icpc_format">
-                        <a href="{url}">{points}{penalty}<div class="solving-time">{time}</div></a>
-                    </td>''',
-                state=(('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                       self.best_solution_state(format_data['points'],
-                                                point,
-                                                contest_problem.first_accept == participation)),
-                url=reverse('contest_user_submissions',
-                            args=[self.contest.key, participation.user.user.username, contest_problem.problem.code]),
-                points=floatformat(format_data['points']),
-                penalty=penalty,
-                time=nice_repr(timedelta(seconds=format_data['time']), 'noday'),
-            )
+            return {
+                'has_data': True,
+                'problem': contest_problem.order,
+                'username': participation.user.user.username,
+                'penalty': floatformat(format_data['penalty']) if format_data['penalty'] else -1,
+                'points': floatformat(format_data['points']),
+                'time': nice_repr(timedelta(seconds=format_data['time']), 'noday'),
+                'state': (('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
+                       self.best_solution_state(format_data['points'], point)),
+            }
         else:
-            return mark_safe('<td class="icpc_format"></td>')
+            return {
+                'has_data': False,
+                'state': 'unsubmitted'
+            }
 
     def get_label_for_problem(self, index):
         index += 1
