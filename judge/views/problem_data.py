@@ -221,6 +221,13 @@ class ProblemDataView(TitleMixin, ProblemManagerMixin):
         data_form.zip_valid = valid_files is not False
         cases_formset = self.get_case_formset(valid_files, post=True)
         if data_form.is_valid() and cases_formset.is_valid():
+            Log.objects.create(
+                user=request.user.profile,
+                title='Change testdata',
+                message='Changed testdata of problem "%s"' % (problem.name),
+                object_id=problem.pk,
+                object_title=problem.code,
+            )
             data = data_form.save()
             for case in cases_formset.save(commit=False):
                 case.dataset_id = problem.id
