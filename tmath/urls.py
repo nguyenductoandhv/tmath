@@ -152,7 +152,7 @@ urlpatterns = [
         path('/pdf/<slug:language>', problem.ProblemPdfView.as_view(), name='problem_pdf'),
         path('/clone', problem.ProblemClone.as_view(), name='problem_clone'),
         path('/submit', problem.ProblemSubmit.as_view(), name='problem_submit'),
-        path('/resubmit/<slug:submission>', problem.ProblemSubmit.as_view(), name='problem_submit'),
+        path('/resubmit/<int:submission>', problem.ProblemSubmit.as_view(), name='problem_submit'),
 
         path('/rank/', paged_list_view(ranked_submission.RankedSubmissions, 'ranked_submissions')),
         path('/submissions/', paged_list_view(submission.ProblemSubmissions, 'chronological_submissions')),
@@ -188,10 +188,10 @@ urlpatterns = [
     path('submissions/', paged_list_view(submission.AllSubmissions, 'all_submissions')),
     path('submissions/user/<str:user>/', paged_list_view(submission.AllUserSubmissions, 'all_user_submissions')),
 
-    path('src/<slug:submission>', submission.SubmissionSource.as_view(), name='submission_source'),
-    path('src/<slug:submission>/raw', submission.SubmissionSourceRaw.as_view(), name='submission_source_raw'),
+    path('src/<int:submission>', submission.SubmissionSource.as_view(), name='submission_source'),
+    path('src/<int:submission>/raw', submission.SubmissionSourceRaw.as_view(), name='submission_source_raw'),
 
-    path('submission/<slug:submission>', include([
+    path('submission/<int:submission>', include([
         path('', submission.SubmissionStatus.as_view(), name='submission_status'),
         path('/abort', submission.abort_submission, name='submission_abort'),
     ])),
