@@ -18,27 +18,16 @@
 
 {% block body %}
 <div class="flex flex-col space-y-4">
-  <form action="" method="get" class="flex items-end space-x-4">
-    <label for="selected_year" class="flex-1 block text-xl">
-      <span class="font-semibold text-gray-700 whitespace-nowrap dark:text-white">{{ _('School year') }}</span>
-      <select class="block w-full px-4 py-1.5 mt-1 border border-gray-500 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-400 focus:ring-opacity-50" name='selected_year' placehover="{{ _('Select school year') }}">
-        <option value="">--------</option>
-        {% for year in list_years %}
-        <option class="item" value="{{ year.id }}" {% if selected_year and year.id == selected_year %}selected{% endif %}>
-            {{ year }}
-        </option>
-        {% endfor %}
-      </select>
-    </label>
-    <div class="flex flex-col items-center justify-end w-1/6">
-        <button class="w-full p-2.5 text-white font-bold bg-blue-500 rounded-md" type="submit">{{_('Search')}}</button>
-    </div>
-  </form>
+  <div class="">
+    <input type="text" id="myInput" onkeyup="filterOrganization()" placeholder="Search for names.." title="Type in a name"
+      class="w-full p-2 bg-white border border-gray-300 rounded-md dark:bg-black dark:text-white dark:placeholder-gray-400 dark:border-gray-600"
+    >
+  </div>
   {% if my_org %}
   <div class="text-2xl font-bold dark:text-white">
     {{ _('My organizations') }}
   </div>
-  <table class="border">
+  <table id="my_organizations" class="border">
     <thead>
       <tr class="[&>*]:p-4 divide-x divide-white">
         <th class="w-5/6 text-white bg-black" id="name">{{ _('Name') }}</th>
@@ -79,4 +68,26 @@
     </tbody>
   </table>
 </div>
+{% endblock %}
+
+{% block bodyend %}
+<script>
+  var trs = document.querySelectorAll("tbody tr");
+  function filterOrganization() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    trs.forEach(function(tr) {
+      td = tr.getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr.style.display = "";
+        } else {
+          tr.style.display = "none";
+        }
+      }
+    });
+  }
+</script>
 {% endblock %}
