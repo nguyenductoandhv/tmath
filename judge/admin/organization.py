@@ -82,9 +82,12 @@ class OrganizationAdmin(VersionAdmin):
 
 class OrganizationRequestAdmin(admin.ModelAdmin):
     list_display = ('username', 'organization', 'state', 'time')
-    readonly_fields = ('user', 'organization')
+    readonly_fields = ('user', 'organization', 'state', 'time', 'admin', 'reason')
 
     def username(self, obj):
         return obj.user.user.username
     username.short_description = _('username')
     username.admin_order_field = 'user__user__username'
+
+    def has_add_permission(self, request):
+        return False

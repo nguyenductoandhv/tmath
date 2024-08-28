@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.db import transaction
 from django.db.models import Count
 from django.forms import ModelForm
+from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.html import format_html
@@ -381,7 +382,10 @@ class PublicSolutionAdmin(admin.ModelAdmin):
 
 
 class LogDownloadTestCaseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'problem', 'user', 'created']
+    list_display = ['id', 'problem', 'user', 'order', 'created']
     # list_filter = ['problem', 'user']
     search_fields = ['problem__code', 'problem__name', 'user__user__username', 'user__name']
     readonly_fields = ['problem', 'user', 'created', 'order']
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        return False

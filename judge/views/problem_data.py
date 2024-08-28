@@ -275,7 +275,7 @@ def problem_testcase_file(request, problem, path, id):
     # Zip two files
     response = HttpResponse()
     response['Content-Type'] = 'application/zip'
-    response['Content-Disposition'] = f'attachment; filename=testcase-{id}.zip'
+    response['Content-Disposition'] = f'attachment; filename={object.code}-test_{id}.zip'
     with ZipFile(response, 'w') as zf:
         if input_file:
             zf.writestr('input.txt', input_file)

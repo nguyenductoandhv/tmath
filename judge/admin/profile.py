@@ -124,6 +124,9 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
     ]
     inlines = [WebAuthnInline]
 
+    def has_add_permission(self, request):
+        return False
+
     def get_queryset(self, request):
         return super(ProfileAdmin, self).get_queryset(request).select_related('user')
 
@@ -195,3 +198,6 @@ class UserAdmin(OldUserAdmin):
         if not request.profile.super_admin and 'is_superuser' not in fields:
             fields += ('is_superuser', 'user_permissions')
         return fields
+
+    def has_add_permission(self, request):
+        return False
