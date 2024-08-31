@@ -30,7 +30,7 @@ LANGS = {
 class ContestDataForm(forms.Form):
     # zipfile field
     upload = forms.FileField(label='Contest data', required=True, validators=[lambda f: f.name.endswith('.zip')])
-    # contest name field
+    clear = forms.BooleanField(label='Clear all data', required=False)
 
 
 class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, FormView):
@@ -100,8 +100,13 @@ class ContestDataView(LoginRequiredMixin, PermissionRequiredMixin, TitleMixin, F
 
         with transaction.atomic():
             # Clear all old data
-            Submission.objects.filter(contest_object=self.contest).delete()
-            self.contest.users.all().delete()
+            if form.cleaned_data['clear']:
+                Submission.objects.filter(contest_object=self.contest).delete()
+                self.contest.users.all().delete()
+            else:
+                # Clear old participations in users
+                Submission.objects.filter(user__in=users, contest_object=self.contest).delete()
+                ContestParticipation.objects.filter(user__in=users, contest=self.contest).delete()
 
             # Create new participations
             participations = ContestParticipation.objects.bulk_create([
