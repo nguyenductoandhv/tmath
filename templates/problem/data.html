@@ -105,7 +105,11 @@
                             else {
                                 $lang = $file_ext.toUpperCase();
                                 if ($lang == "CPP") $lang = "CPP17";
-                                $args.val(JSON.stringify({files: $file_name, lang: $lang}));
+                                $args.val(JSON.stringify({
+                                    files: $file_name, 
+                                    lang: $lang,
+                                    type: 'testlib'
+                                }));
                                 if ($lang == "PY")
                                     $args.val('');
                             }
@@ -601,7 +605,7 @@
                                 {% if not(form.prefix and '__prefix__' in form.prefix) %}
                                 {% if (form.empty_permitted or form['type'].value() != 'C' or
                                           form['input_file'].value() in valid_files) %}
-                                    <a href="javascript:void(0)" class="download-testcase hover:cursor-pointer hover:text-blue-600 text-blue-500" data-order="{{ form.order.value() }}">Download</a>
+                                    <a href="javascript:void(0)" class="text-blue-500 download-testcase hover:cursor-pointer hover:text-blue-600" data-order="{{ form.order.value() }}">Download</a>
                                 {% endif %}
                                 {% endif %}
                             </div>
