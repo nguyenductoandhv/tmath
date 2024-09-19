@@ -234,6 +234,10 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
             func, name, desc = self.get_action('make_private')
             actions[name] = (func, name, desc)
 
+        if request.profile.super_admin:
+            func, name, desc = self.get_action('make_approved')
+            actions[name] = (func, name, desc)
+
         func, name, desc = self.get_action('update_publish_date')
         actions[name] = (func, name, desc)
 
@@ -294,6 +298,13 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
                                             count) % count)
 
     make_private.short_description = _('Mark problems as private')
+
+    def make_approved(self, request, queryset):
+        count = queryset.update(approved=True)
+        self.message_user(request, ngettext('%d problem successfully marked as approved.',
+                                            '%d problems successfully marked as approved.',
+                                            count) % count)
+    make_approved.short_description = _('Mark problems as approved')
 
     def get_queryset(self, request):
         return Problem.get_editable_problems(request.user).prefetch_related('authors__user').distinct()
