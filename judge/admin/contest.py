@@ -98,7 +98,7 @@ class ContestProblemInline(GrappelliSortableHiddenMixin, admin.TabularInline):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'problem':
             kwargs['queryset'] = Problem.objects.annotate(case_count=Count('cases')) \
-                .filter(case_count__gt=0,approved=True).order_by('-pk')
+                .filter(case_count__gt=0, approved=True).order_by('-pk')
             # kwargs['queryset'] = Problem.objects.filter(is_public=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
