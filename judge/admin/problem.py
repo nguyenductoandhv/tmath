@@ -172,7 +172,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
     fieldsets = (
         (None, {
             'fields': (
-                'code', 'name', 'is_public', 'is_manually_managed', 'date', 'authors', 'curators', 'testers',
+                'code', 'name', 'approved', 'is_public', 'is_manually_managed', 'date',
+                'authors', 'curators', 'testers',
                 'is_organization_private', 'organizations', 'submission_source_visibility_mode', 'is_full_markup',
                 'public_description', 'description', 'license', 'testcase_visibility_mode',
             ),
@@ -196,7 +197,7 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         'group',
         'license',
     ]
-    list_display = ['code', 'name', 'show_authors', 'display_types', 'classes', 'is_public', 'show_public']
+    list_display = ['code', 'name', 'show_authors', 'display_types', 'classes', 'is_public', 'approved', 'show_public']
     ordering = ['code']
     search_fields = ('code', 'name', 'types__name', 'classes__name', 'group__name')
     inlines = [
@@ -248,6 +249,8 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
             fields += ('is_full_markup',)
             if obj and obj.is_full_markup:
                 fields += ('description',)
+        if not request.profile.super_admin:
+            fields += ('approved',)
         return fields
 
     def show_authors(self, obj):
@@ -328,7 +331,7 @@ class ProblemAdmin(NoBatchDeleteMixin, VersionAdmin):
         if 'autocomplete' in request.path:
             if request.GET.get('model_name') == 'contestproblem' and request.GET.get('field_name') == 'problem':
                 queryset = queryset.annotate(case_count=Count('cases')) \
-                    .filter(case_count__gt=0).order_by('-pk')
+                    .filter(case_count__gt=0, approved=True).order_by('-pk')
             if request.GET.get('model_name') == 'publicproblem' and request.GET.get('field_name') == 'problem':
                 queryset = queryset.annotate(case_count=Count('cases')) \
                     .filter(case_count__gt=0, is_public=False).order_by('-pk')

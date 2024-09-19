@@ -13,30 +13,16 @@ class JudgeAppConfig(AppConfig):
         #          DO NOT REMOVE THINKING THE import IS UNUSED.
         # noinspection PyUnresolvedReferences
         from chat.models import ChatParticipation, ChatRoom
-        from judge.models import Organization
+        from judge.models import Organization, Problem
+        import pytz
+        from datetime import datetime
 
         from . import jinja2, signals  # noqa: F401, imported for side effects
 
-        # try:
-        #     lang = Language.get_default_language()
-        #     for user in User.objects.filter(profile=None):
-        #         # These poor profileless users
-        #         profile = Profile(user=user, language=lang)
-        #         profile.save()
-        #     for user in User.objects.filter(logged_in_user=None):
-        #         # These poor profileless users
-        #         logged_in_user = LoggedInUser(user=user)
-        #         logged_in_user.save()
-        # except DatabaseError:
-        #     pass
-        # problems = Problem.objects.all()
-        # for problem in problems:
-        #     description: str = problem.description
-        #     description = description.replace('~', '$')
-        #     problem.description = description
-        #     problem.save()
-
         try:
+            tz = pytz.timezone('Asia/Bangkok')
+            date = tz.localize(datetime(2024, 8, 1))
+            Problem.objects.filter(approved=False, date__lt=date).update(approved=True)
             for org in Organization.objects.filter(chat_room=None):
                 room = ChatRoom(organization=org, title=org.name)
                 room.save()

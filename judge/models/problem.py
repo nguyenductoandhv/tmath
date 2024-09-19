@@ -219,6 +219,8 @@ class Problem(models.Model):
                                            help_text=_('If private, only these organizations may see the problem.'))
     is_organization_private = models.BooleanField(verbose_name=_('private to organizations'), default=False)
 
+    approved = models.BooleanField(verbose_name=_('approved'), default=False)
+
     def __init__(self, *args, **kwargs):
         super(Problem, self).__init__(*args, **kwargs)
         self._translated_name_cache = {}
