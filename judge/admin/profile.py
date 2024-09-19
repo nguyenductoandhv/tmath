@@ -199,7 +199,7 @@ class UserAdmin(OldUserAdmin):
             fields += ('is_superuser', 'user_permissions')
         
         if not request.user.is_superuser:
-            fields += ('username', 'is_staff', 'is_active', 'date_joined', 'last_login')
+            fields += ('username', 'is_staff', 'is_active', 'date_joined', 'last_login', 'groups')
 
         return fields
 
