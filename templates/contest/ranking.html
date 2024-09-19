@@ -276,7 +276,7 @@
 <div class="flex flex-row-reverse items-center">
 {% if request.user.has_perm('judge.download_rank_contest') %}
 <div class="flex items-center justify-start gap-2">
-    <a class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600" href="{{ url('export_csv', contest.key) }}">Export to CSV</a>
+    <a class="p-3 font-semibold text-white bg-indigo-500 rounded-md hover:bg-indigo-600" href="{{ url('export_excel', contest.key) }}">Export to Excel</a>
 </div>
 {% endif %}
     {% if tab == 'participation' %}

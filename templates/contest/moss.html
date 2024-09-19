@@ -38,7 +38,7 @@
 {% block body %}
     {% if has_results %}
         <table class="table w-full">
-            <thead class="bg-black text-white">
+            <thead class="text-white bg-black">
             <tr class="divide-x">
                 <th class="p-2">{{ _('Problem') }}</th>
                 {% for lang in languages %}
@@ -50,12 +50,12 @@
                 {% for problem, results in moss_results %}
                     <tr id="problem-{{ problem.code }}" class="[&>*]:p-2 {{ loop.cycle('bg-gray-300', 'bg-gray-200') }} divide-x">
                         <td>
-                            <a href="{{ url('problem_detail', problem.code) }}" class="text-blue-500 hover:text-blue-600 font-semibold">{{ problem.name }}</a>
+                            <a href="{{ url('problem_detail', problem.code) }}" class="font-semibold text-blue-500 hover:text-blue-600">{{ problem.name }}</a>
                         </td>
                         {% for result in results %}
                             <td class="text-center">
                                 {% if result.submission_count %}
-                                    <a href="{{ result.url }}" class="text-blue-500 hover:text-blue-600 font-semibold">{{ result.submission_count }} {{_('submissions')}}</a>
+                                    <a href="{{ result.url }}" class="font-semibold text-blue-500 hover:text-blue-600">{{ result.submission_count }} {{_('submissions')}}</a>
                                 {% else %}
                                     {{ _('No submissions') }}
                                 {% endif %}

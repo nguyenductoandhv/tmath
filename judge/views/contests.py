@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import shutil
+import pandas
 from calendar import SUNDAY, Calendar
 from collections import defaultdict, namedtuple
 from datetime import date, datetime, time, timedelta
@@ -61,7 +62,7 @@ from judge.utils.views import (DiggPaginatorMixin, QueryStringSortMixin,
 __all__ = ['ContestList', 'ContestDetail', 'ContestRanking', 'ContestJoin', 'contestLeave', 'ContestCalendar',
            'ContestClone', 'ContestStats', 'ContestMossView', 'ContestMossDelete', 'contest_ranking_ajax',
            'ContestParticipationList', 'ContestParticipationDisqualify', 'get_contest_ranking_list',
-           'base_contest_ranking_list']
+           'base_contest_ranking_list', 'exportExcel']
 
 
 def _find_contest(request, key, private_check=True):
@@ -646,7 +647,7 @@ def make_contest_ranking_profile(contest, participation, contest_problems):
         try:
             return contest.format.display_user_problem(participation, contest_problem)
         except (KeyError, TypeError, ValueError):
-            return { 'has_data' : False } 
+            return {'has_data': False}
 
     user = participation.user
     return ContestRankingProfile(
@@ -1069,25 +1070,40 @@ class SampleContestPDF(SingleObjectMixin, View):
         return response
 
 
-def exportcsv(request, contest):
-    import codecs
+def exportExcel(request, contest):
     contest_object = Contest.objects.get(key=contest)
     response = HttpResponse()
-    response['Content-Type'] = 'text/csv'
-    response['Content-Disposition'] = 'inline; filename=%s_rank.csv' % contest_object.key
-    response.write(codecs.BOM_UTF8)
-    import csv
-    writer = csv.writer(response)
-    first_row = ['rank', 'name', 'username', 'point']
-    writer.writerow(first_row)
-    users = ContestParticipation.objects.filter(
+    response['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    response['Content-Disposition'] = 'attachment; filename=%s_rank.xlsx' % contest_object.key
+    keys = ['Rank', 'Fullname', 'Username']
+    contestProblems = contest_object.contest_problems.all()
+    for contestProblem in contestProblems:
+        keys.append(contestProblem.temporary_name)
+    keys.append('Total Point')
+    data = {key: [] for key in keys}
+    participations = ContestParticipation.objects.filter(
         contest=contest_object,
         virtual=ContestParticipation.LIVE
     ).order_by('-score')
     index = 0
-    for user in users:
+    for participation in participations:
         index += 1
-        row = [index, user.user.name, user.user.user.username, str(user.score).replace('.', ',')]
-        writer.writerow(row)
+        data['Rank'].append(index)
+        data['Fullname'].append(participation.user.name if participation.user.name else participation.user.username)
+        data['Username'].append(participation.user.username)
+        format_data = participation.format_data or {}
+        for contestProblem in contestProblems:
+            result = format_data.get(str(contestProblem.id))
+            if result:
+                point = result['points']
+                data[contestProblem.temporary_name].append(str(point))
+            else:
+                data[contestProblem.temporary_name].append('---')
+        data['Total Point'].append(str(participation.score))
+
+    df = pandas.DataFrame(data)
+
+    with pandas.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Sheet1', index=False)
 
     return response
