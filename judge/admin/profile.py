@@ -197,6 +197,10 @@ class UserAdmin(OldUserAdmin):
         fields = super().get_readonly_fields(request, obj)
         if not request.profile.super_admin and 'is_superuser' not in fields:
             fields += ('is_superuser', 'user_permissions')
+        
+        if not request.user.is_superuser:
+            fields += ('username', 'is_staff', 'is_active', 'date_joined', 'last_login')
+
         return fields
 
     def has_add_permission(self, request):
