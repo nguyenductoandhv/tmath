@@ -5345,7 +5345,7 @@ details[open]>summary {
 }
 
 .custom-typography {
-  font-family: Lucida Grande
+  /* @apply font-lucida; */
 }
 
 /* Dark highlight */
