@@ -18,6 +18,7 @@ if settings.USE_SELENIUM:
     try:
         from selenium import webdriver
         from selenium.common.exceptions import TimeoutException
+        from selenium.webdriver.chrome.service import Service
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions as EC
         from selenium.webdriver.support.ui import WebDriverWait
@@ -291,9 +292,9 @@ class SeleniumPDFRender(BasePdfMaker):
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
-        options.binary_location = settings.SELENIUM_CUSTOM_CHROME_PATH
+        service = Service(settings.SELENIUM_CHROMEDRIVER_PATH)
 
-        browser = webdriver.Chrome(settings.SELENIUM_CHROMEDRIVER_PATH, options=options)
+        browser = webdriver.Chrome(service=service, options=options)
         browser.get('file://%s' % self.htmlfile)
         self.log = self.get_log(browser)
 
