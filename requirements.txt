@@ -9,7 +9,7 @@ django-sortedm2m
 django-impersonate
 django-grappelli
 django-redis
-lxml
+lxml[html_clean]
 Pygments
 social-auth-app-django
 social-auth-core==4.3.0

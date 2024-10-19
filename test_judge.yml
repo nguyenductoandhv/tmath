@@ -6,7 +6,7 @@ alpha:
         --cap-add=SYS_PTRACE \
         -d \
         --restart=always \
-        vnoj/judge-tier1:latest \
+        vnoj/judge-tier2:latest \
         run -p 11111 -c /problems/alpha.yml \
         171.244.63.31
 
@@ -45,3 +45,9 @@ delta:
         dmoj/judge-tier1:latest \
         run -p 9999 -c /problems/delta.yml \
         "123.30.234.95"
+
+## Path: /mnt/problems/gamma.yml
+id: Gamma
+key: 8I)L)8MT-%h2(cfO*(>fr1Z}BukAK2sDtAG]_G2H&{(!SW7&lQJMycQs=C5Go~(PbQlqnO4:ln2X}o9Ip$|*d7]xa=zAx<<LaVwJ
+problem_storage_globs:
+    - /problems/*
