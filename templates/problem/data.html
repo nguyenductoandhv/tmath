@@ -260,7 +260,7 @@
                     var file = valid_files[i];
             
                     // Nhóm 1: Các file nằm trong thư mục 'in/' hoặc 'inp/'
-                    if (file.includes('/in/') || file.includes('/inp/')) {
+                    if ((file.includes('in/') || file.includes('inp/')) and !file.endsWith('/')) {
                         files_in_folder.push(file);
                     }
             
