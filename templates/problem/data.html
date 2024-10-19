@@ -252,26 +252,58 @@
                 return false;
             });
             $('a#auto-fill').click(function () {
-                var cases = new Array()
-                for (i = 0;i < valid_files.length; i++){
-                    if (valid_files[i].endsWith('in') || valid_files[i].endsWith('inp')){
-                        cases.push(valid_files[i]);
+                var files_in_folder = [];   // Nhóm 1: File nằm trong thư mục 'in/' hoặc 'inp/', yêu cầu trùng tên với file output
+                var files_with_suffix = []; // Nhóm 2: File kết thúc bằng .in hoặc .inp
+            
+                // Lặp qua tất cả các file hợp lệ
+                for (i = 0; i < valid_files.length; i++) {
+                    var file = valid_files[i];
+            
+                    // Nhóm 1: Các file nằm trong thư mục 'in/' hoặc 'inp/'
+                    if (file.includes('/in/') || file.includes('/inp/')) {
+                        files_in_folder.push(file);
+                    }
+            
+                    // Nhóm 2: Các file có đuôi .in hoặc .inp
+                    if (file.endsWith('.in') || file.endsWith('.inp')) {
+                        files_with_suffix.push(file);
                     }
                 }
-                if (cases.length == 0){
-                    alert("The test data is empty or in the wrong format. Each test case should end with .in or .inp and .out");
+
+                // Tính tổng số trường hợp test (cả nhóm 1 và nhóm 2)
+                var total_cases = files_in_folder.length + files_with_suffix.length;
+
+                // Đảm bảo số hàng trong bảng lớn hơn hoặc bằng tổng số trường hợp test
+                while ($total.val() < total_cases) {
+                    $('a#add-case-row').click(); // Thêm hàng nếu chưa đủ
                 }
-                $tr = $($table.find('.extra-row-body').html()
-                    .replace(/__prefix__/g, $total.val()));
-                
-                while($total.val() < cases.length){
-                    $('a#add-case-row').click();
+            
+                // Kiểm tra nếu không có file hợp lệ nào trong cả 2 nhóm
+                if (files_in_folder.length == 0 && files_with_suffix.length == 0) {
+                    alert("No valid files found. Ensure files are in 'in/' or 'inp/' directories, or have '.in' or '.inp' suffix.");
+                    return false;
                 }
-                for (i = 0;i < cases.length; i++){
-                    fill_selections($('select#id_cases-' + i + '-input_file'), cases[i]);
-                    fill_selections($('select#id_cases-' + i + '-output_file'), cases[i].replace(/inp(?!.*?in)/, 'out'));
+            
+                // Thao tác tiếp theo cho Nhóm 1 (file trong thư mục in/ hoặc inp/)
+                // Ví dụ: Điền các trường cho nhóm này
+                for (i = 0; i < files_in_folder.length; i++) {
+                    // Logic để xử lý nhóm 1
+                    fill_selections($('select#id_cases-' + i + '-input_file'), files_in_folder[i]);
+                    var output_file = files_in_folder[i].replace('/in/', '/out/').replace('/inp/', '/out/');
+                    fill_selections($('select#id_cases-' + i + '-output_file'), output_file);
                     $('input[id=id_cases-' + i + '-points]').val(1);
                 }
+            
+                // Thao tác tiếp theo cho Nhóm 2 (file kết thúc bằng .in hoặc .inp)
+                // Ví dụ: Điền các trường cho nhóm này bắt đầu từ vị trí tiếp theo
+                var startIndex = files_in_folder.length;
+                for (i = 0; i < files_with_suffix.length; i++) {
+                    fill_selections($('select#id_cases-' + (startIndex + i) + '-input_file'), files_with_suffix[i]);
+                    var output_file = files_with_suffix[i].replace(/\.inp?$/, '.out');
+                    fill_selections($('select#id_cases-' + (startIndex + i) + '-output_file'), output_file);
+                    $('input[id=id_cases-' + (startIndex + i) + '-points]').val(1);
+                }
+            
                 return false;
             });
             
