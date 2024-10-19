@@ -289,7 +289,7 @@
                 for (i = 0; i < files_in_folder.length; i++) {
                     // Logic để xử lý nhóm 1
                     fill_selections($('select#id_cases-' + i + '-input_file'), files_in_folder[i]);
-                    var output_file = files_in_folder[i].replace('/in/', '/out/').replace('/inp/', '/out/');
+                    var output_file = files_in_folder[i].replace('in/', 'out/').replace('inp/', 'out/');
                     fill_selections($('select#id_cases-' + i + '-output_file'), output_file);
                     $('input[id=id_cases-' + i + '-points]').val(1);
                 }
