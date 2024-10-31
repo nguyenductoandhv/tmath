@@ -148,6 +148,6 @@ def abort_submission(submission):
     if not response.get('judge-aborted', True):
         Submission.objects.filter(id=submission.id).update(status='AB', result='AB', points=0)
         # socket_messages_logger.info('Submission %s aborted', submission.id)
-        async_to_sync(send_abort_message)(Submission.get_id_secret(submission.id))
+        # async_to_sync(send_abort_message)(Submission.get_id_secret(submission.id))
         # event.post('sub_%s' % Submission.get_id_secret(submission.id), {'type': 'aborted-submission'})
-        async_to_sync(_post_update_submission)(submission, done=True)
+        # async_to_sync(_post_update_submission)(submission, done=True)
