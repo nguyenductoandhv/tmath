@@ -1,4 +1,4 @@
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseRedirect, JsonResponse
@@ -87,7 +87,7 @@ def finishTypoContest(request):
         # result.order = rank + 1
         result.is_finish = is_finish == 'true'
         result.save()
-        sync_to_async(send_message)('contest_%s' % contest, {
+        async_to_sync(send_message)('contest_%s' % contest, {
             'type': 'change.progress.participation',
             'message': {
                 'user': profile.pk,
@@ -259,7 +259,7 @@ def participate(request, pk):
     user.action = '0'
     user.save()
 
-    sync_to_async(send_message)('room_%s' % pk, {
+    async_to_sync(send_message)('room_%s' % pk, {
         'type': 'change.user',
         'message': 'participant',
     })
@@ -290,7 +290,7 @@ def spectate(request, pk):
     user.action = '1'
     user.save()
 
-    sync_to_async(send_message)('room_%s' % pk, {
+    async_to_sync(send_message)('room_%s' % pk, {
         'type': 'change.user',
         'message': 'spectator',
     })
@@ -335,7 +335,7 @@ class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
 
         self.object.contest.time_start = timezone.now() + timezone.timedelta(seconds=12)
         self.object.contest.save()
-        sync_to_async(send_message)('room_%s' % self.object.pk, {
+        async_to_sync(send_message)('room_%s' % self.object.pk, {
             'type': 'start.typo',
             'message': 'Typo contest start',
         })

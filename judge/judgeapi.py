@@ -4,7 +4,7 @@ import socket
 import struct
 import zlib
 
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 from django.utils import timezone
@@ -148,6 +148,6 @@ def abort_submission(submission):
     if not response.get('judge-aborted', True):
         Submission.objects.filter(id=submission.id).update(status='AB', result='AB', points=0)
         # socket_messages_logger.info('Submission %s aborted', submission.id)
-        sync_to_async(send_abort_message)(Submission.get_id_secret(submission.id))
+        async_to_sync(send_abort_message)(Submission.get_id_secret(submission.id))
         # event.post('sub_%s' % Submission.get_id_secret(submission.id), {'type': 'aborted-submission'})
-        sync_to_async(_post_update_submission)(submission, done=True)
+        async_to_sync(_post_update_submission)(submission, done=True)
