@@ -7,7 +7,7 @@ import urllib
 from collections import deque, namedtuple
 from operator import itemgetter
 
-from asgiref.sync import async_to_sync, sync_to_async
+from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
 from django import db
 from django.conf import settings
@@ -33,15 +33,17 @@ SubmissionData = namedtuple(
     'time memory short_circuit pretests_only contest_no attempt_no user_id file_only file_size_limit',
 )
 
-channel_layer = get_channel_layer()
+
 
 async def send_detailsubmission_update(secret, message):
+    channel_layer = get_channel_layer()
     await channel_layer.group_send(
         'async_sub_%s' % secret,
         message,
     )
 
 async def send_submission_update(channel, message):
+    channel_layer = get_channel_layer()
     await channel_layer.group_send(
         channel,
         message,

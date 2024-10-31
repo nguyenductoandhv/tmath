@@ -13,11 +13,11 @@ from django.utils import timezone
 
 logger = logging.getLogger('judge.judgeapi')
 size_pack = struct.Struct('!I')
-channel_layer = get_channel_layer()
 socket_messages_logger = logging.getLogger('channels')
 
 
 async def _post_update_submission(submission, done=False):
+    channel_layer = get_channel_layer()
     # if submission.problem.is_public:
     #     if done:
     #         socket_messages_logger.info('Submission %s done', submission.id)
@@ -131,6 +131,7 @@ def disconnect_judge(judge, force=False):
 
 
 async def send_abort_message(submission_secret):
+    channel_layer = get_channel_layer()
     await channel_layer.group_send(
         'async_sub_%s' % submission_secret,
         {

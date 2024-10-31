@@ -21,9 +21,10 @@ from typeracer.models import (TypoContest, TypoData, TypoResult, TypoRoom,
 
 # Create your views here.
 
-channel_layer = get_channel_layer()
+
 
 async def send_message(channel, message):
+    channel_layer = get_channel_layer()
     await channel_layer.group_send(
         channel, message,
     )
