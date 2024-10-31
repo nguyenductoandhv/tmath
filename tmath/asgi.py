@@ -15,9 +15,7 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from django.urls import path
 
-from judge.consumers import \
-    AsyncDetailSubmission as \
-    DetailSubmission  # TicketConsumer, DetailTicketConsumer
+from judge.consumers import AsyncDetailSubmission as DetailSubmission
 from judge.consumers import AsyncSubmissionConsumer as SubmissionConsumer
 from typeracer.consumers import TypoContestConsumer, TypoRoomConsumer
 

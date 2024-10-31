@@ -4,7 +4,7 @@ import socket
 import struct
 import zlib
 
-from asgiref.sync import async_to_sync
+from asgiref.sync import async_to_sync, sync_to_async
 from channels.layers import get_channel_layer
 from django.conf import settings
 from django.utils import timezone
@@ -17,13 +17,13 @@ channel_layer = get_channel_layer()
 socket_messages_logger = logging.getLogger('channels')
 
 
-def _post_update_submission(submission, done=False):
+async def _post_update_submission(submission, done=False):
     # if submission.problem.is_public:
     #     if done:
     #         socket_messages_logger.info('Submission %s done', submission.id)
     #     else:
     #         socket_messages_logger.info('Submission %s updating', submission.id)
-    async_to_sync(channel_layer.group_send)(
+    await channel_layer.group_send(
         'async_submissions',
         {
             'type': 'done.submission' if done else 'update.submission',
@@ -130,6 +130,15 @@ def disconnect_judge(judge, force=False):
     judge_request({'name': 'disconnect-judge', 'judge-id': judge.name, 'force': force}, reply=False)
 
 
+async def send_abort_message(submission_secret):
+    await channel_layer.group_send(
+        'async_sub_%s' % submission_secret,
+        {
+            'type': 'aborted.submission',
+            'message': 'Aborted',
+        },
+    )
+
 def abort_submission(submission):
     from .models import Submission
     response = judge_request({'name': 'terminate-submission', 'submission-id': submission.id})
@@ -138,12 +147,6 @@ def abort_submission(submission):
     if not response.get('judge-aborted', True):
         Submission.objects.filter(id=submission.id).update(status='AB', result='AB', points=0)
         # socket_messages_logger.info('Submission %s aborted', submission.id)
-        async_to_sync(channel_layer.group_send)(
-            'async_sub_%s' % Submission.get_id_secret(submission.id),
-            {
-                'type': 'aborted.submission',
-                'message': 'Aborted',
-            },
-        )
+        sync_to_async(send_abort_message)(Submission.get_id_secret(submission.id))
         # event.post('sub_%s' % Submission.get_id_secret(submission.id), {'type': 'aborted-submission'})
-        _post_update_submission(submission, done=True)
+        sync_to_async(_post_update_submission)(submission, done=True)
