@@ -569,7 +569,11 @@ class ContestParticipationAdmin(admin.ModelAdmin):
     autocomplete_fields = ['user', 'contest']
 
     def get_queryset(self, request):
-        return super(ContestParticipationAdmin, self).get_queryset(request).only(
+        qs = super().get_queryset(request)
+        last_record = qs.order_by('pk').last()
+        if last_record:
+            qs = qs.filter(pk__gt=last_record.pk - 50000)
+        return qs.only(
             'contest__name', 'contest__format_name', 'contest__format_config',
             'user__user__username', 'real_start', 'score', 'cumtime', 'tiebreaker', 'virtual',
         )
