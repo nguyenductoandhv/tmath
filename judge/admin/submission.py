@@ -146,7 +146,9 @@ class SubmissionAdmin(admin.ModelAdmin):
         return fields
 
     def get_queryset(self, request):
-        queryset = Submission.objects.select_related('problem', 'user__user', 'language').only(
+        last_record = Submission.objects.order_by('id').last()
+        queryset = Submission.objects.filter(pk__gt=last_record.pk - 50000) \
+            .select_related('problem', 'user__user', 'language').only(
             'problem__code', 'problem__name', 'user__user__username', 'language__name',
             'time', 'memory', 'points', 'status', 'result',
         )
