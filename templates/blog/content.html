@@ -17,7 +17,7 @@
 
 {% block body %}
     <div class="post-full">
-        <div class="time">
+        <div class="border-b time">
             {% with authors=post.authors.all() %}
                 {% if authors %}
                     <span class="post-authors">{{ link_users(authors) }}</span>
@@ -29,7 +29,7 @@
                 {% endtrans %}
             </span>
         </div>
-        <div class="prose max-w-none">
+        <div class="custom-typography">
             {% cache 86400 'post_content' post.id MATH_ENGINE %}
                 {{ post.content|markdown('blog', MATH_ENGINE)|reference|str|safe}}
             {% endcache %}
@@ -49,4 +49,5 @@
         {% include "mathjax-load.html" %}
     {% endif %}
     {% include "comments/math.html" %}
+    {% include "copybuttonload.html" %}
 {% endblock %}

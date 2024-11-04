@@ -459,7 +459,12 @@ details[open]>summary {
 .custom-typography {
   @apply prose prose-slate max-w-none dark:prose-invert dark:prose-a:text-indigo-400;
   @apply prose-code:before:content-none prose-code:after:content-none;
-  /* @apply font-lucida; */
+  @apply prose-pre:border prose-pre:border-gray-500 prose-pre:bg-slate-200 prose-pre:rounded-lg;
+  @apply prose-pre:dark:bg-slate-800 prose-pre:dark:text-white;
+}
+
+.copy-button {
+  @apply absolute top-0 right-0 px-2 py-1 text-sm z-30 border border-gray-500 rounded-tr-lg rounded-bl-lg;
 }
 
 /* Dark highlight */

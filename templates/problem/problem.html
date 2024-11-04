@@ -426,7 +426,7 @@
             </div>
         </div>
     </div>
-    <div class="p-4 transition-colors bg-white dark:bg-dark-content dark:prose-pre:bg-slate-600 dark:prose-pre:text-slate-300 prose-td:font-roboto custom-typography rounded-xl">
+    <div class="p-4 transition-colors bg-white dark:bg-dark-content prose-td:font-roboto custom-typography rounded-xl">
         {% cache 86400 'problem_html' problem.id MATH_ENGINE LANGUAGE_CODE %}
             {{ description|markdown(problem.markdown_style, MATH_ENGINE)|reference|str|safe }}
         {% endcache %}
@@ -483,4 +483,5 @@
     {% if REQUIRE_JAX %}
         {% include "mathjax-load.html" %}
     {% endif %}
+    {% include "copybuttonload.html" %}
 {% endblock %}

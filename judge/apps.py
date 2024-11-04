@@ -37,9 +37,9 @@ class JudgeAppConfig(AppConfig):
         #         data.save()
 
         try:
-            tz = pytz.timezone('Asia/Bangkok')
-            date = tz.localize(datetime(2024, 8, 1))
-            Problem.objects.filter(approved=False, date__lt=date).update(approved=True)
+            # tz = pytz.timezone('Asia/Bangkok')
+            # date = tz.localize(datetime(2024, 8, 1))
+            # Problem.objects.filter(approved=False, date__lt=date).update(approved=True)
             for org in Organization.objects.filter(chat_room=None):
                 room = ChatRoom(organization=org, title=org.name)
                 room.save()
