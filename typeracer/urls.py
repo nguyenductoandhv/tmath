@@ -1,10 +1,10 @@
 from django.urls import include, path
 
-from typeracer.views import (Contest, CreateRoom, JoinRoom, MultiRoomList,
-                             Racer, Ranking, RoomDetail, RoomInfo, LeaveRoom,
-                             SoloRoomList, TypoRoomList, finishTypoContest,
-                             getQuote, participate, spectate, updateProgress,
-                             CreateContest)
+from typeracer.views import (Contest, CreateContest, CreateRoom, JoinRoom,
+                             LeaveRoom, MultiRoomList, Racer, Ranking,
+                             RoomDetail, RoomInfo, SoloRoomList, TypoRoomList,
+                             finishTypoContest, getQuote, participate,
+                             spectate, updateProgress)
 
 app_name = 'typeracer'
 

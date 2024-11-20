@@ -21,11 +21,11 @@ from typeracer.models import (TypoContest, TypoData, TypoResult, TypoRoom,
 
 # Create your views here.
 
+channel_layer = get_channel_layer()
 
 
-async def send_message(channel, message):
-    channel_layer = get_channel_layer()
-    await channel_layer.group_send(
+def send_message(channel, message):
+    async_to_sync(channel_layer.group_send)(
         channel, message,
     )
 
@@ -87,23 +87,13 @@ def finishTypoContest(request):
         # result.order = rank + 1
         result.is_finish = is_finish == 'true'
         result.save()
-        async_to_sync(send_message)('contest_%s' % contest, {
+        send_message('contest_%s' % contest, {
             'type': 'change.progress.participation',
             'message': {
                 'user': profile.pk,
                 'progress': progress,
             },
         })
-        # async_to_sync(channel_layer.group_send)(
-        #     'contest_%s' % contest,
-        #     {
-        #         'type': 'change.progress.participation',
-        #         'message': {
-        #             'user': profile.pk,
-        #             'progress': progress,
-        #         },
-        #     },
-        # )
         if is_finish == 'true':
             TypoRoomUser.objects.delete(profile=profile, room=contest_object.room)
     return JsonResponse({
@@ -259,17 +249,10 @@ def participate(request, pk):
     user.action = '0'
     user.save()
 
-    async_to_sync(send_message)('room_%s' % pk, {
+    send_message('room_%s' % pk, {
         'type': 'change.user',
         'message': 'participant',
     })
-    # async_to_sync(channel_layer.group_send)(
-    #     'room_%s' % pk,
-    #     {
-    #         'type': 'change.user',
-    #         'message': 'participant',
-    #     },
-    # )
 
     return JsonResponse({
         'result': 'Change to participant success',
@@ -290,17 +273,10 @@ def spectate(request, pk):
     user.action = '1'
     user.save()
 
-    async_to_sync(send_message)('room_%s' % pk, {
+    send_message('room_%s' % pk, {
         'type': 'change.user',
         'message': 'spectator',
     })
-    # async_to_sync(channel_layer.group_send)(
-    #     'room_%s' % pk,
-    #     {
-    #         'type': 'change.user',
-    #         'message': 'spectator',
-    #     },
-    # )
 
     return JsonResponse({
         'result': 'Change to spectator success',
@@ -335,17 +311,10 @@ class CreateContest(LoginRequiredMixin, RoomMixin, SingleObjectMixin, View):
 
         self.object.contest.time_start = timezone.now() + timezone.timedelta(seconds=12)
         self.object.contest.save()
-        async_to_sync(send_message)('room_%s' % self.object.pk, {
+        send_message('room_%s' % self.object.pk, {
             'type': 'start.typo',
             'message': 'Typo contest start',
         })
-        # async_to_sync(channel_layer.group_send)(
-        #     'room_%s' % self.object.pk,
-        #     {
-        #         'type': 'start.typo',
-        #         'message': 'Typo contest start',
-        #     },
-        # )
         return HttpResponseRedirect(reverse('typeracer:room_detail', args=(self.object.pk, )))
 
 

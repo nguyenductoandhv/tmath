@@ -14,16 +14,16 @@ from django.utils import timezone
 logger = logging.getLogger('judge.judgeapi')
 size_pack = struct.Struct('!I')
 socket_messages_logger = logging.getLogger('channels')
+channel_layer = get_channel_layer()
 
 
-async def _post_update_submission(submission, done=False):
-    channel_layer = get_channel_layer()
+def _post_update_submission(submission, done=False):
     # if submission.problem.is_public:
     #     if done:
     #         socket_messages_logger.info('Submission %s done', submission.id)
     #     else:
     #         socket_messages_logger.info('Submission %s updating', submission.id)
-    await channel_layer.group_send(
+    async_to_sync(channel_layer.group_send)(
         'async_submissions',
         {
             'type': 'done.submission' if done else 'update.submission',
@@ -37,12 +37,6 @@ async def _post_update_submission(submission, done=False):
             },
         },
     )
-    # event.post('submissions', {'type': 'done-submission' if done else 'update-submission',
-    #                            'id': submission.id,
-    #                            'contest': submission.contest_key,
-    #                            'user': submission.user_id, 'problem': submission.problem_id,
-    #                            'status': submission.status, 'language': submission.language.key})
-
 
 def judge_request(packet, reply=True):
     sock = socket.create_connection(settings.BRIDGED_DJANGO_CONNECT or
@@ -130,9 +124,8 @@ def disconnect_judge(judge, force=False):
     judge_request({'name': 'disconnect-judge', 'judge-id': judge.name, 'force': force}, reply=False)
 
 
-async def send_abort_message(submission_secret):
-    channel_layer = get_channel_layer()
-    await channel_layer.group_send(
+def send_abort_message(submission_secret):
+    async_to_sync(channel_layer.group_send)(
         'async_sub_%s' % submission_secret,
         {
             'type': 'aborted.submission',
@@ -148,6 +141,5 @@ def abort_submission(submission):
     if not response.get('judge-aborted', True):
         Submission.objects.filter(id=submission.id).update(status='AB', result='AB', points=0)
         # socket_messages_logger.info('Submission %s aborted', submission.id)
-        # async_to_sync(send_abort_message)(Submission.get_id_secret(submission.id))
-        # event.post('sub_%s' % Submission.get_id_secret(submission.id), {'type': 'aborted-submission'})
-        # async_to_sync(_post_update_submission)(submission, done=True)
+        send_abort_message(Submission.get_id_secret(submission.id))
+        _post_update_submission(submission, done=True)
