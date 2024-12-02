@@ -372,7 +372,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             # for contest in Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time'):
             #     rate_contest(contest)
         contests = Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time')
-        batch_size = 100
+        batch_size = 1000
         paginator = Paginator(contests, batch_size)
         for page in paginator.page_range:
             with transaction.atomic():
