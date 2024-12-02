@@ -3,6 +3,7 @@ from random import randrange
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.db import connection, transaction
 from django.db.models import Count, Q, TextField
 from django.forms import ModelForm, ModelMultipleChoiceField
@@ -368,8 +369,15 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             with connection.cursor() as cursor:
                 cursor.execute('TRUNCATE TABLE `%s`' % Rating._meta.db_table)
             Profile.objects.update(rating=None)
-            for contest in Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time'):
-                rate_contest(contest)
+            # for contest in Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time'):
+            #     rate_contest(contest)
+        contests = Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time')
+        batch_size = 100
+        paginator = Paginator(contests, batch_size)
+        for page in paginator.page_range:
+            with transaction.atomic():
+                for contest in paginator.page(page).object_list:
+                    rate_contest(contest)
         return HttpResponseRedirect(reverse('admin:judge_contest_changelist'))
 
     def rate_view(self, request, id):
