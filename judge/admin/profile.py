@@ -126,9 +126,16 @@ class ProfileAdmin(NoBatchDeleteMixin, VersionAdmin):
 
     def has_add_permission(self, request):
         return False
+    
+    def has_view_permission(self, request, obj=None):
+        # Người dùng có quyền hoặc là chính họ
+        return True if obj is None else obj.user == request.user or request.user.has_perm('judge.view_profile')
 
     def get_queryset(self, request):
-        return super(ProfileAdmin, self).get_queryset(request).select_related('user')
+        queryset = super(ProfileAdmin, self).get_queryset(request).select_related('user')
+        if not request.user.has_perm('judge.view_profile'):
+            queryset = queryset.filter(user=request.user)
+        return queryset
 
     def get_fields(self, request, obj=None):
         if request.user.has_perm('judge.totp'):
