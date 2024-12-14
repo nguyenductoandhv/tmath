@@ -848,6 +848,8 @@ class ContestProblem(models.Model):
             return False
         if request.user.is_superuser or self.contest.is_editable_by(request.user):
             return True
+        if request.user.has_perm('judge.view_all_contest_problem'):
+            return True
         if not request.participation or not request.participation.contest == self.contest:
             return False
         if request.participation.virtual >= 1:
@@ -861,6 +863,9 @@ class ContestProblem(models.Model):
         verbose_name = _('contest problem')
         verbose_name_plural = _('contest problems')
         ordering = ('order',)
+        permissions = (
+            ('view_all_contest_problem', _('View all contest problem')),
+        )
 
 
 class ContestSubmission(models.Model):
