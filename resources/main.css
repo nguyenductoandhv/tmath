@@ -401,11 +401,11 @@ input.incorrect {
   @apply block rounded-xl border-2 border-blue-600 px-3 [&>*:last-child]:mb-4 [&>*:nth-child(2)]:mt-3
 }
 
-.custom-typography details.note summary {
+.custom-typography details.note > summary {
   @apply -mx-3 rounded-lg bg-blue-300 p-3 text-lg font-bold text-black marker:content-none focus:outline-none cursor-pointer
 }
 
-.custom-typography details[open].note summary {
+.custom-typography details[open].note > summary {
   @apply rounded-b-none bg-blue-600 text-white
 } 
 
@@ -413,11 +413,11 @@ input.incorrect {
   @apply block rounded-xl border-2 border-green-600 px-3 [&>*:last-child]:mb-4 [&>*:nth-child(2)]:mt-3;
 }
 
-.custom-typography details.success summary {
+.custom-typography details.success > summary {
   @apply p-3 -mx-3 text-lg font-bold text-black rounded-lg cursor-pointer bg-lime-300 marker:content-none focus:outline-none;
 }
 
-.custom-typography details[open].success summary {
+.custom-typography details[open].success > summary {
   @apply text-white bg-green-600 rounded-b-none;
 }
 
