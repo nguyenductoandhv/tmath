@@ -393,6 +393,10 @@ input.incorrect {
   @apply bg-red-500 text-white
 }
 
+.custom-typography details {
+  @apply block px-2 my-5 rounded-md bg-gray-50 border transition-all ease-in-out
+}
+
 .custom-typography details.note {
   @apply block rounded-xl border-2 border-blue-600 px-3 [&>*:last-child]:mb-4 [&>*:nth-child(2)]:mt-3
 }
