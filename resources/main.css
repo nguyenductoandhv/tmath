@@ -394,7 +394,7 @@ input.incorrect {
 }
 
 .custom-typography details {
-  @apply block px-2 my-5 rounded-md bg-gray-50 border transition-all ease-in-out
+  @apply block px-2 my-5 rounded-md bg-gray-50 border transition-all ease-in-out dark:bg-gray-800
 }
 
 .custom-typography details.note {
