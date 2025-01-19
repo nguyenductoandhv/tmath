@@ -36,6 +36,17 @@
     box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
     @apply transition-all ease-in-out duration-500 rounded-full;
   }
+  .container {
+    @apply max-w-xl md:max-w-3xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-8xl mx-auto px-3;
+  }
+  .row {
+    @apply flex flex-wrap -mx-3 -mt-0 [&>*]:px-3 [&>*]:max-w-full;
+  }
+  .floating-label {
+      @apply absolute top-0 left-0 z-10 h-full pointer-events-none text-ellipsis whitespace-nowrap overflow-hidden text-start border border-transparent;
+      @apply transform origin-top-left transition-all duration-100 ease-in-out;
+      @apply peer-focus:translate-x-1 peer-focus:-translate-y-2 peer-focus:scale-75 peer-focus:text-slate-500 peer-[:not(:placeholder-shown)]:translate-x-1 peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-75 peer-[:not(:placeholder-shown)]:text-slate-500;
+  }
 }
 
 .default-result {
@@ -251,19 +262,19 @@
 }
 
 
-.prose .table {
+.custom-typography .table {
   @apply table-fixed
 }
 
-.prose .table thead th:nth-child(1) {
+.custom-typography .table thead th:nth-child(1) {
   @apply !rounded-tl-none
 }
 
-.prose .table thead th:nth-last-child(1) {
+.custom-typography .table thead th:nth-last-child(1) {
   @apply !rounded-tr-none
 }
 
-.prose img.emojione {
+.custom-typography img.emojione {
   @apply inline-flex h-5 align-text-top my-0
 }
 
@@ -382,27 +393,27 @@ input.incorrect {
   @apply bg-red-500 text-white
 }
 
-.prose details.note {
+.custom-typography details.note {
   @apply block rounded-xl border-2 border-blue-600 px-3 [&>*:last-child]:mb-4 [&>*:nth-child(2)]:mt-3
 }
 
-.prose details.note summary {
+.custom-typography details.note summary {
   @apply -mx-3 rounded-lg bg-blue-300 p-3 text-lg font-bold text-black marker:content-none focus:outline-none cursor-pointer
 }
 
-.prose details[open].note summary {
+.custom-typography details[open].note summary {
   @apply rounded-b-none bg-blue-600 text-white
 } 
 
-.prose details.success {
+.custom-typography details.success {
   @apply block rounded-xl border-2 border-green-600 px-3 [&>*:last-child]:mb-4 [&>*:nth-child(2)]:mt-3;
 }
 
-.prose details.success summary {
+.custom-typography details.success summary {
   @apply p-3 -mx-3 text-lg font-bold text-black rounded-lg cursor-pointer bg-lime-300 marker:content-none focus:outline-none;
 }
 
-.prose details[open].success summary {
+.custom-typography details[open].success summary {
   @apply text-white bg-green-600 rounded-b-none;
 }
 
@@ -461,6 +472,10 @@ details[open]>summary {
   @apply prose-code:before:content-none prose-code:after:content-none prose-code:dark:bg-slate-800;
   @apply prose-pre:border prose-pre:border-gray-500 prose-pre:bg-slate-200 prose-pre:rounded-lg;
   @apply prose-pre:dark:bg-slate-800 prose-pre:dark:text-white;
+}
+
+.custom-typography > iframe {
+  @apply w-full rounded-md;
 }
 
 .copy-button {
