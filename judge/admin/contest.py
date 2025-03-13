@@ -21,7 +21,7 @@ from django_ace import AceWidget
 from judge.models import (Contest, ContestProblem, ContestSubmission, Problem,
                           Profile, Rating, SampleContest, Submission)
 from judge.models.contest import ContestLevel, SampleContestProblem
-from judge.ratings import rate_contest
+from judge.tasks import rate_contest
 from judge.utils.views import NoBatchDeleteMixin
 from judge.widgets import (AdminHeavySelect2MultipleWidget,
                            AdminHeavySelect2Widget, AdminMartorWidget)
@@ -369,15 +369,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
             with connection.cursor() as cursor:
                 cursor.execute('TRUNCATE TABLE `%s`' % Rating._meta.db_table)
             Profile.objects.update(rating=None)
-            # for contest in Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time'):
-            #     rate_contest(contest)
-        contests = Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time')
-        batch_size = 1000
-        paginator = Paginator(contests, batch_size)
-        for page in paginator.page_range:
-            with transaction.atomic():
-                for contest in paginator.page(page).object_list:
-                    rate_contest(contest)
+        rate_contest.delay()
         return HttpResponseRedirect(reverse('admin:judge_contest_changelist'))
 
     def rate_view(self, request, id):
@@ -386,8 +378,7 @@ class ContestAdmin(NoBatchDeleteMixin, VersionAdmin):
         contest = get_object_or_404(Contest, id=id)
         if not contest.is_rated or not contest.ended:
             raise Http404()
-        with transaction.atomic():
-            contest.rate()
+        rate_contest.delay(id)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('admin:judge_contest_changelist')))
 
     def get_form(self, request, obj=None, **kwargs):

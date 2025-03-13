@@ -456,19 +456,6 @@ class Contest(models.Model):
             queryset = queryset.filter(q)
         return queryset.distinct()
 
-    def rate(self):
-        with transaction.atomic():
-            Rating.objects.filter(contest__end_time__range=(self.end_time, self._now)).delete()
-        contests = Contest.objects.filter(
-            is_rated=True, end_time__range=(self.end_time, self._now),
-        ).order_by('end_time')
-        batch_size = 1000
-        paginator = Paginator(contests, batch_size)
-        for page in paginator.page_range:
-            with transaction.atomic():
-                for contest in paginator.page(page).object_list:
-                    rate_contest(contest)
-
     def can_view_tasks(self, user):
         if self.is_public_contest:
             return True
