@@ -3,7 +3,6 @@ from random import randrange
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator
 from django.db import connection, transaction
 from django.db.models import Count, Q, TextField
 from django.forms import ModelForm, ModelMultipleChoiceField

@@ -23,7 +23,7 @@ class DefaultLimitContestFormat(DefaultContestFormat):
                 cumtime += dt
             format_data[str(result['problem_id'])] = {'time': dt, 'points': result['points']}
             map_points[result['problem__order']] = (result['points'], result['problem__points'])
-        
+
         last = -1
         for i in sorted(map_points.keys()):
             if i == last + 1:

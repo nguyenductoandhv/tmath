@@ -5,7 +5,6 @@ from django.db.models import Max
 from django.template.defaultfilters import floatformat
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from judge.contest_format.base import BaseContestFormat
@@ -56,18 +55,18 @@ class DefaultContestFormat(BaseContestFormat):
                 'points': floatformat(format_data['points']),
                 'time': nice_repr(timedelta(seconds=format_data['time']), 'noday'),
                 'state': ('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                         self.best_solution_state(format_data['points'], contest_problem.points),
+                self.best_solution_state(format_data['points'], contest_problem.points),
             }
         else:
             return {
                 'has_data': False,
-                'state': 'unsubmitted'
+                'state': 'unsubmitted',
             }
 
     def display_participation_result(self, participation):
         return format_html(
             u'''<td class="sticky right-0 default_format">
-                <a class="font-bold text-black dark:text-white" 
+                <a class="font-bold text-black dark:text-white"
                    href="{url}">{points}<div class="solving-time">{cumtime}</div></a>
             </td>''',
             url=reverse('contest_all_user_submissions',

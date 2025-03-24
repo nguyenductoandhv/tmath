@@ -35,17 +35,20 @@ SubmissionData = namedtuple(
 
 channel_layer = get_channel_layer()
 
+
 def send_detailsubmission_update(secret, message):
     async_to_sync(channel_layer.group_send)(
         'async_sub_%s' % secret,
         message,
     )
 
+
 def send_submission_update(channel, message):
     async_to_sync(channel_layer.group_send)(
         channel,
         message,
     )
+
 
 def get_submission_file_url(source):
     """ Get absolute URL to submission file
@@ -222,12 +225,12 @@ class JudgeHandler(ZlibPacketHandler):
             try:
                 pid, time, memory, short_circuit, lid, is_pretested, sub_date, uid, part_virtual, part_id, \
                     file_only, file_size_limit = (
-                    Submission.objects.filter(id=submission)
-                    .values_list('problem__id', 'problem__time_limit', 'problem__memory_limit',
-                               'problem__short_circuit', 'language__id', 'is_pretested',
-                               'date', 'user__id',
-                               'contest__participation__virtual', 'contest__participation__id',
-                               'language__file_only', 'language__file_size_limit')).get()
+                        Submission.objects.filter(id=submission)
+                        .values_list('problem__id', 'problem__time_limit', 'problem__memory_limit',
+                                     'problem__short_circuit', 'language__id', 'is_pretested',
+                                     'date', 'user__id',
+                                     'contest__participation__virtual', 'contest__participation__id',
+                                     'language__file_only', 'language__file_size_limit')).get()
                 break  # If successful, break the retry loop
             except Submission.DoesNotExist:
                 retry_count += 1

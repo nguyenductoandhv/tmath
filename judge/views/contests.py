@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import shutil
-import pandas
 from calendar import SUNDAY, Calendar
 from collections import defaultdict, namedtuple
 from datetime import date, datetime, time, timedelta
@@ -10,6 +9,7 @@ from functools import partial
 from itertools import chain
 from operator import attrgetter, itemgetter
 
+import pandas
 from django import forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -1083,7 +1083,7 @@ def exportExcel(request, contest):
     data = {key: [] for key in keys}
     participations = ContestParticipation.objects.filter(
         contest=contest_object,
-        virtual=ContestParticipation.LIVE
+        virtual=ContestParticipation.LIVE,
     ).order_by('-score')
     index = 0
     for participation in participations:

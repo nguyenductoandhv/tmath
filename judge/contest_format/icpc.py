@@ -3,9 +3,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.template.defaultfilters import floatformat
-from django.urls import reverse
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 
 from judge.contest_format.default import DefaultContestFormat
@@ -108,12 +105,12 @@ class ICPCContestFormat(DefaultContestFormat):
                 'points': floatformat(format_data['points']),
                 'time': nice_repr(timedelta(seconds=format_data['time']), 'noday'),
                 'state': ('pretest-' if self.contest.run_pretests_only and contest_problem.is_pretested else '') +
-                         self.best_solution_state(format_data['points'], contest_problem.points),
+                self.best_solution_state(format_data['points'], contest_problem.points),
             }
         else:
             return {
                 'has_data': False,
-                'state': 'unsubmitted'
+                'state': 'unsubmitted',
             }
 
     def get_label_for_problem(self, index):

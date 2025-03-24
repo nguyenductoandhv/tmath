@@ -1,17 +1,14 @@
 from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models, transaction
 from django.db.models import CASCADE, Q
-# from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from jsonfield import JSONField
-# from lupa import LuaRuntime
 from moss import MOSS_LANG_C, MOSS_LANG_CC, MOSS_LANG_JAVA, MOSS_LANG_PYTHON
 
 from judge import contest_format
@@ -19,7 +16,6 @@ from judge.models.choices import NEWBIE, RATE
 from judge.models.problem import Problem
 from judge.models.profile import Organization, Profile
 from judge.models.submission import Submission
-from judge.ratings import rate_contest
 
 __all__ = ['Contest', 'ContestTag', 'ContestParticipation', 'ContestProblem', 'ContestSubmission', 'Rating']
 

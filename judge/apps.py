@@ -12,12 +12,12 @@ class JudgeAppConfig(AppConfig):
         #          OPERATIONS MAY HAVE SIDE EFFECTS.
         #          DO NOT REMOVE THINKING THE import IS UNUSED.
         # noinspection PyUnresolvedReferences
-        from datetime import datetime
+        # from datetime import datetime
 
-        import pytz
+        # import pytz
 
         from chat.models import ChatParticipation, ChatRoom
-        from judge.models import Organization, Problem
+        from judge.models import Organization
 
         from . import jinja2, signals  # noqa: F401, imported for side effects
 

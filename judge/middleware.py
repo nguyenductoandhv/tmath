@@ -19,6 +19,7 @@ from requests.exceptions import HTTPError
 
 logger = logging.getLogger('judge.request')
 
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
