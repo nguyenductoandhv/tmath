@@ -8,7 +8,7 @@ from judge.utils.celery import Progress
 
 
 @shared_task(bind=True)
-def rate_contest(self, contest_id = None):
+def rate_contest(self, contest_id=None):
     if contest_id is None:
         contests = Contest.objects.filter(is_rated=True, end_time__lte=timezone.now()).order_by('end_time')
     else:

@@ -550,7 +550,7 @@ def user_ranking_redirect(request):
     except KeyError:
         raise Http404()
     user = get_object_or_404(Profile, user__username=username)
-    rank = Profile.objects.filter(is_unlisted=False, user__is_active=True, 
+    rank = Profile.objects.filter(is_unlisted=False, user__is_active=True,
                                   performance_points__gt=user.performance_points).count()
     rank += Profile.objects.filter(
         is_unlisted=False, user__is_active=True, performance_points__exact=user.performance_points, id__lt=user.id,
