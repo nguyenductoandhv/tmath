@@ -214,22 +214,33 @@ class JudgeHandler(ZlibPacketHandler):
     def get_related_submission_data(self, submission):
         _ensure_connection()
 
-        try:
-            pid, time, memory, short_circuit, lid, is_pretested, sub_date, uid, part_virtual, part_id, \
-                file_only, file_size_limit = (
+        MAX_RETRIES = 3
+        RETRY_DELAY = 0.5  # seconds
+        retry_count = 0
+
+        while retry_count < MAX_RETRIES:
+            try:
+                pid, time, memory, short_circuit, lid, is_pretested, sub_date, uid, part_virtual, part_id, \
+                    file_only, file_size_limit = (
                     Submission.objects.filter(id=submission)
                     .values_list('problem__id', 'problem__time_limit', 'problem__memory_limit',
-                                 'problem__short_circuit', 'language__id', 'is_pretested',
-                                 'date', 'user__id',
-                                 'contest__participation__virtual', 'contest__participation__id',
-                                 'language__file_only', 'language__file_size_limit')).get()
-        except Submission.DoesNotExist:
-            logger.error('Submission vanished: %s', submission)
-            json_log.error(self._make_json_log(
-                sub=self._working, action='request',
-                info='submission vanished when fetching info',
-            ))
-            return
+                               'problem__short_circuit', 'language__id', 'is_pretested',
+                               'date', 'user__id',
+                               'contest__participation__virtual', 'contest__participation__id',
+                               'language__file_only', 'language__file_size_limit')).get()
+                break  # If successful, break the retry loop
+            except Submission.DoesNotExist:
+                retry_count += 1
+                if retry_count < MAX_RETRIES:
+                    logger.warning('Submission %s not found, retrying (%d/%d)...', submission, retry_count, MAX_RETRIES)
+                    time.sleep(RETRY_DELAY)
+                else:
+                    logger.error('Submission vanished after %d retries: %s', MAX_RETRIES, submission)
+                    json_log.error(self._make_json_log(
+                        sub=self._working, action='request',
+                        info='submission vanished when fetching info',
+                    ))
+                    return
 
         attempt_no = Submission.objects.filter(problem__id=pid, contest__participation__id=part_id, user__id=uid,
                                                date__lt=sub_date).exclude(status__in=('CE', 'IE')).count() + 1
