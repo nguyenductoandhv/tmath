@@ -6,6 +6,7 @@ import urllib
 from collections import deque, namedtuple
 from operator import itemgetter
 from time import sleep
+from time import time as time_func
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -344,7 +345,7 @@ class JudgeHandler(ZlibPacketHandler):
         return self._working or None
 
     def ping(self):
-        self.send({'name': 'ping', 'when': time.time()})
+        self.send({'name': 'ping', 'when': time_func()})
 
     def on_packet(self, data):
         try:
@@ -657,7 +658,7 @@ class JudgeHandler(ZlibPacketHandler):
         json_log.exception(self._make_json_log(sub=self._working, info='malformed json packet'))
 
     def on_ping_response(self, packet):
-        end = time.time()
+        end = time_func()
         self._ping_average.append(end - packet['when'])
         self._time_delta.append((end + packet['when']) / 2 - packet['time'])
         self.latency = sum(self._ping_average) / len(self._ping_average)
