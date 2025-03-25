@@ -2,10 +2,10 @@ import hmac
 import json
 import logging
 import threading
-import time
 import urllib
 from collections import deque, namedtuple
 from operator import itemgetter
+from time import sleep
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -236,7 +236,7 @@ class JudgeHandler(ZlibPacketHandler):
                 retry_count += 1
                 if retry_count < MAX_RETRIES:
                     logger.warning('Submission %s not found, retrying (%d/%d)...', submission, retry_count, MAX_RETRIES)
-                    time.sleep(RETRY_DELAY)
+                    sleep(RETRY_DELAY)
                 else:
                     logger.error('Submission vanished after %d retries: %s', MAX_RETRIES, submission)
                     json_log.error(self._make_json_log(
