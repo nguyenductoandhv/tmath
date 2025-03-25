@@ -5,7 +5,7 @@ import threading
 import urllib
 from collections import deque, namedtuple
 from operator import itemgetter
-from time import sleep
+from time import sleep, monotonic
 from time import time as time_func
 
 from asgiref.sync import async_to_sync
@@ -632,14 +632,14 @@ class JudgeHandler(ZlibPacketHandler):
         if id in self.update_counter:
             cnt, reset = self.update_counter[id]
             cnt += 1
-            if time.monotonic() - reset > UPDATE_RATE_TIME:
+            if monotonic() - reset > UPDATE_RATE_TIME:
                 del self.update_counter[id]
             else:
                 self.update_counter[id] = (cnt, reset)
                 if cnt > UPDATE_RATE_LIMIT:
                     do_post = False
         if id not in self.update_counter:
-            self.update_counter[id] = (1, time.monotonic())
+            self.update_counter[id] = (1, monotonic())
 
         if do_post:
             socket_messages_logger.info('Submission %s test case %s', id, max_position)
