@@ -61,8 +61,9 @@ def get_profile(request):
 
 def __nav_tab(request):
     problem_link = reverse('problem_list')
-    if request.user.is_authenticated and request.profile.current_contest:
-        problem_link = reverse('contest_problem_list', args=[request.profile.current_contest.contest.key])
+    user = getattr(request, 'user', None)
+    if user and user.is_authenticated and user.profile.current_contest:
+        problem_link = reverse('contest_problem_list', args=[user.profile.current_contest.contest.key])
     return [
         ('problem', problem_link, _('Problems')),
         ('submission', reverse('all_submissions'), _('Submissions')),
@@ -133,11 +134,4 @@ def site_name(request):
 
 def math_setting(request):
     caniuse = CanIUse(request.META.get('HTTP_USER_AGENT', ''))
-
-    if request.user.is_authenticated:
-        engine = request.user.profile.math_engine
-    else:
-        engine = settings.MATHOID_DEFAULT_TYPE
-    if engine == 'auto':
-        engine = 'mml' if bool(settings.MATHOID_URL) and caniuse.mathml == SUPPORT else 'jax'
-    return {'MATH_ENGINE': engine, 'REQUIRE_JAX': engine == 'jax', 'caniuse': caniuse}
+    return {'MATH_ENGINE': 'jax', 'REQUIRE_JAX': True, 'caniuse': caniuse}
