@@ -2,6 +2,7 @@ import random
 
 from django.conf import settings
 from django.contrib.auth.context_processors import PermWrapper
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
 from django.urls import reverse
@@ -42,8 +43,9 @@ def get_resource(request):
 
 
 def get_profile(request):
-    if request.user.is_authenticated:
-        return Profile.objects.get_or_create(user=request.user)[0]
+    user = getattr(request, 'user', None)
+    if user and user.is_authenticated:
+        return Profile.objects.get_or_create(user=user)[0]
     return None
 
 
@@ -83,7 +85,7 @@ def general_info(request):
         'nav_tab': __nav_tab(request),
         'nav_bar': NavigationBar.objects.all(),
         'LOGIN_RETURN_PATH': '' if path.startswith('/accounts/') else path,
-        'perms': PermWrapper(request.user),
+        'perms': PermWrapper(getattr(request, 'user', AnonymousUser())),
         'HAS_WEBAUTHN': bool(settings.WEBAUTHN_RP_ID),
         'version': version,
     }
