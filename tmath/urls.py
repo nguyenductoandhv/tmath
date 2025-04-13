@@ -259,7 +259,7 @@ urlpatterns = [
         path('/task/<int:problem>', include([
             path('', ContestProblemDetailView.as_view(), name='contest_problem_detail'),
             path('/submit', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
-            path('/resubmit/<slug:submission>', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
+            path('/resubmit/<int:submission>', ContestProblemSubmit.as_view(), name='contest_problem_submit'),
             path('/submissions/', paged_list_view(ContestProblemSubmissions, 'contest_problem_submissions')),
             path('/submissions/<str:user>/', paged_list_view(UserContestProblemSubmissions,
                                                              'user_contest_problem_submissions')),
