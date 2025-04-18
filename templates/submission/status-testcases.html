@@ -11,14 +11,14 @@
     {% elif submission.status == 'P' %}
         <div class="mt-4 text-xl font-bold dark:text-white">{{ _('Your submission is being processed...') }}</div>
     {% elif submission.status == 'CE' %}
-    <div class="relative p-6 mt-4 text-xl font-bold border dark:border-white rounded-xl">
-        <div class="absolute px-4 mt-4 text-xl font-bold -top-8 dark:bg-dark-all dark:text-white">{{ _('Compilation Error') }}</div>
+    <div class="relative p-6 mt-4 text-xl font-bold rounded-xl border dark:border-white">
+        <div class="absolute -top-8 px-4 mt-4 text-xl font-bold dark:bg-dark-all dark:text-white">{{ _('Compilation Error') }}</div>
         <pre class="dark:text-white">{{ submission.error|ansi2html }}</pre>
     </div>
     {% else %}
         {% if submission.error %}
-        <div class="relative p-6 mt-4 text-xl font-bold border dark:border-white rounded-xl">
-            <div class="absolute px-4 mt-4 text-xl font-bold -top-8 dark:bg-dark-all dark:text-white">{{ _('Compilation Warnings') }}</div>
+        <div class="relative p-6 mt-4 text-xl font-bold rounded-xl border dark:border-white">
+            <div class="absolute -top-8 px-4 mt-4 text-xl font-bold dark:bg-dark-all dark:text-white">{{ _('Compilation Warnings') }}</div>
             <pre class="dark:text-white">{{ submission.error|ansi2html }}</pre>
         </div>
         {% endif %}
@@ -118,7 +118,7 @@
                 <div class="px-2">
                     {% set print_case_output = case.status != 'AC' and case.output and (prefix_length is none or prefix_length > 0) %}
                     {% if print_case_output %}
-                    <div class="flex flex-col p-4 bg-blue-100 border-2 border-blue-700 rounded-md">
+                    <div class="flex flex-col p-4 bg-blue-100 rounded-md border-2 border-blue-700">
                         <div class="text-xl font-bold">{{ _('Your output (clipped)') }}</div>
                         {% if prefix_length is none %}
                             <pre class="case-output">{{ case.output|linebreaksbr }}</pre>
@@ -145,7 +145,9 @@
                             {% endif %}
                         {% endif %}
                         <div class="text-xl font-bold">{{ _('Judge feedback') }}</div>
-                        <pre class="case-output">{{ case.extended_feedback|linebreaksbr }}</pre>
+                        {% if not request.in_contest %}
+                            <pre class="case-output">{{ case.extended_feedback|linebreaksbr }}</pre>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -160,7 +162,7 @@
             {% if submission.is_graded %}
             <div class="flex flex-col gap-6 dark:text-white">
                 <div class="relative self-center w-80 h-80 {{ submission.result }} !text-white border rounded-full">
-                    <div class="absolute text-5xl font-bold -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                    <div class="absolute top-1/2 left-1/2 text-5xl font-bold -translate-x-1/2 -translate-y-1/2">
                         {% if submission.result in ['AB', 'TLE', 'RTE', 'OLE', 'IE'] %}
                         ---
                         {% else %}
@@ -177,7 +179,7 @@
                     </div>
                 </div>
                 {% if submission.result != "AB" %}
-                <div class="flex flex-col items-center gap-2 resources md:flex-row">
+                <div class="flex flex-col gap-2 items-center resources md:flex-row">
                     <div class="text-2xl font-bold">{{ _('Resources:') }}</div>
                     <div class="text-xl font-semibold text-indigo-600 dark:text-sky-400">
                         {% if submission.result == "TLE" %}
@@ -189,12 +191,12 @@
                     </div>
                 </div>
                 {% if submission.result == "AC" %}
-                <div class="flex flex-col items-center gap-2 runtime md:flex-row">
+                <div class="flex flex-col gap-2 items-center runtime md:flex-row">
                     <div class="text-2xl font-bold">{{ _('Maximum runtime on single test case:') }}</div>
                     <div class="text-xl font-semibold text-indigo-600 dark:text-sky-400" title="{{ max_execution_time }}s">{{ max_execution_time|floatformat(3) }}s</div>
                 </div>
                 {% endif %}
-                <div class="flex flex-col items-center gap-2 score md:flex-row">
+                <div class="flex flex-col gap-2 items-center score md:flex-row">
                     <div class="text-2xl font-bold">
                         {% if is_pretest %}
                             {{ _('Final pretest score:') }}
